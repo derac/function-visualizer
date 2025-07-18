@@ -218,28 +218,60 @@ class XORVisualizer:
         """Generate new random parameters for the mathematical function."""
         import random
         
-        # Random operation selection probabilities
-        operations = {
-            'use_xor': random.random() > 0.3,
-            'use_mod': random.random() > 0.2,
-            'use_sin': random.random() > 0.3,
-            'use_cos': random.random() > 0.3,
-            'use_product': random.random() > 0.4,
-            'use_addition': random.random() > 0.4
-        }
+        # Random operation selection probabilities - ensure at least one operation
+        use_sin = random.random() > 0.2
+        use_cos = random.random() > 0.2
+        
+        if not use_sin and not use_cos:
+            # If both sin and cos disabled, enable at least one other operation
+            operations = {
+                'use_xor': True,
+                'use_mod': random.random() > 0.2,
+                'use_sin': False,
+                'use_cos': False,
+                'use_product': random.random() > 0.4,
+                'use_addition': True
+            }
+        elif not use_sin or not use_cos:
+            # Only one wave type - ensure other operations exist
+            operations = {
+                'use_xor': random.random() > 0.3,
+                'use_mod': random.random() > 0.2,
+                'use_sin': use_sin,
+                'use_cos': use_cos,
+                'use_product': random.random() > 0.4,
+                'use_addition': not random.random() > 0.4
+            }
+        else:
+            # Both wave types enabled
+            operations = {
+                'use_xor': random.random() > 0.3,
+                'use_mod': random.random() > 0.2,
+                'use_sin': use_sin,
+                'use_cos': use_cos,
+                'use_product': random.random() > 0.4,
+                'use_addition': random.random() > 0.4
+            }
+        
+        # Ensure at least one primary operation is enabled
+        if not any([operations['use_xor'], operations['use_product'], operations['use_addition'], 
+                   operations['use_sin'], operations['use_cos']]):
+            operations['use_xor'] = True
+            operations['use_sin'] = True
+            operations['use_cos'] = True
         
         # Random scaling factors
         params = {
-            'wave1_freq': random.uniform(0.1, 2.0),
-            'wave2_freq': random.uniform(0.1, 2.0),
-            'wave1_mult': random.uniform(8, 30),
-            'wave2_mult': random.uniform(8, 30),
-            'mod_factor': random.uniform(20, 200),
-            'xor_strength': random.uniform(0.3, 2.0),
-            'color_red_mult': random.uniform(0.8, 1.2),
-            'color_green_mult': random.uniform(0.3, 0.8),
-            'color_blue_mult': random.uniform(0.1, 0.5),
-            'time_speed': random.uniform(0.3, 2.0)
+            'wave1_freq': random.uniform(0.05, 3.0),
+            'wave2_freq': random.uniform(0.05, 3.0),
+            'wave1_mult': random.uniform(5, 50),
+            'wave2_mult': random.uniform(5, 50),
+            'mod_factor': random.uniform(10, 300),
+            'xor_strength': random.uniform(0.1, 3.0),
+            'color_red_mult': random.uniform(0.5, 1.5),
+            'color_green_mult': random.uniform(0.2, 1.0),
+            'color_blue_mult': random.uniform(0.1, 0.8),
+            'time_speed': random.uniform(0.1, 3.0)
         }
         
         self.random_params = {**operations, **params}
