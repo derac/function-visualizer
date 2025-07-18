@@ -81,13 +81,17 @@ class XORVisualizer:
         
         params = self.random_params
         
+        # Ensure x and y are arrays
+        x = np.asarray(x, dtype=np.float32)
+        y = np.asarray(y, dtype=np.float32)
+        
         # Normalize with variation
         x_normalized = x / params['wave1_mult']
         y_normalized = y / params['wave2_mult']
         
-        # Dynamic wave components
-        wave1 = 0
-        wave2 = 0
+        # Dynamic wave components initialized as arrays
+        wave1 = np.zeros_like(x)
+        wave2 = np.zeros_like(x)
         
         if params['use_sin']:
             wave1 = np.abs(np.sin(x_normalized + time_val * params['time_speed']))
@@ -95,23 +99,23 @@ class XORVisualizer:
             wave2 = np.abs(np.cos(y_normalized + time_val * params['time_speed'] * params['wave2_freq']))
         
         # Dynamic operations
-        combined = 0
+        combined = np.zeros_like(x, dtype=np.float32)
         
         if params['use_xor']:
-            xor_mask = np.bitwise_xor(x, y) & 0xFF
+            xor_mask = np.bitwise_xor(x.astype(np.int32), y.astype(np.int32)) & 0xFF
             if params['use_mod']:
                 mod_factor = ((x + y + int(time_val * params['mod_factor'])) % 256) / 255.0
-                combined += xor_mask * mod_factor * params['xor_strength']
+                combined = combined + xor_mask * mod_factor * params['xor_strength']
             else:
-                combined += xor_mask / 2.0
+                combined = combined + xor_mask / 2.0
         
         if params['use_product'] and params['use_sin'] and params['use_cos']:
-            combined += wave1 * wave2 * 255
+            combined = combined + wave1 * wave2 * 255
         elif params['use_addition']:
             if params['use_sin']:
-                combined += wave1 * 255
+                combined = combined + wave1 * 255
             if params['use_cos']:
-                combined += wave2 * 255
+                combined = combined + wave2 * 255
         
         combined = np.clip(combined, 0, 255)
         
@@ -128,13 +132,17 @@ class XORVisualizer:
         
         params = self.random_params
         
+        # Ensure x and y are cupy arrays
+        x = cp.asarray(x, dtype=cp.float32)
+        y = cp.asarray(y, dtype=cp.float32)
+        
         # Normalize with variation
         x_normalized = x / params['wave1_mult']
         y_normalized = y / params['wave2_mult']
         
-        # Dynamic wave components
-        wave1 = 0
-        wave2 = 0
+        # Dynamic wave components initialized as arrays
+        wave1 = cp.zeros_like(x)
+        wave2 = cp.zeros_like(x)
         
         if params['use_sin']:
             wave1 = cp.abs(cp.sin(x_normalized + time_val * params['time_speed']))
@@ -142,15 +150,15 @@ class XORVisualizer:
             wave2 = cp.abs(cp.cos(y_normalized + time_val * params['time_speed'] * params['wave2_freq']))
         
         # Dynamic operations
-        combined = 0
+        combined = cp.zeros_like(x, dtype=cp.float32)
         
         if params['use_xor']:
             xor_mask = cp.bitwise_xor(x.astype(cp.int32), y.astype(cp.int32)) & 0xFF
             if params['use_mod']:
                 mod_factor = ((x + y + int(time_val * params['mod_factor'])) % 256) / 255.0
-                combined += xor_mask * mod_factor * params['xor_strength']
+                combined = combined + xor_mask * mod_factor * params['xor_strength']
             else:
-                combined += xor_mask / 2.0
+                combined = combined + xor_mask / 2.0
         
         if params['use_product'] and params['use_sin'] and params['use_cos']:
             combined += wave1 * wave2 * 255
@@ -218,60 +226,42 @@ class XORVisualizer:
         """Generate new random parameters for the mathematical function."""
         import random
         
-        # Random operation selection probabilities - ensure at least one operation
-        use_sin = random.random() > 0.2
-        use_cos = random.random() > 0.2
+        # Define all possible operations to choose from
+        all_operations = ['use_sin', 'use_cos', 'use_xor', 'use_mod', 'use_product', 'use_addition', 
+                         'use_division', 'use_abs', 'use_power', 'use_signed', 'use_circular']
         
-        if not use_sin and not use_cos:
-            # If both sin and cos disabled, enable at least one other operation
-            operations = {
-                'use_xor': True,
-                'use_mod': random.random() > 0.2,
-                'use_sin': False,
-                'use_cos': False,
-                'use_product': random.random() > 0.4,
-                'use_addition': True
-            }
-        elif not use_sin or not use_cos:
-            # Only one wave type - ensure other operations exist
-            operations = {
-                'use_xor': random.random() > 0.3,
-                'use_mod': random.random() > 0.2,
-                'use_sin': use_sin,
-                'use_cos': use_cos,
-                'use_product': random.random() > 0.4,
-                'use_addition': not random.random() > 0.4
-            }
-        else:
-            # Both wave types enabled
-            operations = {
-                'use_xor': random.random() > 0.3,
-                'use_mod': random.random() > 0.2,
-                'use_sin': use_sin,
-                'use_cos': use_cos,
-                'use_product': random.random() > 0.4,
-                'use_addition': random.random() > 0.4
-            }
+        # Create initial operations dict
+        operations = {}
         
-        # Ensure at least one primary operation is enabled
-        if not any([operations['use_xor'], operations['use_product'], operations['use_addition'], 
-                   operations['use_sin'], operations['use_cos']]):
-            operations['use_xor'] = True
-            operations['use_sin'] = True
-            operations['use_cos'] = True
+        # Randomly select at least 3 operations, with propensity for more
+        selected_ops = random.sample(all_operations, k=random.randint(6, 10))
         
-        # Random scaling factors
+        for op in all_operations:
+            operations[op] = op in selected_ops
+        
+        # Ensure sin and cos can't both be disabled
+        if not operations['use_sin'] and not operations['use_cos']:
+            # If both disabled, randomly enable one
+            if random.random() > 0.5:
+                operations['use_sin'] = True
+            else:
+                operations['use_cos'] = True
+        
+        # Random scaling factors with more variety
         params = {
-            'wave1_freq': random.uniform(0.05, 3.0),
-            'wave2_freq': random.uniform(0.05, 3.0),
-            'wave1_mult': random.uniform(5, 50),
-            'wave2_mult': random.uniform(5, 50),
-            'mod_factor': random.uniform(10, 300),
-            'xor_strength': random.uniform(0.1, 3.0),
-            'color_red_mult': random.uniform(0.5, 1.5),
-            'color_green_mult': random.uniform(0.2, 1.0),
-            'color_blue_mult': random.uniform(0.1, 0.8),
-            'time_speed': random.uniform(0.1, 3.0)
+            'wave1_freq': random.uniform(0.02, 5.0),
+            'wave2_freq': random.uniform(0.02, 5.0),
+            'wave1_mult': random.uniform(3, 80),
+            'wave2_mult': random.uniform(3, 80),
+            'mod_factor': random.uniform(5, 400),
+            'xor_strength': random.uniform(0.2, 4.0),
+            'color_red_mult': random.uniform(0.3, 2.0),
+            'color_green_mult': random.uniform(0.1, 1.5),
+            'color_blue_mult': random.uniform(0.05, 1.2),
+            'time_speed': random.uniform(0.05, 4.0),
+            'power_exponent': random.uniform(0.5, 3.0),
+            'division_factor': random.uniform(50, 200),
+            'abs_strength': random.uniform(0.3, 2.0)
         }
         
         self.random_params = {**operations, **params}
