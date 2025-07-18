@@ -44,8 +44,8 @@ class XORVisualizer:
         self.stop_btn = ttk.Button(self.toolbar, text="Stop", command=self.stop_animation)
         self.stop_btn.pack(side=tk.LEFT, padx=5)
         
-        self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bg='black')
-        self.canvas.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
+        self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bg='black', highlightthickness=0)
+        self.canvas.pack(expand=True, fill=tk.BOTH, padx=0, pady=0)
         
     def setup_bindings(self):
         self.root.bind('<Configure>', self.on_resize)
@@ -60,8 +60,9 @@ class XORVisualizer:
             
     def on_resize(self, event):
         if event.widget == self.root:
+            toolbar_height = self.toolbar.winfo_height()
             new_width = event.width - 20
-            new_height = event.height - 100
+            new_height = event.height - toolbar_height - 20
             if new_width > 0 and new_height > 0:
                 self.width = new_width
                 self.height = new_height
@@ -130,6 +131,14 @@ class XORVisualizer:
         if self.running:
             self.time_val += 0.05
             try:
+                actual_width = self.canvas.winfo_width()
+                actual_height = self.canvas.winfo_height()
+                
+                if actual_width > 0 and actual_height > 0:
+                    if actual_width != self.width or actual_height != self.height:
+                        self.width = actual_width
+                        self.height = actual_height
+                        
                 photo = self.generate_image()
                 self.canvas.delete("all")
                 self.canvas.create_image(0, 0, anchor=tk.NW, image=photo)
