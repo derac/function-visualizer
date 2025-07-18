@@ -59,14 +59,8 @@ class XORVisualizer:
             self.status_label.config(text="GPU: Not Available")
             
     def on_resize(self, event):
-        if event.widget == self.root:
-            toolbar_height = self.toolbar.winfo_height()
-            new_width = event.width - 20
-            new_height = event.height - toolbar_height - 20
-            if new_width > 0 and new_height > 0:
-                self.width = new_width
-                self.height = new_height
-                self.canvas.config(width=self.width, height=self.height)
+        # Let the canvas automatically resize via pack(expand=True, fill=tk.BOTH)
+        pass
                 
     def compute_function(self, x, y, time_val):
         if self.using_cupy and CUPY_AVAILABLE:
@@ -135,9 +129,8 @@ class XORVisualizer:
                 actual_height = self.canvas.winfo_height()
                 
                 if actual_width > 0 and actual_height > 0:
-                    if actual_width != self.width or actual_height != self.height:
-                        self.width = actual_width
-                        self.height = actual_height
+                    self.width = actual_width
+                    self.height = actual_height
                         
                 photo = self.generate_image()
                 self.canvas.delete("all")
