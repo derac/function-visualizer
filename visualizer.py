@@ -24,6 +24,10 @@ class XORVisualizer:
         self.width = 640
         self.height = 480
         
+        # Random parameters for function generation
+        self.random_params = None
+        self.randomize_function_params()
+        
         self.setup_ui()
         self.setup_bindings()
         
@@ -43,6 +47,9 @@ class XORVisualizer:
         
         self.stop_btn = ttk.Button(self.toolbar, text="Stop", command=self.stop_animation)
         self.stop_btn.pack(side=tk.LEFT, padx=5)
+        
+        self.randomize_btn = ttk.Button(self.toolbar, text="Randomize", command=self.randomize_function_params)
+        self.randomize_btn.pack(side=tk.LEFT, padx=5)
         
         self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bg='black', highlightthickness=0)
         self.canvas.pack(expand=True, fill=tk.BOTH, padx=0, pady=0)
@@ -69,38 +76,96 @@ class XORVisualizer:
             return self.compute_function_numpy(x, y, time_val)
             
     def compute_function_numpy(self, x, y, time_val):
-        x_normalized = x / 10.0
-        y_normalized = y / 10.0
+        if self.random_params is None:
+            self.randomize_function_params()
         
-        wave1 = np.abs(np.sin(x_normalized + time_val * 0.5))
-        wave2 = np.abs(np.cos(y_normalized + time_val * 0.3))
+        params = self.random_params
         
-        xor_mask = np.bitwise_xor(x, y) & 0xFF
-        mod_factor = ((x + y + int(time_val * 10)) % 256) / 255.0
+        # Normalize with variation
+        x_normalized = x / params['wave1_mult']
+        y_normalized = y / params['wave2_mult']
         
-        combined = np.clip((xor_mask * mod_factor + wave1 * wave2 * 255), 0, 255)
+        # Dynamic wave components
+        wave1 = 0
+        wave2 = 0
         
-        red = combined.astype(np.uint8)
-        green = ((combined * 0.5 + 127) % 256).astype(np.uint8)
-        blue = ((combined * 0.3 + 200) % 256).astype(np.uint8)
+        if params['use_sin']:
+            wave1 = np.abs(np.sin(x_normalized + time_val * params['time_speed']))
+        if params['use_cos']:
+            wave2 = np.abs(np.cos(y_normalized + time_val * params['time_speed'] * params['wave2_freq']))
+        
+        # Dynamic operations
+        combined = 0
+        
+        if params['use_xor']:
+            xor_mask = np.bitwise_xor(x, y) & 0xFF
+            if params['use_mod']:
+                mod_factor = ((x + y + int(time_val * params['mod_factor'])) % 256) / 255.0
+                combined += xor_mask * mod_factor * params['xor_strength']
+            else:
+                combined += xor_mask / 2.0
+        
+        if params['use_product'] and params['use_sin'] and params['use_cos']:
+            combined += wave1 * wave2 * 255
+        elif params['use_addition']:
+            if params['use_sin']:
+                combined += wave1 * 255
+            if params['use_cos']:
+                combined += wave2 * 255
+        
+        combined = np.clip(combined, 0, 255)
+        
+        # Dynamic color mapping
+        red = (combined * params['color_red_mult']).astype(np.uint8)
+        green = ((combined * params['color_green_mult'] + 127) % 256).astype(np.uint8)
+        blue = ((combined * params['color_blue_mult'] + 200) % 256).astype(np.uint8)
         
         return np.stack([red, green, blue], axis=-1)
         
     def compute_function_cupy(self, x, y, time_val):
-        x_norm = x / 10.0
-        y_norm = y / 10.0
+        if self.random_params is None:
+            self.randomize_function_params()
         
-        wave1 = cp.abs(cp.sin(x_norm + time_val * 0.5))
-        wave2 = cp.abs(cp.cos(y_norm + time_val * 0.3))
+        params = self.random_params
         
-        xor_mask = cp.bitwise_xor(x.astype(cp.int32), y.astype(cp.int32)) & 0xFF
-        mod_factor = ((x + y + int(time_val * 10)) % 256) / 255.0
+        # Normalize with variation
+        x_normalized = x / params['wave1_mult']
+        y_normalized = y / params['wave2_mult']
         
-        combined = cp.clip((xor_mask * mod_factor + wave1 * wave2 * 255), 0, 255)
+        # Dynamic wave components
+        wave1 = 0
+        wave2 = 0
         
-        red = combined.astype(cp.uint8)
-        green = ((combined * 0.5 + 127) % 256).astype(cp.uint8)
-        blue = ((combined * 0.3 + 200) % 256).astype(cp.uint8)
+        if params['use_sin']:
+            wave1 = cp.abs(cp.sin(x_normalized + time_val * params['time_speed']))
+        if params['use_cos']:
+            wave2 = cp.abs(cp.cos(y_normalized + time_val * params['time_speed'] * params['wave2_freq']))
+        
+        # Dynamic operations
+        combined = 0
+        
+        if params['use_xor']:
+            xor_mask = cp.bitwise_xor(x.astype(cp.int32), y.astype(cp.int32)) & 0xFF
+            if params['use_mod']:
+                mod_factor = ((x + y + int(time_val * params['mod_factor'])) % 256) / 255.0
+                combined += xor_mask * mod_factor * params['xor_strength']
+            else:
+                combined += xor_mask / 2.0
+        
+        if params['use_product'] and params['use_sin'] and params['use_cos']:
+            combined += wave1 * wave2 * 255
+        elif params['use_addition']:
+            if params['use_sin']:
+                combined += wave1 * 255
+            if params['use_cos']:
+                combined += wave2 * 255
+        
+        combined = cp.clip(combined, 0, 255)
+        
+        # Dynamic color mapping
+        red = (combined * params['color_red_mult']).astype(cp.uint8)
+        green = ((combined * params['color_green_mult'] + 127) % 256).astype(cp.uint8)
+        blue = ((combined * params['color_blue_mult'] + 200) % 256).astype(cp.uint8)
         
         return cp.stack([red, green, blue], axis=-1)
         
@@ -149,6 +214,36 @@ class XORVisualizer:
     def stop_animation(self):
         self.running = False
         
+    def randomize_function_params(self):
+        """Generate new random parameters for the mathematical function."""
+        import random
+        
+        # Random operation selection probabilities
+        operations = {
+            'use_xor': random.random() > 0.3,
+            'use_mod': random.random() > 0.2,
+            'use_sin': random.random() > 0.3,
+            'use_cos': random.random() > 0.3,
+            'use_product': random.random() > 0.4,
+            'use_addition': random.random() > 0.4
+        }
+        
+        # Random scaling factors
+        params = {
+            'wave1_freq': random.uniform(0.1, 2.0),
+            'wave2_freq': random.uniform(0.1, 2.0),
+            'wave1_mult': random.uniform(8, 30),
+            'wave2_mult': random.uniform(8, 30),
+            'mod_factor': random.uniform(20, 200),
+            'xor_strength': random.uniform(0.3, 2.0),
+            'color_red_mult': random.uniform(0.8, 1.2),
+            'color_green_mult': random.uniform(0.3, 0.8),
+            'color_blue_mult': random.uniform(0.1, 0.5),
+            'time_speed': random.uniform(0.3, 2.0)
+        }
+        
+        self.random_params = {**operations, **params}
+    
     def on_closing(self):
         self.stop_animation()
         self.root.destroy()
