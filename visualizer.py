@@ -101,6 +101,7 @@ class XORVisualizer:
         # Dynamic operations
         combined = np.zeros_like(x, dtype=np.float32)
         
+        # Apply operations in a fixed order (no shuffling)
         if params['use_xor']:
             xor_mask = np.bitwise_xor(x.astype(np.int32), y.astype(np.int32)) & 0xFF
             if params['use_mod']:
@@ -109,13 +110,34 @@ class XORVisualizer:
             else:
                 combined = combined + xor_mask / 2.0
         
+        if params['use_sin']:
+            combined = combined + wave1 * 200
+        if params['use_cos']:
+            combined = combined + wave2 * 200
+        
+        if params['use_fractal']:
+            radius = np.sqrt(x**2 + y**2)
+            combined = combined + radius * np.sin(radius * params['fractal_iterations'])
+            
         if params['use_product'] and params['use_sin'] and params['use_cos']:
-            combined = combined + wave1 * wave2 * 255
+            combined = combined + wave1 * wave2 * 150
         elif params['use_addition']:
             if params['use_sin']:
-                combined = combined + wave1 * 255
+                combined = combined + wave1 * 150
             if params['use_cos']:
-                combined = combined + wave2 * 255
+                combined = combined + wave2 * 150
+                
+        if params['use_cellular']:
+            # Simple cellular noise approximation
+            grid_x = (x / params['cellular_scale']).astype(int)
+            grid_y = (y / params['cellular_scale']).astype(int)
+            cell_val = np.sin(grid_x * 0.1) * np.cos(grid_y * 0.1)
+            combined = combined + cell_val * 150
+            
+        if params['use_domain_warp']:
+            warped_x = x + params['domain_warp_strength'] * np.sin(y * 0.1)
+            warped_y = y + params['domain_warp_strength'] * np.cos(x * 0.1)
+            combined = combined + np.sin(warped_x) * np.cos(warped_y) * 100
         
         combined = np.clip(combined, 0, 255)
         
@@ -226,42 +248,58 @@ class XORVisualizer:
         """Generate new random parameters for the mathematical function."""
         import random
         
-        # Define all possible operations to choose from
-        all_operations = ['use_sin', 'use_cos', 'use_xor', 'use_mod', 'use_product', 'use_addition', 
-                         'use_division', 'use_abs', 'use_power', 'use_signed', 'use_circular']
+        # Expanded operations list with more function types
+        all_operations = ['use_sin', 'use_cos', 'use_tan', 'use_xor', 'use_mod', 
+                         'use_product', 'use_addition', 'use_fractal', 
+                         'use_cellular', 'use_domain_warp', 'use_polar',
+                         'use_noise', 'use_voronoi', 'use_abs', 'use_power']
         
         # Create initial operations dict
         operations = {}
         
-        # Randomly select at least 3 operations, with propensity for more
-        selected_ops = random.sample(all_operations, k=random.randint(6, 10))
+        # Forced interesting combinations
+        interesting_combinations = [
+            ['use_sin', 'use_cos', 'use_mod', 'use_xor'],
+            ['use_fractal', 'use_domain_warp'],
+            ['use_cellular', 'use_voronoi'],
+            ['use_polar', 'use_noise']
+        ]
         
+        # Start with an interesting combination (50% chance)
+        if random.random() > 0.5:
+            combo = random.choice(interesting_combinations)
+            operations.update({op: True for op in combo})
+        
+        # Fill remaining operations (8-12 total active operations)
+        remaining_ops = [op for op in all_operations if op not in operations]
+        ops_to_select = random.randint(
+            max(0, 8 - len(operations)),
+            max(0, 12 - len(operations))
+        )
+        additional_ops = random.sample(remaining_ops, k=ops_to_select)
+        operations.update({op: True for op in additional_ops})
+        
+        # Ensure all operations are in the dict
         for op in all_operations:
-            operations[op] = op in selected_ops
+            if op not in operations:
+                operations[op] = False
         
-        # Ensure sin and cos can't both be disabled
-        if not operations['use_sin'] and not operations['use_cos']:
-            # If both disabled, randomly enable one
-            if random.random() > 0.5:
-                operations['use_sin'] = True
-            else:
-                operations['use_cos'] = True
-        
-        # Random scaling factors with more variety
+        # More sophisticated parameter ranges
         params = {
-            'wave1_freq': random.uniform(0.02, 5.0),
-            'wave2_freq': random.uniform(0.02, 5.0),
-            'wave1_mult': random.uniform(3, 80),
-            'wave2_mult': random.uniform(3, 80),
-            'mod_factor': random.uniform(5, 400),
-            'xor_strength': random.uniform(0.2, 4.0),
-            'color_red_mult': random.uniform(0.3, 2.0),
-            'color_green_mult': random.uniform(0.1, 1.5),
-            'color_blue_mult': random.uniform(0.05, 1.2),
-            'time_speed': random.uniform(0.05, 4.0),
-            'power_exponent': random.uniform(0.5, 3.0),
-            'division_factor': random.uniform(50, 200),
-            'abs_strength': random.uniform(0.3, 2.0)
+            'wave1_f freq': random.choice([0.618, 1.0, 1.618, 3.14]),
+            'wave2_freq': random.choice([0.618, 1.0, 1.618, 3.14]),
+            'wave1_mult': random.uniform(10, 200),
+            'wave2_mult': random.uniform(10, 200),
+            'mod_factor': random.uniform(10, 500),
+            'xor_strength': random.uniform(0.5, 5.0),
+            'color_red_mult': random.uniform(0.5, 3.0),
+            'color_green_mult': random.uniform(0.5, 3.0),
+            'color_blue_mult': random.uniform(0.5, 3.0),
+            'time_speed': random.uniform(0.1, 5.0),
+            'power_exponent': random.uniform(0.3, 4.0),
+            'fractal_iterations': random.randint(3, 10),
+            'cellular_scale': random.uniform(0.5, 10.0),
+            'domain_warp_strength': random.uniform(0.5, 15.0)
         }
         
         self.random_params = {**operations, **params}
