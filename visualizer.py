@@ -139,13 +139,37 @@ class XORVisualizer:
                 continue
             
             if op == 'use_xor':
+                # Enhanced time-based translation and shape transformation
+                time_shift_x = time_val * params.get('xor_translate_x', 0.5)
+                time_shift_y = time_val * params.get('xor_translate_y', 0.3)
+                morph_phase = time_val * params.get('xor_morph_speed', 0.2)
+                
+                # Apply smooth translation to coordinates
+                trans_x = x + np.sin(time_shift_x) * params.get('xor_translate_range', 50)
+                trans_y = y + np.cos(time_shift_y) * params.get('xor_translate_range', 50)
+                
+                # Subtle shape morphing through coordinate transformation
+                morph_x = trans_x + np.sin(morph_phase + trans_y * 0.01) * (5 + 3 * np.sin(morph_phase * 0.7))
+                morph_y = trans_y + np.cos(morph_phase + trans_x * 0.01) * (5 + 3 * np.cos(morph_phase * 0.5))
+                
+                # Add gentle rotation effect
+                rot_angle = np.sin(time_val * 0.1) * 0.1  # Small rotation amount
+                rot_x = morph_x * np.cos(rot_angle) - morph_y * np.sin(rot_angle)
+                rot_y = morph_x * np.sin(rot_angle) + morph_y * np.cos(rot_angle)
+                
                 if params.get('use_mod', False):
-                    xor_mask = np.bitwise_xor(x.astype(np.int32), y.astype(np.int32)) & 0xFF
-                    mod_factor = ((x + y + int(time_val * params['mod_factor'])) % 256) / 255.0
-                    combined = combined + xor_mask * mod_factor * params['xor_strength']
+                    # Apply XOR with mod using morphed coordinates
+                    xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & 0xFF
+                    mod_factor = ((rot_x + rot_y + int(time_val * params['mod_factor'])) % 256) / 255.0
+                    # Smooth modulation of the modulation factor
+                    mod_smooth = 0.5 + 0.5 * np.sin(time_val * 0.15 + mod_factor * np.pi)
+                    combined = combined + xor_mask * mod_factor * mod_smooth * params['xor_strength']
                 else:
-                    xor_mask = np.bitwise_xor(x.astype(np.int32), y.astype(np.int32)) & 0xFF
-                    combined = combined + xor_mask / 2.0
+                    # Clean XOR with morphing
+                    xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & 0xFF
+                    # Gentle intensity modulation
+                    intensity = 0.8 + 0.2 * np.sin(time_val * 0.05 + (rot_x + rot_y) * 0.001)
+                    combined = combined + xor_mask * intensity * params['xor_strength']
             
             elif op == 'use_sin':
                 combined = combined + wave1 * 200
@@ -284,13 +308,37 @@ class XORVisualizer:
                 continue
             
             if op == 'use_xor':
+                # Enhanced time-based translation and shape transformation
+                time_shift_x = time_val * params.get('xor_translate_x', 0.5)
+                time_shift_y = time_val * params.get('xor_translate_y', 0.3)
+                morph_phase = time_val * params.get('xor_morph_speed', 0.2)
+                
+                # Apply smooth translation to coordinates
+                trans_x = x + cp.sin(time_shift_x) * params.get('xor_translate_range', 50)
+                trans_y = y + cp.cos(time_shift_y) * params.get('xor_translate_range', 50)
+                
+                # Subtle shape morphing through coordinate transformation
+                morph_x = trans_x + cp.sin(morph_phase + trans_y * 0.01) * (5 + 3 * cp.sin(morph_phase * 0.7))
+                morph_y = trans_y + cp.cos(morph_phase + trans_x * 0.01) * (5 + 3 * cp.cos(morph_phase * 0.5))
+                
+                # Add gentle rotation effect
+                rot_angle = cp.sin(time_val * 0.1) * 0.1  # Small rotation amount
+                rot_x = morph_x * cp.cos(rot_angle) - morph_y * cp.sin(rot_angle)
+                rot_y = morph_x * cp.sin(rot_angle) + morph_y * cp.cos(rot_angle)
+                
                 if params.get('use_mod', False):
-                    xor_mask = cp.bitwise_xor(x.astype(cp.int32), y.astype(cp.int32)) & 0xFF
-                    mod_factor = ((x + y + int(time_val * params['mod_factor'])) % 256) / 255.0
-                    combined = combined + xor_mask * mod_factor * params['xor_strength']
+                    # Apply XOR with mod using morphed coordinates
+                    xor_mask = cp.bitwise_xor(rot_x.astype(cp.int32), rot_y.astype(cp.int32)) & 0xFF
+                    mod_factor = ((rot_x + rot_y + int(time_val * params['mod_factor'])) % 256) / 255.0
+                    # Smooth modulation of the modulation factor
+                    mod_smooth = 0.5 + 0.5 * cp.sin(time_val * 0.15 + mod_factor * cp.pi)
+                    combined = combined + xor_mask * mod_factor * mod_smooth * params['xor_strength']
                 else:
-                    xor_mask = cp.bitwise_xor(x.astype(cp.int32), y.astype(cp.int32)) & 0xFF
-                    combined = combined + xor_mask / 2.0
+                    # Clean XOR with morphing
+                    xor_mask = cp.bitwise_xor(rot_x.astype(cp.int32), rot_y.astype(cp.int32)) & 0xFF
+                    # Gentle intensity modulation
+                    intensity = 0.8 + 0.2 * cp.sin(time_val * 0.05 + (rot_x + rot_y) * 0.001)
+                    combined = combined + xor_mask * intensity * params['xor_strength']
             
             elif op == 'use_sin':
                 combined = combined + wave1 * 200
@@ -494,6 +542,10 @@ class XORVisualizer:
             'wave2_translate_y': random.uniform(-100, 100),
             'mod_factor': random.uniform(20, 800),  # Extended range
             'xor_strength': random.uniform(1.0, 10.0),  # Higher impact
+            'xor_translate_x': random.uniform(0.2, 1.5),  # Time-based translation speed for XOR
+            'xor_translate_y': random.uniform(0.1, 1.0),
+            'xor_translate_range': random.uniform(20, 100),  # Translation range for XOR
+            'xor_morph_speed': random.uniform(0.1, 0.5),  # Morphing speed for XOR shape
             'time_speed': random.uniform(0.2, 3.0),  # More balanced speed range
             'time_translate_x': random.uniform(-50, 50),  # Time-based translation speed
             'time_translate_y': random.uniform(-50, 50),
