@@ -1,14 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
-import numpy as np
 import time
 import threading
 from PIL import Image, ImageTk
 
 try:
-    import cupy as cp
+    import cupy as np
     CUPY_AVAILABLE = True
 except ImportError:
+    import numpy as np
     CUPY_AVAILABLE = False
 
 
@@ -83,12 +83,6 @@ class XORVisualizer:
         pass
                 
     def compute_function(self, x, y, time_val):
-        if self.using_cupy and CUPY_AVAILABLE:
-            return self.compute_function_cupy(x, y, time_val)
-        else:
-            return self.compute_function_numpy(x, y, time_val)
-            
-    def compute_function_numpy(self, x, y, time_val):
         if self.random_params is None:
             self.randomize_function_params()
         
@@ -257,199 +251,13 @@ class XORVisualizer:
         colors = np.stack([red, green, blue], axis=-1) * 255
         return colors.astype(np.uint8)
         
-    def compute_function_cupy(self, x, y, time_val):
-        if self.random_params is None:
-            self.randomize_function_params()
-        
-        params = self.random_params
-        
-        # Add time-based modulation to all parameters
-        time_mod = cp.sin(time_val * 0.2) * 0.3 + cp.cos(time_val * 0.15) * 0.2
-        wave1_mult = params['wave1_mult'] * (1 + 0.3 * cp.sin(time_val * 0.15))
-        wave2_mult = params['wave2_mult'] * (1 + 0.3 * cp.cos(time_val * 0.12))
-        domain_warp_strength = params['domain_warp_strength'] * (1 + 0.4 * cp.sin(time_val * 0.25))
-        fractal_iterations = params['fractal_iterations'] * (1 + 0.2 * cp.sin(time_val * 0.1))
-        
-        # Ensure x and y are cupy arrays
-        x = cp.asarray(x, dtype=cp.float32)
-        y = cp.asarray(y, dtype=cp.float32)
-        
-        # Apply time-based translations
-        time_offset_x = time_val * params['time_translate_x']
-        time_offset_y = time_val * params['time_translate_y']
-        time_warp = time_val * params['time_warp_factor']
-        
-        # Apply wave translations with time evolution
-        wave1_offset_x = time_offset_x + params['wave1_translate_x']
-        wave1_offset_y = time_offset_y + params['wave1_translate_y']
-        wave2_offset_x = time_offset_x + params['wave2_translate_x']
-        wave2_offset_y = time_offset_y + params['wave2_translate_y']
-        
-        # Normalize with time-based scaling and translations
-        x_normalized = (x - wave1_offset_x) / wave1_mult
-        y_normalized = (y - wave1_offset_y) / wave1_mult
-        
-        # Dynamic wave components initialized as arrays
-        wave1 = cp.zeros_like(x)
-        wave2 = cp.zeros_like(x)
-        
-        if params['use_sin']:
-            wave1 = cp.abs(cp.sin(x_normalized * params['wave1_freq'] + time_val * params['time_speed']))
-        if params['use_cos']:
-            wave2 = cp.abs(cp.cos(y_normalized * params['wave2_freq'] + time_val * params['time_speed']))
-        
-        combined = cp.zeros_like(x, dtype=cp.float32)
-        
-        # Apply functions in predetermined order
-        operations = params.get('function_order', [])
-        
-        for op in operations:
-            if not params.get(op, False):
-                continue
-            
-            if op == 'use_xor':
-                # Enhanced time-based translation and shape transformation
-                time_shift_x = time_val * params.get('xor_translate_x', 0.5)
-                time_shift_y = time_val * params.get('xor_translate_y', 0.3)
-                morph_phase = time_val * params.get('xor_morph_speed', 0.2)
-                
-                # Apply smooth translation to coordinates
-                trans_x = x + cp.sin(time_shift_x) * params.get('xor_translate_range', 50)
-                trans_y = y + cp.cos(time_shift_y) * params.get('xor_translate_range', 50)
-                
-                # Subtle shape morphing through coordinate transformation
-                morph_x = trans_x + cp.sin(morph_phase + trans_y * 0.01) * (5 + 3 * cp.sin(morph_phase * 0.7))
-                morph_y = trans_y + cp.cos(morph_phase + trans_x * 0.01) * (5 + 3 * cp.cos(morph_phase * 0.5))
-                
-                # Add gentle rotation effect
-                rot_angle = cp.sin(time_val * 0.1) * 0.1  # Small rotation amount
-                rot_x = morph_x * cp.cos(rot_angle) - morph_y * cp.sin(rot_angle)
-                rot_y = morph_x * cp.sin(rot_angle) + morph_y * cp.cos(rot_angle)
-                
-                if params.get('use_mod', False):
-                    # Apply XOR with mod using morphed coordinates
-                    xor_mask = cp.bitwise_xor(rot_x.astype(cp.int32), rot_y.astype(cp.int32)) & 0xFF
-                    mod_factor = ((rot_x + rot_y + int(time_val * params['mod_factor'])) % 256) / 255.0
-                    # Smooth modulation of the modulation factor
-                    mod_smooth = 0.5 + 0.5 * cp.sin(time_val * 0.15 + mod_factor * cp.pi)
-                    combined = combined + xor_mask * mod_factor * mod_smooth * params['xor_strength']
-                else:
-                    # Clean XOR with morphing
-                    xor_mask = cp.bitwise_xor(rot_x.astype(cp.int32), rot_y.astype(cp.int32)) & 0xFF
-                    # Gentle intensity modulation
-                    intensity = 0.8 + 0.2 * cp.sin(time_val * 0.05 + (rot_x + rot_y) * 0.001)
-                    combined = combined + xor_mask * intensity * params['xor_strength']
-            
-            elif op == 'use_sin':
-                combined = combined + wave1 * 200
-            
-            elif op == 'use_cos':
-                combined = combined + wave2 * 200
-            
-            elif op == 'use_fractal':
-                radius = cp.sqrt(x**2 + y**2)
-                time_fractal = time_val * params['fractal_time_sensitivity']
-                combined = combined + radius * cp.sin(radius * fractal_iterations + time_fractal * 0.3 + 
-                                                     cp.sin(time_fractal * 0.7) * radius * 0.1)
-            
-            elif op == 'use_product' and params['use_sin'] and params['use_cos']:
-                combined = combined + wave1 * wave2 * 150
-            
-            elif op == 'use_addition':
-                if params['use_sin']:
-                    combined = combined + wave1 * 150
-                if params['use_cos']:
-                    combined = combined + wave2 * 150
-            
-            elif op == 'use_cellular':
-                time_cellular = time_val * params['cellular_time_translate']
-                grid_x = ((x + time_cellular * 5) / params['cellular_scale']).astype(int)
-                grid_y = ((y + time_cellular * 3) / params['cellular_scale']).astype(int)
-                cell_val = cp.sin(grid_x * 0.1 + time_cellular) * cp.cos(grid_y * 0.1 + time_cellular * 1.5)
-                combined = combined + cell_val * 150
-            
-            elif op == 'use_domain_warp':
-                animated_strength = domain_warp_strength * (1 + 0.3 * cp.sin(time_val * params['domain_warp_time_factor']))
-                time_phase = time_val * 0.5
-                warped_x = x + animated_strength * cp.sin(y * 0.1 + time_phase + 
-                                                        cp.sin(time_phase * 2) * 0.5)
-                warped_y = y + animated_strength * cp.cos(x * 0.1 + time_phase * 0.7 + 
-                                                        cp.sin(time_phase * 1.5) * 0.3)
-                combined = combined + cp.sin(warped_x) * cp.cos(warped_y) * 100
-        
-        # Smooth color remapping using sigmoid-like functions
-        # Normalize combined values and apply smooth transformation
-        min_val = cp.min(combined)
-        max_val = cp.max(combined)
-        combined_norm = (combined - min_val) / (max_val - min_val + 1e-8)
-        
-        # Use smooth sigmoid remapping for smooth transitions
-        smooth_factor = 3.0
-        combined_smooth = 1.0 / (1.0 + cp.exp(-smooth_factor * (combined_norm - 0.5)))
-        
-        # Apply power curve for additional color control
-        adjusted = cp.power(combined_smooth, params['color_power'] * 0.5 + 0.5)
-        
-        # Create smooth color flows using multiple overlapping waves
-        time_factor = time_val * 0.1
-        time_warped = time_val * params.get('time_warp_factor', 1.0)
-        
-        # Create continuous color gradients using smooth trigonometric functions
-        base_hue = (time_factor + combined_smooth * 6.0 + time_warped * 0.3) % 6.0
-        
-        # Generate RGB from hue using smooth 6-segment color wheel
-        c = adjusted * params['color_saturation']
-        x = c * (1 - cp.abs(cp.mod(base_hue, 2) - 1))
-        
-        # Smooth RGB transitions using vectorized operations
-        red = cp.where(base_hue < 1, c, 
-              cp.where(base_hue < 2, x, 
-              cp.where(base_hue < 4, 0, 
-              cp.where(base_hue < 5, x, c))))
-        
-        green = cp.where(base_hue < 1, x, 
-                cp.where(base_hue < 3, c, 
-                cp.where(base_hue < 4, x, 
-                cp.where(base_hue < 5, 0, 0))))
-        
-        blue = cp.where(base_hue < 2, 0,
-               cp.where(base_hue < 3, x,
-               cp.where(base_hue < 5, c, x)))
-        
-        # Add enhanced time-based modulation using phase parameters
-        modulation_factor = 0.15
-        phase_red = params.get('color_phase_red', 0) * cp.pi / 180
-        phase_green = params.get('color_phase_green', 0) * cp.pi / 180
-        phase_blue = params.get('color_phase_blue', 0) * cp.pi / 180
-        
-        mod_wave = cp.sin(time_factor * 2 + combined_smooth * 4 * cp.pi) * modulation_factor
-        
-        # Apply phase-shifted color modulation
-        red_mod = cp.sin(time_factor * 1.7 + phase_red) * modulation_factor
-        green_mod = cp.sin(time_factor * 1.9 + phase_green) * modulation_factor * 0.8
-        blue_mod = cp.sin(time_factor * 2.1 + phase_blue) * modulation_factor * 1.2
-        
-        red = cp.clip(red * (1 + mod_wave + red_mod) * params['color_red_mult'], 0, 1)
-        green = cp.clip(green * (1 + mod_wave * 0.8 + green_mod) * params['color_green_mult'], 0, 1)
-        blue = cp.clip(blue * (1 + mod_wave * 1.2 + blue_mod) * params['color_blue_mult'], 0, 1)
-        
-        # Final smooth scaling to 8-bit values
-        colors = cp.stack([red, green, blue], axis=-1) * 255
-        return colors.astype(cp.uint8)
         
     def generate_image(self):
-        if self.using_cupy and CUPY_AVAILABLE:
-            x = cp.arange(self.width)[:, None] * cp.ones((1, self.height), dtype=cp.float32)
-            y = cp.arange(self.height)[None, :] * cp.ones((self.width, 1), dtype=cp.float32)
-            
-            colors = self.compute_function_cupy(x, y, self.time_val)
-            img_array = cp.transpose(colors, (1, 0, 2)).get()
-        else:
-            x = np.arange(self.width)[:, None] * np.ones((1, self.height), dtype=np.float32)
-            y = np.arange(self.height)[None, :] * np.ones((self.width, 1), dtype=np.float32)
-            
-            colors = self.compute_function_numpy(x, y, self.time_val)
-            img_array = np.transpose(colors, (1, 0, 2))
+        x = np.arange(self.width)[:, None] * np.ones((1, self.height), dtype=np.float32)
+        y = np.arange(self.height)[None, :] * np.ones((self.width, 1), dtype=np.float32)
+        
+        colors = self.compute_function(x, y, self.time_val)
+        img_array = np.transpose(colors, (1, 0, 2)).get()
             
         img = Image.fromarray(img_array, 'RGB')
         return ImageTk.PhotoImage(img)
