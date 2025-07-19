@@ -167,12 +167,6 @@ class XORVisualizer:
             elif op == 'use_cos':
                 combined = combined + wave2 * 200
             
-            elif op == 'use_fractal':
-                radius = np.sqrt(x**2 + y**2)
-                time_fractal = time_val * params['fractal_time_sensitivity']
-                combined = combined + radius * np.sin(radius * fractal_iterations + time_fractal * 0.3 + 
-                                                     np.sin(time_fractal * 0.7) * radius * 0.1)
-            
             elif op == 'use_product' and params['use_sin'] and params['use_cos']:
                 combined = combined + wave1 * wave2 * 150
             
@@ -303,7 +297,7 @@ class XORVisualizer:
         
         # Expanded operations list with more function types
         all_operations = ['use_sin', 'use_cos', 'use_tan', 'use_xor', 'use_mod', 
-                         'use_product', 'use_addition', 'use_fractal', 
+                         'use_product', 'use_addition', 
                          'use_cellular', 'use_domain_warp', 'use_polar',
                          'use_noise', 'use_voronoi', 'use_abs', 'use_power']
         
@@ -315,7 +309,6 @@ class XORVisualizer:
             ['use_sin', 'use_cos', 'use_mod', 'use_xor'],
             ['use_fractal', 'use_domain_warp'],
             ['use_cellular', 'use_voronoi'],
-            ['use_polar', 'use_noise']
         ]
         
         # Start with an interesting combination (50% chance)
@@ -362,8 +355,6 @@ class XORVisualizer:
             'time_translate_y': random.uniform(-50, 50),
             'time_warp_factor': random.uniform(0.5, 2.0),  # Time warping for phase modulation
             'power_exponent': random.uniform(0.5, 6.0),  # Wider range
-            'fractal_iterations': random.randint(4, 15),  # More detailed fractals
-            'fractal_time_sensitivity': random.uniform(0.1, 1.5),  # How much fractals respond to time
             'cellular_scale': random.uniform(1.0, 20.0),  # Better cellular resolution
             'cellular_time_translate': random.uniform(-2.0, 2.0),  # Cellular pattern translation over time
             'domain_warp_strength': random.uniform(5.0, 30.0),  # Stronger warping
