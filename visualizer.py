@@ -146,16 +146,17 @@ class XORVisualizer:
                 rot_x = morph_x * np.cos(rot_angle) - morph_y * np.sin(rot_angle)
                 rot_y = morph_x * np.sin(rot_angle) + morph_y * np.cos(rot_angle)
                 
+                # Clean XOR with morphing
+                xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(50 * (np.sin(time_val)+1))
+
                 if params.get('use_mod', False):
                     # Apply XOR with mod using morphed coordinates
-                    xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & 0xFF
-                    mod_factor = ((rot_x + rot_y + int(time_val * params['mod_factor'])) % 256) / 255.0
+                    
+                    mod_factor = ((rot_x + rot_y + int(time_val * params['mod_factor'])) % 255) / 255.0
                     # Smooth modulation of the modulation factor
                     mod_smooth = 0.5 + 0.5 * np.sin(time_val * 0.15 + mod_factor * np.pi)
                     combined = combined + xor_mask * mod_factor * mod_smooth * params['xor_strength']
                 else:
-                    # Clean XOR with morphing
-                    xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & 0xFF
                     # Gentle intensity modulation
                     intensity = 0.8 + 0.2 * np.sin(time_val * 0.05 + (rot_x + rot_y) * 0.001)
                     combined = combined + xor_mask * intensity * params['xor_strength']
