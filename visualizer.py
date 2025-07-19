@@ -21,6 +21,7 @@ class XORVisualizer:
         self.using_cupy = CUPY_AVAILABLE
         self.running = False
         self.time_val = 0.0
+        self.time_step = 0.05
         self.width = 640
         self.height = 480
         
@@ -50,6 +51,18 @@ class XORVisualizer:
         
         self.randomize_btn = ttk.Button(self.toolbar, text="Randomize", command=self.randomize_function_params)
         self.randomize_btn.pack(side=tk.LEFT, padx=5)
+        
+        # Time step control
+        self.time_step_label = ttk.Label(self.toolbar, text="Time Step:", relief=tk.SUNKEN)
+        self.time_step_label.pack(side=tk.LEFT, padx=5, pady=2)
+        
+        self.time_step_slider = ttk.Scale(self.toolbar, from_=0.0, to=0.2, 
+                                         command=self.update_time_step, orient=tk.HORIZONTAL, length=100)
+        self.time_step_slider.set(self.time_step)
+        self.time_step_slider.pack(side=tk.LEFT, padx=5)
+        
+        self.time_step_value = ttk.Label(self.toolbar, text=f"{self.time_step:.3f}", relief=tk.SUNKEN, width=6)
+        self.time_step_value.pack(side=tk.LEFT, padx=2)
         
         self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bg='black', highlightthickness=0)
         self.canvas.pack(expand=True, fill=tk.BOTH, padx=0, pady=0)
@@ -98,46 +111,53 @@ class XORVisualizer:
         if params['use_cos']:
             wave2 = np.abs(np.cos(y_normalized + time_val * params['time_speed'] * params['wave2_freq']))
         
-        # Dynamic operations
         combined = np.zeros_like(x, dtype=np.float32)
         
-        # Apply operations in a fixed order (no shuffling)
-        if params['use_xor']:
-            xor_mask = np.bitwise_xor(x.astype(np.int32), y.astype(np.int32)) & 0xFF
-            if params['use_mod']:
-                mod_factor = ((x + y + int(time_val * params['mod_factor'])) % 256) / 255.0
-                combined = combined + xor_mask * mod_factor * params['xor_strength']
-            else:
-                combined = combined + xor_mask / 2.0
+        # Apply functions in predetermined order
+        operations = params.get('function_order', [])
         
-        if params['use_sin']:
-            combined = combined + wave1 * 200
-        if params['use_cos']:
-            combined = combined + wave2 * 200
-        
-        if params['use_fractal']:
-            radius = np.sqrt(x**2 + y**2)
-            combined = combined + radius * np.sin(radius * params['fractal_iterations'])
+        for op in operations:
+            if not params.get(op, False):
+                continue
             
-        if params['use_product'] and params['use_sin'] and params['use_cos']:
-            combined = combined + wave1 * wave2 * 150
-        elif params['use_addition']:
-            if params['use_sin']:
-                combined = combined + wave1 * 150
-            if params['use_cos']:
-                combined = combined + wave2 * 150
-                
-        if params['use_cellular']:
-            # Simple cellular noise approximation
-            grid_x = (x / params['cellular_scale']).astype(int)
-            grid_y = (y / params['cellular_scale']).astype(int)
-            cell_val = np.sin(grid_x * 0.1) * np.cos(grid_y * 0.1)
-            combined = combined + cell_val * 150
+            if op == 'use_xor':
+                if params.get('use_mod', False):
+                    xor_mask = np.bitwise_xor(x.astype(np.int32), y.astype(np.int32)) & 0xFF
+                    mod_factor = ((x + y + int(time_val * params['mod_factor'])) % 256) / 255.0
+                    combined = combined + xor_mask * mod_factor * params['xor_strength']
+                else:
+                    xor_mask = np.bitwise_xor(x.astype(np.int32), y.astype(np.int32)) & 0xFF
+                    combined = combined + xor_mask / 2.0
             
-        if params['use_domain_warp']:
-            warped_x = x + params['domain_warp_strength'] * np.sin(y * 0.1)
-            warped_y = y + params['domain_warp_strength'] * np.cos(x * 0.1)
-            combined = combined + np.sin(warped_x) * np.cos(warped_y) * 100
+            elif op == 'use_sin':
+                combined = combined + wave1 * 200
+            
+            elif op == 'use_cos':
+                combined = combined + wave2 * 200
+            
+            elif op == 'use_fractal':
+                radius = np.sqrt(x**2 + y**2)
+                combined = combined + radius * np.sin(radius * params['fractal_iterations'])
+            
+            elif op == 'use_product' and params['use_sin'] and params['use_cos']:
+                combined = combined + wave1 * wave2 * 150
+            
+            elif op == 'use_addition':
+                if params['use_sin']:
+                    combined = combined + wave1 * 150
+                if params['use_cos']:
+                    combined = combined + wave2 * 150
+            
+            elif op == 'use_cellular':
+                grid_x = (x / params['cellular_scale']).astype(int)
+                grid_y = (y / params['cellular_scale']).astype(int)
+                cell_val = np.sin(grid_x * 0.1) * np.cos(grid_y * 0.1)
+                combined = combined + cell_val * 150
+            
+            elif op == 'use_domain_warp':
+                warped_x = x + params['domain_warp_strength'] * np.sin(y * 0.1)
+                warped_y = y + params['domain_warp_strength'] * np.cos(x * 0.1)
+                combined = combined + np.sin(warped_x) * np.cos(warped_y) * 100
         
         combined = np.clip(combined, 0, 255)
         
@@ -171,24 +191,53 @@ class XORVisualizer:
         if params['use_cos']:
             wave2 = cp.abs(cp.cos(y_normalized + time_val * params['time_speed'] * params['wave2_freq']))
         
-        # Dynamic operations
         combined = cp.zeros_like(x, dtype=cp.float32)
         
-        if params['use_xor']:
-            xor_mask = cp.bitwise_xor(x.astype(cp.int32), y.astype(cp.int32)) & 0xFF
-            if params['use_mod']:
-                mod_factor = ((x + y + int(time_val * params['mod_factor'])) % 256) / 255.0
-                combined = combined + xor_mask * mod_factor * params['xor_strength']
-            else:
-                combined = combined + xor_mask / 2.0
+        # Apply functions in predetermined order
+        operations = params.get('function_order', [])
         
-        if params['use_product'] and params['use_sin'] and params['use_cos']:
-            combined += wave1 * wave2 * 255
-        elif params['use_addition']:
-            if params['use_sin']:
-                combined += wave1 * 255
-            if params['use_cos']:
-                combined += wave2 * 255
+        for op in operations:
+            if not params.get(op, False):
+                continue
+            
+            if op == 'use_xor':
+                if params.get('use_mod', False):
+                    xor_mask = cp.bitwise_xor(x.astype(cp.int32), y.astype(cp.int32)) & 0xFF
+                    mod_factor = ((x + y + int(time_val * params['mod_factor'])) % 256) / 255.0
+                    combined = combined + xor_mask * mod_factor * params['xor_strength']
+                else:
+                    xor_mask = cp.bitwise_xor(x.astype(cp.int32), y.astype(cp.int32)) & 0xFF
+                    combined = combined + xor_mask / 2.0
+            
+            elif op == 'use_sin':
+                combined = combined + wave1 * 200
+            
+            elif op == 'use_cos':
+                combined = combined + wave2 * 200
+            
+            elif op == 'use_fractal':
+                radius = cp.sqrt(x**2 + y**2)
+                combined = combined + radius * cp.sin(radius * params['fractal_iterations'])
+            
+            elif op == 'use_product' and params['use_sin'] and params['use_cos']:
+                combined = combined + wave1 * wave2 * 150
+            
+            elif op == 'use_addition':
+                if params['use_sin']:
+                    combined = combined + wave1 * 150
+                if params['use_cos']:
+                    combined = combined + wave2 * 150
+            
+            elif op == 'use_cellular':
+                grid_x = (x / params['cellular_scale']).astype(int)
+                grid_y = (y / params['cellular_scale']).astype(int)
+                cell_val = cp.sin(grid_x * 0.1) * cp.cos(grid_y * 0.1)
+                combined = combined + cell_val * 150
+            
+            elif op == 'use_domain_warp':
+                warped_x = x + params['domain_warp_strength'] * cp.sin(y * 0.1)
+                warped_y = y + params['domain_warp_strength'] * cp.cos(x * 0.1)
+                combined = combined + cp.sin(warped_x) * cp.cos(warped_y) * 100
         
         combined = cp.clip(combined, 0, 255)
         
@@ -216,9 +265,13 @@ class XORVisualizer:
         img = Image.fromarray(img_array, 'RGB')
         return ImageTk.PhotoImage(img)
         
+    def update_time_step(self, value):
+        self.time_step = float(value)
+        self.time_step_value.config(text=f"{self.time_step:.3f}")
+    
     def update_display(self):
         if self.running:
-            self.time_val += 0.05
+            self.time_val += self.time_step
             try:
                 actual_width = self.canvas.winfo_width()
                 actual_height = self.canvas.winfo_height()
@@ -254,7 +307,7 @@ class XORVisualizer:
                          'use_cellular', 'use_domain_warp', 'use_polar',
                          'use_noise', 'use_voronoi', 'use_abs', 'use_power']
         
-        # Create initial operations dict
+        # Create initial operations dict with deterministic/randomized selection
         operations = {}
         
         # Forced interesting combinations
@@ -284,6 +337,10 @@ class XORVisualizer:
             if op not in operations:
                 operations[op] = False
         
+        # Create a deterministic order for applying operations
+        enabled_ops = [op for op in all_operations if operations.get(op, False)]
+        random.shuffle(enabled_ops)
+        
         # More sophisticated parameter ranges
         params = {
             'wave1_f freq': random.choice([0.618, 1.0, 1.618, 3.14]),
@@ -299,7 +356,8 @@ class XORVisualizer:
             'power_exponent': random.uniform(0.3, 4.0),
             'fractal_iterations': random.randint(3, 10),
             'cellular_scale': random.uniform(0.5, 10.0),
-            'domain_warp_strength': random.uniform(0.5, 15.0)
+            'domain_warp_strength': random.uniform(0.5, 15.0),
+            'function_order': enabled_ops  # Store the order for consistent application
         }
         
         self.random_params = {**operations, **params}
