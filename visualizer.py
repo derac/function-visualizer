@@ -89,7 +89,6 @@ class XORVisualizer:
         wave1_mult = params['wave1_mult'] * (1 + 0.3 * np.sin(time_val * 0.15))
         wave2_mult = params['wave2_mult'] * (1 + 0.3 * np.cos(time_val * 0.12))
         domain_warp_strength = params['domain_warp_strength'] * (1 + 0.4 * np.sin(time_val * 0.25))
-        fractal_iterations = params['fractal_iterations'] * (1 + 0.2 * np.sin(time_val * 0.1))
         
         # Ensure x and y are arrays
         x = np.asarray(x, dtype=np.float32)
@@ -191,6 +190,133 @@ class XORVisualizer:
                 warped_y = y + animated_strength * np.cos(x * 0.1 + time_phase * 0.7 + 
                                                         np.sin(time_phase * 1.5) * 0.3)
                 combined = combined + np.sin(warped_x) * np.cos(warped_y) * 100
+            
+            elif op == 'use_tan':
+                time_tan = time_val * params['tan_time_speed']
+                tan_mult = params['tan_mult'] * (1 + 0.2 * np.sin(time_val * 0.1))
+                
+                # Apply tan with domain stretching and modulation
+                x_tan = (x / tan_mult + time_tan) % (2 * np.pi)
+                y_tan = (y / tan_mult + time_tan * 0.7) % (2 * np.pi)
+                
+                # Smooth tan function with safe handling
+                tan_x = np.tan(x_tan * params['tan_freq_x'])
+                tan_y = np.tan(y_tan * params['tan_freq_y'])
+                
+                # Clamp extreme values for smooth visualization
+                tan_x = np.clip(tan_x, -3, 3)
+                tan_y = np.clip(tan_y, -3, 3)
+                
+                combined = combined + tan_x * tan_y * 80 * params['tan_strength']
+            
+            elif op == 'use_polar':
+                # Calculate polar coordinates with time evolution
+                center_x = self.width / 2 + np.sin(time_val * params['polar_orbit_speed_x']) * params['polar_orbit_range']
+                center_y = self.height / 2 + np.cos(time_val * params['polar_orbit_speed_y']) * params['polar_orbit_range']
+                
+                x_rel = x - center_x
+                y_rel = y - center_y
+                
+                r = np.sqrt(x_rel**2 + y_rel**2) + 1e-8  # Add small value to avoid division by zero
+                theta = np.arctan2(y_rel, x_rel) + time_val * params['polar_rotation_speed']
+                
+                # Apply polar transformation with time-based frequency modulation
+                freq_mod = 1 + 0.3 * np.sin(time_val * 0.15)
+                polar_wave = np.sin(r * params['polar_freq_r'] * freq_mod + theta * params['polar_freq_theta']) * \
+                            np.cos(theta * params['polar_theta_harmonics'] + time_val * params['polar_time_factor'])
+                
+                # Add spiral motion effect
+                spiral_angle = theta + r * params['polar_spiral_factor']
+                spiral_wave = np.sin(spiral_angle * params['polar_spiral_freq'] + time_val * params['polar_spiral_speed'])
+                
+                combined = combined + (polar_wave + spiral_wave * 0.5) * 120 * params['polar_strength']
+            
+            elif op == 'use_noise':
+                # Simplex-like noise approximation using sin/cos combinations
+                time_noise = time_val * params['noise_time_speed']
+                noise_scale = params['noise_scale']
+                
+                # Create multiple octaves of pseudo-noise
+                noise_val = np.zeros_like(x)
+                for i in range(params['noise_octaves']):
+                    octave_freq = noise_scale * (2 ** i)
+                    octave_amp = 0.5 ** i
+                    
+                    # Use hash-like approach with sine waves for noise
+                    octave_val = (np.sin(x * octave_freq + time_noise * (1 + i * 0.2)) + 
+                                 np.cos(y * octave_freq + time_noise * (1 + i * 0.3)) + 
+                                 np.sin((x + y) * octave_freq * 0.7 + time_noise * (1 + i * 0.1)) +
+                                 np.cos((x - y) * octave_freq * 0.8 + time_noise * (1 + i * 0.15)))
+                    
+                    noise_val += octave_val * octave_amp
+                
+                # Remap noise to 0-1 range
+                noise_val = (noise_val + 4) / 8  # Normalize based on expected range
+                combined = combined + noise_val * 200 * params['noise_strength']
+            
+            elif op == 'use_voronoi':
+                time_voronoi = time_val * params['voronoi_time_speed']
+                cell_scale = params['voronoi_cell_scale']
+                
+                # Dynamic grid with cell drift
+                grid_x = ((x + time_voronoi * params['voronoi_drift_x']) / cell_scale).astype(int)
+                grid_y = ((y + time_voronoi * params['voronoi_drift_y']) / cell_scale).astype(int)
+                
+                # Generate cell distances with time evolution
+                offset_x = np.sin(grid_x * 0.1 + time_voronoi * 0.5) * cell_scale
+                offset_y = np.cos(grid_y * 0.15 + time_voronoi * 0.7) * cell_scale
+                
+                # Calculate 3D distance to nearby points for smooth patterns
+                dist1 = np.sqrt(((x - (offset_x + grid_x * cell_scale)) % self.width) ** 2 + 
+                              ((y - (offset_y + grid_y * cell_scale)) % self.height) ** 2)
+                
+                dist2 = np.sqrt(((x - (offset_x + (grid_x + 1) * cell_scale)) % self.width) ** 2 + 
+                              ((y - (offset_y + grid_y * cell_scale)) % self.height) ** 2)
+                
+                # Create cell boundaries using distance differences
+                cell_pattern = np.abs(dist1 - dist2) / cell_scale
+                cell_pattern = np.clip(cell_pattern, 0, 1)
+                
+                # Add cellular detail with time modulation
+                detail = np.sin(cell_pattern * np.pi * params['voronoi_freq']) * np.cos(time_voronoi * 2)
+                combined = combined + (cell_pattern * 100 + detail * 50) * params['voronoi_strength']
+            
+            elif op == 'use_abs':
+                # Absolute value transformations with time-based modulation
+                time_abs = time_val * params['abs_time_speed']
+                abs_wave1 = np.abs(np.sin(x * params['abs_freq_x'] + time_abs))
+                abs_wave2 = np.abs(np.cos(y * params['abs_freq_y'] + time_abs * 0.7))
+                
+                # Create rich patterns through absolute value combinations
+                abs_combo = abs_wave1 * abs_wave2 + np.abs(abs_wave1 - abs_wave2)
+                
+                # Add time-varying cross terms
+                cross_term = np.abs(np.sin((x + y) * params['abs_freq_xy'] + time_abs * 1.5))
+                combined = combined + (abs_combo + cross_term) * 120 * params['abs_strength']
+            
+            elif op == 'use_power':
+                # Power transformations with time-evolving exponents
+                time_power = time_val * params['power_time_speed']
+                base = (np.sin(x * params['power_freq_x'] + time_power) + 
+                       np.cos(y * params['power_freq_y'] + time_power * 0.8) + 2) / 2  # Ensure positive base
+                
+                # Dynamic power exponent with smooth transitions
+                exp_base = params['power_exponent']
+                exp_mod = exp_base * (1 + 0.4 * np.sin(time_power * params['power_exp_mod_freq']))
+                
+                # Apply power function with gradient safety
+                power_val = np.power(base, exp_mod)
+                power_val = np.nan_to_num(power_val, nan=0.0, posinf=1000.0, neginf=0.0)
+                
+                # Add additional power-based harmonics
+                harmonic = np.power(
+                    (np.sin(x * params['power_freq_x'] * 2 + time_power * 1.5) + 
+                     np.cos(y * params['power_freq_y'] * 2 + time_power * 2) + 2) / 2,
+                    exp_mod * 0.5
+                )
+                harmonic = np.nan_to_num(harmonic, nan=0.0, posinf=1000.0, neginf=0.0)
+                
+                combined = combined + (power_val + harmonic * 0.3) * 100 * params['power_strength']
         
         # Smooth color remapping using sigmoid-like functions
         # Normalize combined values and apply smooth transformation
@@ -386,6 +512,51 @@ class XORVisualizer:
             'color_phase_blue': random.uniform(0, 360),
             'color_saturation': random.uniform(0.7, 1.5),  # Saturation boost
             'color_power': random.uniform(0.8, 1.4),       # Gamma-like adjustment
+            
+            # New operation parameters
+            'tan_mult': random.uniform(30, 180),         # Tan domain scale
+            'tan_freq_x': random.choice([0.5, 1.0, 2.0, 3.0, 5.0]),
+            'tan_freq_y': random.choice([0.5, 1.0, 2.0, 3.0, 5.0]),
+            'tan_strength': random.uniform(0.3, 2.5),     # Tan output strength
+            'tan_time_speed': random.uniform(0.1, 1.8),   # Tan animation speed
+
+            'polar_strength': random.uniform(0.4, 2.2),   # Polar pattern strength
+            'polar_freq_r': random.choice([0.01, 0.02, 0.05, 0.1]),  # Radial frequency
+            'polar_freq_theta': random.choice([2, 3, 5, 8]),  # Angular frequency
+            'polar_rotation_speed': random.uniform(-0.5, 0.5),  # Polar rotation speed
+            'polar_orbit_speed_x': random.uniform(-0.3, 0.3),   # Center orbit speed X
+            'polar_orbit_speed_y': random.uniform(-0.3, 0.3),   # Center orbit speed Y
+            'polar_orbit_range': random.uniform(50, 150),    # Center orbit radius
+            'polar_time_factor': random.uniform(0.2, 2.0),   # Time modulation for polar patterns
+            'polar_theta_harmonics': random.uniform(1, 4),   # Angular harmonics
+            'polar_spiral_factor': random.uniform(-0.005, 0.005),  # Spiral generation
+            'polar_spiral_freq': random.uniform(2, 8),      # Spiral frequency
+            'polar_spiral_speed': random.uniform(0.1, 1.5),  # Spiral animation speed
+
+            'noise_strength': random.uniform(0.3, 2.0),   # Noise pattern strength
+            'noise_scale': random.uniform(0.005, 0.02),   # Noise frequency scale
+            'noise_time_speed': random.uniform(0.1, 1.0),  # Noise animation speed
+            'noise_octaves': random.randint(3, 6),       # Noise complexity levels
+
+            'voronoi_strength': random.uniform(0.5, 2.5),  # Voronoi pattern strength
+            'voronoi_cell_scale': random.uniform(15, 60),  # Cell size scale
+            'voronoi_time_speed': random.uniform(0.05, 0.5),  # Cell motion speed
+            'voronoi_drift_x': random.uniform(5, 20),     # X direction drift
+            'voronoi_drift_y': random.uniform(5, 20),     # Y direction drift
+            'voronoi_freq': random.uniform(1.0, 5.0),     # Cell detail frequency
+
+            'abs_strength': random.uniform(0.5, 2.5),     # Absolute value strength
+            'abs_freq_x': random.choice([0.01, 0.02, 0.05, 0.1]),  # X frequency
+            'abs_freq_y': random.choice([0.01, 0.02, 0.05, 0.1]),  # Y frequency
+            'abs_freq_xy': random.choice([0.01, 0.02, 0.05]),  # Combined frequency
+            'abs_time_speed': random.uniform(0.2, 2.0),   # Animation speed
+
+            'power_strength': random.uniform(0.4, 2.0),   # Power function strength
+            'power_exponent': random.uniform(0.5, 6.0),   # Power exponent
+            'power_freq_x': random.choice([0.01, 0.02, 0.05, 0.1]),  # X frequency for power base
+            'power_freq_y': random.choice([0.01, 0.02, 0.05, 0.1]),  # Y frequency for power base
+            'power_time_speed': random.uniform(0.2, 1.8),  # Power animation speed
+            'power_exp_mod_freq': random.uniform(0.1, 1.0),  # Exponent modulation frequency
         })
         
         self.random_params = {**operations, **params}
