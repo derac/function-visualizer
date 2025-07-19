@@ -40,9 +40,6 @@ class XORVisualizer:
                                      relief=tk.SUNKEN)
         self.status_label.pack(side=tk.LEFT, padx=5, pady=2)
         
-        self.toggle_btn = ttk.Button(self.toolbar, text="Toggle GPU/CPU", command=self.toggle_compute_method)
-        self.toggle_btn.pack(side=tk.LEFT, padx=5)
-        
         self.start_btn = ttk.Button(self.toolbar, text="Start", command=self.start_animation)
         self.start_btn.pack(side=tk.LEFT, padx=5)
         
@@ -71,12 +68,6 @@ class XORVisualizer:
         self.root.bind('<Configure>', self.on_resize)
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         
-    def toggle_compute_method(self):
-        if CUPY_AVAILABLE:
-            self.using_cupy = not self.using_cupy
-            self.status_label.config(text="GPU: " + ("CUDA" if self.using_cupy else "CPU"))
-        else:
-            self.status_label.config(text="GPU: Not Available")
             
     def on_resize(self, event):
         # Let the canvas automatically resize via pack(expand=True, fill=tk.BOTH)
@@ -401,6 +392,7 @@ class XORVisualizer:
         self.root.destroy()
         
     def run(self):
+        self.start_animation()
         self.root.mainloop()
 
 
