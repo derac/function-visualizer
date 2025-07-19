@@ -94,22 +94,29 @@ class XORVisualizer:
         
         params = self.random_params
         
+        # Add time-based modulation to all parameters
+        time_mod = np.sin(time_val * 0.2) * 0.3 + np.cos(time_val * 0.15) * 0.2
+        wave1_mult = params['wave1_mult'] * (1 + 0.3 * np.sin(time_val * 0.15))
+        wave2_mult = params['wave2_mult'] * (1 + 0.3 * np.cos(time_val * 0.12))
+        domain_warp_strength = params['domain_warp_strength'] * (1 + 0.4 * np.sin(time_val * 0.25))
+        fractal_iterations = params['fractal_iterations'] * (1 + 0.2 * np.sin(time_val * 0.1))
+        
         # Ensure x and y are arrays
         x = np.asarray(x, dtype=np.float32)
         y = np.asarray(y, dtype=np.float32)
         
-        # Normalize with variation
-        x_normalized = x / params['wave1_mult']
-        y_normalized = y / params['wave2_mult']
+        # Normalize with time-based scaling
+        x_normalized = x / wave1_mult
+        y_normalized = y / wave2_mult
         
         # Dynamic wave components initialized as arrays
         wave1 = np.zeros_like(x)
         wave2 = np.zeros_like(x)
         
         if params['use_sin']:
-            wave1 = np.abs(np.sin(x_normalized + time_val * params['time_speed']))
+            wave1 = np.abs(np.sin(x_normalized * params['wave1_freq'] + time_val * params['time_speed']))
         if params['use_cos']:
-            wave2 = np.abs(np.cos(y_normalized + time_val * params['time_speed'] * params['wave2_freq']))
+            wave2 = np.abs(np.cos(y_normalized * params['wave2_freq'] + time_val * params['time_speed']))
         
         combined = np.zeros_like(x, dtype=np.float32)
         
@@ -137,7 +144,7 @@ class XORVisualizer:
             
             elif op == 'use_fractal':
                 radius = np.sqrt(x**2 + y**2)
-                combined = combined + radius * np.sin(radius * params['fractal_iterations'])
+                combined = combined + radius * np.sin(radius * fractal_iterations + time_val * 0.3)
             
             elif op == 'use_product' and params['use_sin'] and params['use_cos']:
                 combined = combined + wave1 * wave2 * 150
@@ -155,16 +162,27 @@ class XORVisualizer:
                 combined = combined + cell_val * 150
             
             elif op == 'use_domain_warp':
-                warped_x = x + params['domain_warp_strength'] * np.sin(y * 0.1)
-                warped_y = y + params['domain_warp_strength'] * np.cos(x * 0.1)
+                animated_strength = domain_warp_strength * (1 + 0.3 * np.sin(time_val * 0.8))
+                warped_x = x + animated_strength * np.sin(y * 0.1 + time_val * 0.5)
+                warped_y = y + animated_strength * np.cos(x * 0.1 + time_val * 0.5)
                 combined = combined + np.sin(warped_x) * np.cos(warped_y) * 100
         
         combined = np.clip(combined, 0, 255)
         
-        # Dynamic color mapping
-        red = (combined * params['color_red_mult']).astype(np.uint8)
-        green = ((combined * params['color_green_mult'] + 127) % 256).astype(np.uint8)
-        blue = ((combined * params['color_blue_mult'] + 200) % 256).astype(np.uint8)
+        # Enhanced color mapping with phase shifts and smoother transitions
+        # Apply gamma and saturation adjustments
+        combined_power = np.power(combined / 255.0, params['color_power'])
+        combined_saturated = np.clip(combined_power * params['color_saturation'], 0, 1)
+        
+        # Apply phase shifts for rotating colors
+        red_phase = np.sin(np.radians(params['color_phase_red'] + time_val * 30))
+        green_phase = np.sin(np.radians(params['color_phase_green'] + time_val * 30))
+        blue_phase = np.sin(np.radians(params['color_phase_blue'] + time_val * 30))
+        
+        # Generate colors with smooth transitions
+        red = (combined_saturated * 255 * params['color_red_mult'] * (0.7 + 0.3 * red_phase)).astype(np.uint8)
+        green = ((combined_saturated * 255 * params['color_green_mult'] * (0.7 + 0.3 * green_phase) + 127) % 256).astype(np.uint8)
+        blue = ((combined_saturated * 255 * params['color_blue_mult'] * (0.7 + 0.3 * blue_phase) + 200) % 256).astype(np.uint8)
         
         return np.stack([red, green, blue], axis=-1)
         
@@ -174,22 +192,29 @@ class XORVisualizer:
         
         params = self.random_params
         
+        # Add time-based modulation to all parameters
+        time_mod = cp.sin(time_val * 0.2) * 0.3 + cp.cos(time_val * 0.15) * 0.2
+        wave1_mult = params['wave1_mult'] * (1 + 0.3 * cp.sin(time_val * 0.15))
+        wave2_mult = params['wave2_mult'] * (1 + 0.3 * cp.cos(time_val * 0.12))
+        domain_warp_strength = params['domain_warp_strength'] * (1 + 0.4 * cp.sin(time_val * 0.25))
+        fractal_iterations = params['fractal_iterations'] * (1 + 0.2 * cp.sin(time_val * 0.1))
+        
         # Ensure x and y are cupy arrays
         x = cp.asarray(x, dtype=cp.float32)
         y = cp.asarray(y, dtype=cp.float32)
         
-        # Normalize with variation
-        x_normalized = x / params['wave1_mult']
-        y_normalized = y / params['wave2_mult']
+        # Normalize with time-based scaling
+        x_normalized = x / wave1_mult
+        y_normalized = y / wave2_mult
         
         # Dynamic wave components initialized as arrays
         wave1 = cp.zeros_like(x)
         wave2 = cp.zeros_like(x)
         
         if params['use_sin']:
-            wave1 = cp.abs(cp.sin(x_normalized + time_val * params['time_speed']))
+            wave1 = cp.abs(cp.sin(x_normalized * params['wave1_freq'] + time_val * params['time_speed']))
         if params['use_cos']:
-            wave2 = cp.abs(cp.cos(y_normalized + time_val * params['time_speed'] * params['wave2_freq']))
+            wave2 = cp.abs(cp.cos(y_normalized * params['wave2_freq'] + time_val * params['time_speed']))
         
         combined = cp.zeros_like(x, dtype=cp.float32)
         
@@ -217,7 +242,7 @@ class XORVisualizer:
             
             elif op == 'use_fractal':
                 radius = cp.sqrt(x**2 + y**2)
-                combined = combined + radius * cp.sin(radius * params['fractal_iterations'])
+                combined = combined + radius * cp.sin(radius * fractal_iterations)
             
             elif op == 'use_product' and params['use_sin'] and params['use_cos']:
                 combined = combined + wave1 * wave2 * 150
@@ -235,16 +260,26 @@ class XORVisualizer:
                 combined = combined + cell_val * 150
             
             elif op == 'use_domain_warp':
-                warped_x = x + params['domain_warp_strength'] * cp.sin(y * 0.1)
-                warped_y = y + params['domain_warp_strength'] * cp.cos(x * 0.1)
+                warped_x = x + domain_warp_strength * cp.sin(y * 0.1)
+                warped_y = y + domain_warp_strength * cp.cos(x * 0.1)
                 combined = combined + cp.sin(warped_x) * cp.cos(warped_y) * 100
         
         combined = cp.clip(combined, 0, 255)
         
-        # Dynamic color mapping
-        red = (combined * params['color_red_mult']).astype(cp.uint8)
-        green = ((combined * params['color_green_mult'] + 127) % 256).astype(cp.uint8)
-        blue = ((combined * params['color_blue_mult'] + 200) % 256).astype(cp.uint8)
+        # Enhanced color mapping with phase shifts and smoother transitions
+        # Apply gamma and saturation adjustments
+        combined_power = cp.power(combined / 255.0, params['color_power'])
+        combined_saturated = cp.clip(combined_power * params['color_saturation'], 0, 1)
+        
+        # Apply phase shifts for rotating colors
+        red_phase = cp.sin(cp.radians(params['color_phase_red'] + time_val * 30))
+        green_phase = cp.sin(cp.radians(params['color_phase_green'] + time_val * 30))
+        blue_phase = cp.sin(cp.radians(params['color_phase_blue'] + time_val * 30))
+        
+        # Generate colors with smooth transitions
+        red = (combined_saturated * 255 * params['color_red_mult'] * (0.7 + 0.3 * red_phase)).astype(cp.uint8)
+        green = ((combined_saturated * 255 * params['color_green_mult'] * (0.7 + 0.3 * green_phase) + 127) % 256).astype(cp.uint8)
+        blue = ((combined_saturated * 255 * params['color_blue_mult'] * (0.7 + 0.3 * blue_phase) + 200) % 256).astype(cp.uint8)
         
         return cp.stack([red, green, blue], axis=-1)
         
@@ -267,7 +302,7 @@ class XORVisualizer:
         
     def update_time_step(self, value):
         self.time_step = float(value)
-        self.time_step_value.config(text=f"{self.time_step:.3f}")
+        self.time_step_label.config(text=f"{self.time_step:.3f}")
     
     def update_display(self):
         if self.running:
@@ -341,24 +376,47 @@ class XORVisualizer:
         enabled_ops = [op for op in all_operations if operations.get(op, False)]
         random.shuffle(enabled_ops)
         
-        # More sophisticated parameter ranges
+        # Sophisticated parameter ranges for beautiful visuals
         params = {
-            'wave1_f freq': random.choice([0.618, 1.0, 1.618, 3.14]),
-            'wave2_freq': random.choice([0.618, 1.0, 1.618, 3.14]),
-            'wave1_mult': random.uniform(10, 200),
-            'wave2_mult': random.uniform(10, 200),
-            'mod_factor': random.uniform(10, 500),
-            'xor_strength': random.uniform(0.5, 5.0),
-            'color_red_mult': random.uniform(0.5, 3.0),
-            'color_green_mult': random.uniform(0.5, 3.0),
-            'color_blue_mult': random.uniform(0.5, 3.0),
-            'time_speed': random.uniform(0.1, 5.0),
-            'power_exponent': random.uniform(0.3, 4.0),
-            'fractal_iterations': random.randint(3, 10),
-            'cellular_scale': random.uniform(0.5, 10.0),
-            'domain_warp_strength': random.uniform(0.5, 15.0),
+            'wave1_freq': random.choice([0.618, 1.0, 1.618, 2.5, 3.14, 4.2, 5.8]),  # More frequency options
+            'wave2_freq': random.choice([0.618, 1.0, 1.618, 2.5, 3.14, 4.2, 5.8]),
+            'wave1_mult': random.uniform(50, 300),  # Broader range for larger patterns
+            'wave2_mult': random.uniform(50, 300),
+            'mod_factor': random.uniform(20, 800),  # Extended range
+            'xor_strength': random.uniform(1.0, 10.0),  # Higher impact
+            'time_speed': random.uniform(0.2, 3.0),  # More balanced speed range
+            'power_exponent': random.uniform(0.5, 6.0),  # Wider range
+            'fractal_iterations': random.randint(4, 15),  # More detailed fractals
+            'cellular_scale': random.uniform(1.0, 20.0),  # Better cellular resolution
+            'domain_warp_strength': random.uniform(5.0, 30.0),  # Stronger warping
             'function_order': enabled_ops  # Store the order for consistent application
         }
+        
+        # Enhanced color mapping with harmonic ratios
+        color_schemes = [
+            # Nature-inspired schemes
+            {'red': 1.0, 'green': 1.4, 'blue': 0.8},     # golden hour
+            {'red': 0.8, 'green': 1.0, 'blue': 1.6},     # oceanic
+            {'red': 1.5, 'green': 0.8, 'blue': 1.0},     # sunset
+            {'red': 1.2, 'green': 1.2, 'blue': 1.2},     # moonlight
+            {'red': 0.9, 'green': 1.3, 'blue': 0.7},     # forest
+            {'red': 1.6, 'green': 0.9, 'blue': 1.3},     # aurora
+            {'red': 1.3, 'green': 1.5, 'blue': 1.1},     # crystal
+            {'red': 1.1, 'green': 0.7, 'blue': 1.5},     # nebula
+        ]
+        
+        # Enhanced color parameters with phase shifts
+        color_scheme = random.choice(color_schemes)
+        params.update({
+            'color_red_mult': color_scheme['red'],
+            'color_green_mult': color_scheme['green'],
+            'color_blue_mult': color_scheme['blue'],
+            'color_phase_red': random.uniform(0, 360),    # Phase shifts for dynamic colors
+            'color_phase_green': random.uniform(0, 360),
+            'color_phase_blue': random.uniform(0, 360),
+            'color_saturation': random.uniform(0.7, 1.5),  # Saturation boost
+            'color_power': random.uniform(0.8, 1.4),       # Gamma-like adjustment
+        })
         
         self.random_params = {**operations, **params}
     
