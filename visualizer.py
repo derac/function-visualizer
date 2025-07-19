@@ -167,24 +167,44 @@ class XORVisualizer:
                 warped_y = y + animated_strength * np.cos(x * 0.1 + time_val * 0.5)
                 combined = combined + np.sin(warped_x) * np.cos(warped_y) * 100
         
-        combined = np.clip(combined, 0, 255)
+        # Smooth color remapping using sigmoid-like functions
+        # Normalize combined values and apply smooth transformation
+        combined_norm = (combined - np.min(combined)) / (np.max(combined) - np.min(combined) + 1e-8)
         
-        # Enhanced color mapping with phase shifts and smoother transitions
-        # Apply gamma and saturation adjustments
-        combined_power = np.power(combined / 255.0, params['color_power'])
-        combined_saturated = np.clip(combined_power * params['color_saturation'], 0, 1)
+        # Use smooth sigmoid remapping for smooth transitions
+        smooth_factor = 3.0
+        combined_smooth = 1.0 / (1.0 + np.exp(-smooth_factor * (combined_norm - 0.5)))
         
-        # Apply phase shifts for rotating colors
-        red_phase = np.sin(np.radians(params['color_phase_red'] + time_val * 30))
-        green_phase = np.sin(np.radians(params['color_phase_green'] + time_val * 30))
-        blue_phase = np.sin(np.radians(params['color_phase_blue'] + time_val * 30))
+        # Apply power curve for additional color control
+        adjusted = np.power(combined_smooth, params['color_power'] * 0.5 + 0.5)
         
-        # Generate colors with smooth transitions
-        red = (combined_saturated * 255 * params['color_red_mult'] * (0.7 + 0.3 * red_phase)).astype(np.uint8)
-        green = ((combined_saturated * 255 * params['color_green_mult'] * (0.7 + 0.3 * green_phase) + 127) % 256).astype(np.uint8)
-        blue = ((combined_saturated * 255 * params['color_blue_mult'] * (0.7 + 0.3 * blue_phase) + 200) % 256).astype(np.uint8)
+        # Create smooth color flows using multiple overlapping waves
+        time_factor = time_val * 0.1
+        phase_shift = combined_smooth * 2 * np.pi
         
-        return np.stack([red, green, blue], axis=-1)
+        # Create continuous color gradients using smooth trigonometric functions
+        base_hue = (time_factor + combined_smooth * 6.0) % 6.0
+        
+        # Generate RGB from hue using smooth 6-segment color wheel
+        c = adjusted * params['color_saturation']
+        x = c * (1 - np.abs(np.mod(base_hue, 2) - 1))
+        
+        # Smooth RGB transitions
+        red = np.where(base_hue < 1, c, np.where(base_hue < 2, x, np.where(base_hue < 4, 0, np.where(base_hue < 5, x, c))))
+        green = np.where(base_hue < 1, x, np.where(base_hue < 3, c, np.where(base_hue < 4, x, np.where(base_hue < 5, 0, 0))))
+        blue = np.where(base_hue < 2, 0, np.where(base_hue < 3, x, np.where(base_hue < 5, c, x)))
+        
+        # Add subtle modulation for dynamic color evolution
+        modulation_factor = 0.1
+        mod_wave = np.sin(time_factor + combined_smooth * 4 * np.pi) * modulation_factor
+        
+        red = np.clip(red * (1 + mod_wave) * params['color_red_mult'], 0, 1)
+        green = np.clip(green * (1 + mod_wave * 0.8) * params['color_green_mult'], 0, 1)
+        blue = np.clip(blue * (1 + mod_wave * 1.2) * params['color_blue_mult'], 0, 1)
+        
+        # Final smooth scaling to 8-bit values
+        colors = np.stack([red, green, blue], axis=-1) * 255
+        return colors.astype(np.uint8)
         
     def compute_function_cupy(self, x, y, time_val):
         if self.random_params is None:
@@ -264,24 +284,55 @@ class XORVisualizer:
                 warped_y = y + domain_warp_strength * cp.cos(x * 0.1)
                 combined = combined + cp.sin(warped_x) * cp.cos(warped_y) * 100
         
-        combined = cp.clip(combined, 0, 255)
+        # Smooth color remapping using sigmoid-like functions
+        # Normalize combined values and apply smooth transformation
+        min_val = cp.min(combined)
+        max_val = cp.max(combined)
+        combined_norm = (combined - min_val) / (max_val - min_val + 1e-8)
         
-        # Enhanced color mapping with phase shifts and smoother transitions
-        # Apply gamma and saturation adjustments
-        combined_power = cp.power(combined / 255.0, params['color_power'])
-        combined_saturated = cp.clip(combined_power * params['color_saturation'], 0, 1)
+        # Use smooth sigmoid remapping for smooth transitions
+        smooth_factor = 3.0
+        combined_smooth = 1.0 / (1.0 + cp.exp(-smooth_factor * (combined_norm - 0.5)))
         
-        # Apply phase shifts for rotating colors
-        red_phase = cp.sin(cp.radians(params['color_phase_red'] + time_val * 30))
-        green_phase = cp.sin(cp.radians(params['color_phase_green'] + time_val * 30))
-        blue_phase = cp.sin(cp.radians(params['color_phase_blue'] + time_val * 30))
+        # Apply power curve for additional color control
+        adjusted = cp.power(combined_smooth, params['color_power'] * 0.5 + 0.5)
         
-        # Generate colors with smooth transitions
-        red = (combined_saturated * 255 * params['color_red_mult'] * (0.7 + 0.3 * red_phase)).astype(cp.uint8)
-        green = ((combined_saturated * 255 * params['color_green_mult'] * (0.7 + 0.3 * green_phase) + 127) % 256).astype(cp.uint8)
-        blue = ((combined_saturated * 255 * params['color_blue_mult'] * (0.7 + 0.3 * blue_phase) + 200) % 256).astype(cp.uint8)
+        # Create smooth color flows using multiple overlapping waves
+        time_factor = time_val * 0.1
         
-        return cp.stack([red, green, blue], axis=-1)
+        # Create continuous color gradients using smooth trigonometric functions
+        base_hue = (time_factor + combined_smooth * 6.0) % 6.0
+        
+        # Generate RGB from hue using smooth 6-segment color wheel
+        c = adjusted * params['color_saturation']
+        x = c * (1 - cp.abs(cp.mod(base_hue, 2) - 1))
+        
+        # Smooth RGB transitions using vectorized operations
+        red = cp.where(base_hue < 1, c, 
+              cp.where(base_hue < 2, x, 
+              cp.where(base_hue < 4, 0, 
+              cp.where(base_hue < 5, x, c))))
+        
+        green = cp.where(base_hue < 1, x, 
+                cp.where(base_hue < 3, c, 
+                cp.where(base_hue < 4, x, 
+                cp.where(base_hue < 5, 0, 0))))
+        
+        blue = cp.where(base_hue < 2, 0,
+               cp.where(base_hue < 3, x,
+               cp.where(base_hue < 5, c, x)))
+        
+        # Add subtle modulation for dynamic color evolution
+        modulation_factor = 0.1
+        mod_wave = cp.sin(time_factor + combined_smooth * 4 * cp.pi) * modulation_factor
+        
+        red = cp.clip(red * (1 + mod_wave) * params['color_red_mult'], 0, 1)
+        green = cp.clip(green * (1 + mod_wave * 0.8) * params['color_green_mult'], 0, 1)
+        blue = cp.clip(blue * (1 + mod_wave * 1.2) * params['color_blue_mult'], 0, 1)
+        
+        # Final smooth scaling to 8-bit values
+        colors = cp.stack([red, green, blue], axis=-1) * 255
+        return colors.astype(cp.uint8)
         
     def generate_image(self):
         if self.using_cupy and CUPY_AVAILABLE:
