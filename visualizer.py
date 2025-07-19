@@ -24,6 +24,7 @@ class XORVisualizer:
         self.time_step = 0.05
         self.width = 640
         self.height = 480
+        self.frame_time_ms = 0.0
         
         # Random parameters for function generation
         self.random_params = None
@@ -39,6 +40,10 @@ class XORVisualizer:
         self.status_label = ttk.Label(self.toolbar, text="GPU: " + ("CUDA" if self.using_cupy else "CPU"), 
                                      relief=tk.SUNKEN)
         self.status_label.pack(side=tk.LEFT, padx=5, pady=2)
+        
+        self.frame_time_label = ttk.Label(self.toolbar, text="Frame: 0.0ms", 
+                                         relief=tk.SUNKEN)
+        self.frame_time_label.pack(side=tk.LEFT, padx=5, pady=2)
         
         self.start_btn = ttk.Button(self.toolbar, text="Start", command=self.start_animation)
         self.start_btn.pack(side=tk.LEFT, padx=5)
@@ -261,6 +266,8 @@ class XORVisualizer:
         if self.running:
             self.time_val += self.time_step
             try:
+                start_time = time.time()
+                
                 actual_width = self.canvas.winfo_width()
                 actual_height = self.canvas.winfo_height()
                 
@@ -269,6 +276,11 @@ class XORVisualizer:
                     self.height = actual_height
                         
                 photo = self.generate_image()
+                
+                end_time = time.time()
+                self.frame_time_ms = (end_time - start_time) * 1000
+                self.frame_time_label.config(text=f"Frame: {self.frame_time_ms:.1f}ms")
+                
                 self.canvas.delete("all")
                 self.canvas.create_image(0, 0, anchor=tk.NW, image=photo)
                 self.canvas.image = photo
