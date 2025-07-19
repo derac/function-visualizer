@@ -105,9 +105,20 @@ class XORVisualizer:
         x = np.asarray(x, dtype=np.float32)
         y = np.asarray(y, dtype=np.float32)
         
-        # Normalize with time-based scaling
-        x_normalized = x / wave1_mult
-        y_normalized = y / wave2_mult
+        # Apply time-based translations
+        time_offset_x = time_val * params['time_translate_x']
+        time_offset_y = time_val * params['time_translate_y']
+        time_warp = time_val * params['time_warp_factor']
+        
+        # Apply wave translations with time evolution
+        wave1_offset_x = time_offset_x + params['wave1_translate_x']
+        wave1_offset_y = time_offset_y + params['wave1_translate_y']
+        wave2_offset_x = time_offset_x + params['wave2_translate_x']
+        wave2_offset_y = time_offset_y + params['wave2_translate_y']
+        
+        # Normalize with time-based scaling and translations
+        x_normalized = (x - wave1_offset_x) / wave1_mult
+        y_normalized = (y - wave1_offset_y) / wave1_mult
         
         # Dynamic wave components initialized as arrays
         wave1 = np.zeros_like(x)
@@ -144,7 +155,9 @@ class XORVisualizer:
             
             elif op == 'use_fractal':
                 radius = np.sqrt(x**2 + y**2)
-                combined = combined + radius * np.sin(radius * fractal_iterations + time_val * 0.3)
+                time_fractal = time_val * params['fractal_time_sensitivity']
+                combined = combined + radius * np.sin(radius * fractal_iterations + time_fractal * 0.3 + 
+                                                     np.sin(time_fractal * 0.7) * radius * 0.1)
             
             elif op == 'use_product' and params['use_sin'] and params['use_cos']:
                 combined = combined + wave1 * wave2 * 150
@@ -156,15 +169,19 @@ class XORVisualizer:
                     combined = combined + wave2 * 150
             
             elif op == 'use_cellular':
-                grid_x = (x / params['cellular_scale']).astype(int)
-                grid_y = (y / params['cellular_scale']).astype(int)
-                cell_val = np.sin(grid_x * 0.1) * np.cos(grid_y * 0.1)
+                time_cellular = time_val * params['cellular_time_translate']
+                grid_x = ((x + time_cellular * 5) / params['cellular_scale']).astype(int)
+                grid_y = ((y + time_cellular * 3) / params['cellular_scale']).astype(int)
+                cell_val = np.sin(grid_x * 0.1 + time_cellular) * np.cos(grid_y * 0.1 + time_cellular * 1.5)
                 combined = combined + cell_val * 150
             
             elif op == 'use_domain_warp':
-                animated_strength = domain_warp_strength * (1 + 0.3 * np.sin(time_val * 0.8))
-                warped_x = x + animated_strength * np.sin(y * 0.1 + time_val * 0.5)
-                warped_y = y + animated_strength * np.cos(x * 0.1 + time_val * 0.5)
+                animated_strength = domain_warp_strength * (1 + 0.3 * np.sin(time_val * params['domain_warp_time_factor']))
+                time_phase = time_val * 0.5
+                warped_x = x + animated_strength * np.sin(y * 0.1 + time_phase + 
+                                                        np.sin(time_phase * 2) * 0.5)
+                warped_y = y + animated_strength * np.cos(x * 0.1 + time_phase * 0.7 + 
+                                                        np.sin(time_phase * 1.5) * 0.3)
                 combined = combined + np.sin(warped_x) * np.cos(warped_y) * 100
         
         # Smooth color remapping using sigmoid-like functions
@@ -181,9 +198,10 @@ class XORVisualizer:
         # Create smooth color flows using multiple overlapping waves
         time_factor = time_val * 0.1
         phase_shift = combined_smooth * 2 * np.pi
+        time_warped = time_val * params.get('time_warp_factor', 1.0)
         
         # Create continuous color gradients using smooth trigonometric functions
-        base_hue = (time_factor + combined_smooth * 6.0) % 6.0
+        base_hue = (time_factor + combined_smooth * 6.0 + time_warped * 0.3) % 6.0
         
         # Generate RGB from hue using smooth 6-segment color wheel
         c = adjusted * params['color_saturation']
@@ -194,13 +212,22 @@ class XORVisualizer:
         green = np.where(base_hue < 1, x, np.where(base_hue < 3, c, np.where(base_hue < 4, x, np.where(base_hue < 5, 0, 0))))
         blue = np.where(base_hue < 2, 0, np.where(base_hue < 3, x, np.where(base_hue < 5, c, x)))
         
-        # Add subtle modulation for dynamic color evolution
-        modulation_factor = 0.1
-        mod_wave = np.sin(time_factor + combined_smooth * 4 * np.pi) * modulation_factor
+        # Add enhanced time-based modulation using phase parameters
+        modulation_factor = 0.15
+        phase_red = params.get('color_phase_red', 0) * np.pi / 180
+        phase_green = params.get('color_phase_green', 0) * np.pi / 180
+        phase_blue = params.get('color_phase_blue', 0) * np.pi / 180
         
-        red = np.clip(red * (1 + mod_wave) * params['color_red_mult'], 0, 1)
-        green = np.clip(green * (1 + mod_wave * 0.8) * params['color_green_mult'], 0, 1)
-        blue = np.clip(blue * (1 + mod_wave * 1.2) * params['color_blue_mult'], 0, 1)
+        mod_wave = np.sin(time_factor * 2 + combined_smooth * 4 * np.pi) * modulation_factor
+        
+        # Apply phase-shifted color modulation
+        red_mod = np.sin(time_factor * 1.7 + phase_red) * modulation_factor
+        green_mod = np.sin(time_factor * 1.9 + phase_green) * modulation_factor * 0.8
+        blue_mod = np.sin(time_factor * 2.1 + phase_blue) * modulation_factor * 1.2
+        
+        red = np.clip(red * (1 + mod_wave + red_mod) * params['color_red_mult'], 0, 1)
+        green = np.clip(green * (1 + mod_wave * 0.8 + green_mod) * params['color_green_mult'], 0, 1)
+        blue = np.clip(blue * (1 + mod_wave * 1.2 + blue_mod) * params['color_blue_mult'], 0, 1)
         
         # Final smooth scaling to 8-bit values
         colors = np.stack([red, green, blue], axis=-1) * 255
@@ -223,9 +250,20 @@ class XORVisualizer:
         x = cp.asarray(x, dtype=cp.float32)
         y = cp.asarray(y, dtype=cp.float32)
         
-        # Normalize with time-based scaling
-        x_normalized = x / wave1_mult
-        y_normalized = y / wave2_mult
+        # Apply time-based translations
+        time_offset_x = time_val * params['time_translate_x']
+        time_offset_y = time_val * params['time_translate_y']
+        time_warp = time_val * params['time_warp_factor']
+        
+        # Apply wave translations with time evolution
+        wave1_offset_x = time_offset_x + params['wave1_translate_x']
+        wave1_offset_y = time_offset_y + params['wave1_translate_y']
+        wave2_offset_x = time_offset_x + params['wave2_translate_x']
+        wave2_offset_y = time_offset_y + params['wave2_translate_y']
+        
+        # Normalize with time-based scaling and translations
+        x_normalized = (x - wave1_offset_x) / wave1_mult
+        y_normalized = (y - wave1_offset_y) / wave1_mult
         
         # Dynamic wave components initialized as arrays
         wave1 = cp.zeros_like(x)
@@ -262,7 +300,9 @@ class XORVisualizer:
             
             elif op == 'use_fractal':
                 radius = cp.sqrt(x**2 + y**2)
-                combined = combined + radius * cp.sin(radius * fractal_iterations)
+                time_fractal = time_val * params['fractal_time_sensitivity']
+                combined = combined + radius * cp.sin(radius * fractal_iterations + time_fractal * 0.3 + 
+                                                     cp.sin(time_fractal * 0.7) * radius * 0.1)
             
             elif op == 'use_product' and params['use_sin'] and params['use_cos']:
                 combined = combined + wave1 * wave2 * 150
@@ -274,14 +314,19 @@ class XORVisualizer:
                     combined = combined + wave2 * 150
             
             elif op == 'use_cellular':
-                grid_x = (x / params['cellular_scale']).astype(int)
-                grid_y = (y / params['cellular_scale']).astype(int)
-                cell_val = cp.sin(grid_x * 0.1) * cp.cos(grid_y * 0.1)
+                time_cellular = time_val * params['cellular_time_translate']
+                grid_x = ((x + time_cellular * 5) / params['cellular_scale']).astype(int)
+                grid_y = ((y + time_cellular * 3) / params['cellular_scale']).astype(int)
+                cell_val = cp.sin(grid_x * 0.1 + time_cellular) * cp.cos(grid_y * 0.1 + time_cellular * 1.5)
                 combined = combined + cell_val * 150
             
             elif op == 'use_domain_warp':
-                warped_x = x + domain_warp_strength * cp.sin(y * 0.1)
-                warped_y = y + domain_warp_strength * cp.cos(x * 0.1)
+                animated_strength = domain_warp_strength * (1 + 0.3 * cp.sin(time_val * params['domain_warp_time_factor']))
+                time_phase = time_val * 0.5
+                warped_x = x + animated_strength * cp.sin(y * 0.1 + time_phase + 
+                                                        cp.sin(time_phase * 2) * 0.5)
+                warped_y = y + animated_strength * cp.cos(x * 0.1 + time_phase * 0.7 + 
+                                                        cp.sin(time_phase * 1.5) * 0.3)
                 combined = combined + cp.sin(warped_x) * cp.cos(warped_y) * 100
         
         # Smooth color remapping using sigmoid-like functions
@@ -299,9 +344,10 @@ class XORVisualizer:
         
         # Create smooth color flows using multiple overlapping waves
         time_factor = time_val * 0.1
+        time_warped = time_val * params.get('time_warp_factor', 1.0)
         
         # Create continuous color gradients using smooth trigonometric functions
-        base_hue = (time_factor + combined_smooth * 6.0) % 6.0
+        base_hue = (time_factor + combined_smooth * 6.0 + time_warped * 0.3) % 6.0
         
         # Generate RGB from hue using smooth 6-segment color wheel
         c = adjusted * params['color_saturation']
@@ -322,13 +368,22 @@ class XORVisualizer:
                cp.where(base_hue < 3, x,
                cp.where(base_hue < 5, c, x)))
         
-        # Add subtle modulation for dynamic color evolution
-        modulation_factor = 0.1
-        mod_wave = cp.sin(time_factor + combined_smooth * 4 * cp.pi) * modulation_factor
+        # Add enhanced time-based modulation using phase parameters
+        modulation_factor = 0.15
+        phase_red = params.get('color_phase_red', 0) * cp.pi / 180
+        phase_green = params.get('color_phase_green', 0) * cp.pi / 180
+        phase_blue = params.get('color_phase_blue', 0) * cp.pi / 180
         
-        red = cp.clip(red * (1 + mod_wave) * params['color_red_mult'], 0, 1)
-        green = cp.clip(green * (1 + mod_wave * 0.8) * params['color_green_mult'], 0, 1)
-        blue = cp.clip(blue * (1 + mod_wave * 1.2) * params['color_blue_mult'], 0, 1)
+        mod_wave = cp.sin(time_factor * 2 + combined_smooth * 4 * cp.pi) * modulation_factor
+        
+        # Apply phase-shifted color modulation
+        red_mod = cp.sin(time_factor * 1.7 + phase_red) * modulation_factor
+        green_mod = cp.sin(time_factor * 1.9 + phase_green) * modulation_factor * 0.8
+        blue_mod = cp.sin(time_factor * 2.1 + phase_blue) * modulation_factor * 1.2
+        
+        red = cp.clip(red * (1 + mod_wave + red_mod) * params['color_red_mult'], 0, 1)
+        green = cp.clip(green * (1 + mod_wave * 0.8 + green_mod) * params['color_green_mult'], 0, 1)
+        blue = cp.clip(blue * (1 + mod_wave * 1.2 + blue_mod) * params['color_blue_mult'], 0, 1)
         
         # Final smooth scaling to 8-bit values
         colors = cp.stack([red, green, blue], axis=-1) * 255
@@ -433,13 +488,23 @@ class XORVisualizer:
             'wave2_freq': random.choice([0.618, 1.0, 1.618, 2.5, 3.14, 4.2, 5.8]),
             'wave1_mult': random.uniform(50, 300),  # Broader range for larger patterns
             'wave2_mult': random.uniform(50, 300),
+            'wave1_translate_x': random.uniform(-100, 100),  # Translation parameters for wave 1
+            'wave1_translate_y': random.uniform(-100, 100),
+            'wave2_translate_x': random.uniform(-100, 100),  # Translation parameters for wave 2
+            'wave2_translate_y': random.uniform(-100, 100),
             'mod_factor': random.uniform(20, 800),  # Extended range
             'xor_strength': random.uniform(1.0, 10.0),  # Higher impact
             'time_speed': random.uniform(0.2, 3.0),  # More balanced speed range
+            'time_translate_x': random.uniform(-50, 50),  # Time-based translation speed
+            'time_translate_y': random.uniform(-50, 50),
+            'time_warp_factor': random.uniform(0.5, 2.0),  # Time warping for phase modulation
             'power_exponent': random.uniform(0.5, 6.0),  # Wider range
             'fractal_iterations': random.randint(4, 15),  # More detailed fractals
+            'fractal_time_sensitivity': random.uniform(0.1, 1.5),  # How much fractals respond to time
             'cellular_scale': random.uniform(1.0, 20.0),  # Better cellular resolution
+            'cellular_time_translate': random.uniform(-2.0, 2.0),  # Cellular pattern translation over time
             'domain_warp_strength': random.uniform(5.0, 30.0),  # Stronger warping
+            'domain_warp_time_factor': random.uniform(0.3, 2.0),  # How warping changes with time
             'function_order': enabled_ops  # Store the order for consistent application
         }
         
