@@ -24,6 +24,7 @@ class Visualizer:
         self.width = 640
         self.height = 480
         self.frame_time_ms = 0.0
+        self.visual_fidelity = 100.0  # Percentage scale: 100% = full resolution
         
         # Random parameters for function generation
         self.random_params = None
@@ -40,10 +41,12 @@ class Visualizer:
             self.height, 
             self.time_step, 
             self.brightness,
+            self.visual_fidelity,
             self.randomize_function_params,
             self.generate_image_wrapper,
             self.update_time_step,
-            self.update_brightness
+            self.update_brightness,
+            self.update_visual_fidelity
         )
         
     def setup_bindings(self):
@@ -64,13 +67,25 @@ class Visualizer:
         
         
     def generate_image(self):
-        img_array = generate_image_data(self.width, self.height, self.time_val, self.random_params).get()
+        # Calculate scaled dimensions based on visual fidelity
+        scale_factor = self.visual_fidelity / 100.0
+        scaled_width = max(1, int(self.width * scale_factor))
+        scaled_height = max(1, int(self.height * scale_factor))
+        
+        # Generate image at reduced resolution
+        img_array = generate_image_data(scaled_width, scaled_height, self.time_val, self.random_params).get()
         
         # Apply brightness adjustment
         img_array = img_array.astype(np.float32) * self.brightness
         img_array = np.clip(img_array, 0, 255).astype(np.uint8)
             
+        # Create PIL image from array
         img = Image.fromarray(img_array, 'RGB')
+        
+        # Stretch the reduced image to fill the viewport
+        if scaled_width != self.width or scaled_height != self.height:
+            img = img.resize((self.width, self.height), Image.Resampling.NEAREST)
+        
         return ImageTk.PhotoImage(img)
         
     def update_time_step(self, value):
@@ -78,6 +93,9 @@ class Visualizer:
         
     def update_brightness(self, value):
         self.brightness = float(value)
+        
+    def update_visual_fidelity(self, value):
+        self.visual_fidelity = float(value)
     
     def update_display(self):
         if self.running:

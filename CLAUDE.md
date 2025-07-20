@@ -9,4 +9,9 @@
 
 # Refactoring Tasks for visualizer.py
 
-☐ 
+✅ Explore the codebase to understand current visualizer structure
+✅ Identify where image generation and rendering occurs
+✅ Add percentage scale slider UI for visual fidelity control
+✅ Implement scaling logic to reduce pixels based on slider value
+✅ Add stretching mechanism to expand scaled image to viewport
+✅ Test the visual fidelity slider functionality 
