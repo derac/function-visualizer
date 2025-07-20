@@ -141,9 +141,9 @@ class XORVisualizer:
                 rot_y = morph_x * np.sin(rot_angle) + morph_y * np.cos(rot_angle)
                 
                 # Clean XOR with morphing
-                xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(11 + 10 * np.sin(time_val/10))
+                xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(11 + 9 * np.sin(time_val/10))
 
-                if params.get('use_mod', False):
+                if params.get('use_mod', True):
                     # Apply XOR with mod using morphed coordinates
                     
                     mod_factor = ((rot_x + rot_y + int(time_val * params['mod_factor'])) % 255) / 255.0
@@ -180,10 +180,10 @@ class XORVisualizer:
             elif op == 'use_domain_warp':
                 animated_strength = domain_warp_strength * (1 + 0.3 * np.sin(time_val * params['domain_warp_time_factor']))
                 time_phase = time_val * 0.5
-                warped_x = x + animated_strength * np.sin(y * 0.1 + time_phase + 
-                                                        np.sin(time_phase * 2) * 0.5)
-                warped_y = y + animated_strength * np.cos(x * 0.1 + time_phase * 0.7 + 
-                                                        np.sin(time_phase * 1.5) * 0.3)
+                warped_x = (x + animated_strength * np.sin(y * 0.1 + time_phase + 
+                                                        np.sin(time_phase * 2) * 0.5))/(3*np.sin(time_val/10)+4)
+                warped_y = (y + animated_strength * np.cos(x * 0.1 + time_phase * 0.7 + 
+                                                        np.sin(time_phase * 1.5) * 0.3))/(3*np.sin(time_val/10)+4)
                 combined = combined + np.sin(warped_x) * np.cos(warped_y) * 100
             
             elif op == 'use_tan':
@@ -249,32 +249,6 @@ class XORVisualizer:
                 noise_val = (noise_val + 4) / 8  # Normalize based on expected range
                 combined = combined + noise_val * 200 * params['noise_strength']
             
-            elif op == 'use_voronoi':
-                time_voronoi = time_val * params['voronoi_time_speed']
-                cell_scale = params['voronoi_cell_scale']
-                
-                # Dynamic grid with cell drift
-                grid_x = ((x + time_voronoi * params['voronoi_drift_x']) / cell_scale).astype(int)
-                grid_y = ((y + time_voronoi * params['voronoi_drift_y']) / cell_scale).astype(int)
-                
-                # Generate cell distances with time evolution
-                offset_x = np.sin(grid_x * 0.1 + time_voronoi * 0.5) * cell_scale
-                offset_y = np.cos(grid_y * 0.15 + time_voronoi * 0.7) * cell_scale
-                
-                # Calculate 3D distance to nearby points for smooth patterns
-                dist1 = np.sqrt(((x - (offset_x + grid_x * cell_scale)) % self.width) ** 2 + 
-                              ((y - (offset_y + grid_y * cell_scale)) % self.height) ** 2)
-                
-                dist2 = np.sqrt(((x - (offset_x + (grid_x + 1) * cell_scale)) % self.width) ** 2 + 
-                              ((y - (offset_y + grid_y * cell_scale)) % self.height) ** 2)
-                
-                # Create cell boundaries using distance differences
-                cell_pattern = np.abs(dist1 - dist2) / cell_scale
-                cell_pattern = np.clip(cell_pattern, 0, 1)
-                
-                # Add cellular detail with time modulation
-                detail = np.sin(cell_pattern * np.pi * params['voronoi_freq']) * np.cos(time_voronoi * 2)
-                combined = combined + (cell_pattern * 100 + detail * 50) * params['voronoi_strength']
             
             elif op == 'use_abs':
                 # Absolute value transformations with time-based modulation
@@ -420,7 +394,7 @@ class XORVisualizer:
         all_operations = ['use_sin', 'use_cos', 'use_tan', 'use_xor', 'use_mod', 
                          'use_product', 'use_addition', 
                          'use_cellular', 'use_domain_warp', 'use_polar',
-                         'use_noise', 'use_voronoi', 'use_abs', 'use_power']
+                         'use_noise', 'use_abs', 'use_power']
         
         # Create initial operations dict with deterministic/randomized selection
         operations = {}
@@ -429,7 +403,6 @@ class XORVisualizer:
         interesting_combinations = [
             ['use_sin', 'use_cos', 'use_mod', 'use_xor'],
             ['use_fractal', 'use_domain_warp'],
-            ['use_cellular', 'use_voronoi'],
         ]
         
         # Start with an interesting combination (50% chance)
@@ -440,7 +413,7 @@ class XORVisualizer:
         # Fill remaining operations (8-12 total active operations)
         remaining_ops = [op for op in all_operations if op not in operations]
         ops_to_select = random.randint(
-            max(0, 4 - len(operations)),
+            max(0, 3 - len(operations)),
             max(0, 6 - len(operations))
         )
         additional_ops = random.sample(remaining_ops, k=ops_to_select)
@@ -532,13 +505,6 @@ class XORVisualizer:
             'noise_scale': random.uniform(0.005, 0.02),   # Noise frequency scale
             'noise_time_speed': random.uniform(0.1, 1.0),  # Noise animation speed
             'noise_octaves': random.randint(3, 6),       # Noise complexity levels
-
-            'voronoi_strength': random.uniform(0.5, 2.5),  # Voronoi pattern strength
-            'voronoi_cell_scale': random.uniform(15, 60),  # Cell size scale
-            'voronoi_time_speed': random.uniform(0.05, 0.5),  # Cell motion speed
-            'voronoi_drift_x': random.uniform(5, 20),     # X direction drift
-            'voronoi_drift_y': random.uniform(5, 20),     # Y direction drift
-            'voronoi_freq': random.uniform(1.0, 5.0),     # Cell detail frequency
 
             'abs_strength': random.uniform(0.5, 2.5),     # Absolute value strength
             'abs_freq_x': random.choice([0.01, 0.02, 0.05, 0.1]),  # X frequency
