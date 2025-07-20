@@ -147,7 +147,7 @@ class XORVisualizer:
                 rot_y = morph_x * np.sin(rot_angle) + morph_y * np.cos(rot_angle)
                 
                 # Clean XOR with morphing
-                xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(50 * (np.sin(time_val)+1))
+                xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(30 + 30 * np.sin(time_val/10))
 
                 if params.get('use_mod', False):
                     # Apply XOR with mod using morphed coordinates
@@ -446,8 +446,8 @@ class XORVisualizer:
         # Fill remaining operations (8-12 total active operations)
         remaining_ops = [op for op in all_operations if op not in operations]
         ops_to_select = random.randint(
-            max(0, 8 - len(operations)),
-            max(0, 12 - len(operations))
+            max(0, 4 - len(operations)),
+            max(0, 6 - len(operations))
         )
         additional_ops = random.sample(remaining_ops, k=ops_to_select)
         operations.update({op: True for op in additional_ops})
