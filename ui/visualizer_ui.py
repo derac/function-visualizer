@@ -6,7 +6,7 @@ from utils.hardware import get_hardware_info, CUPY_AVAILABLE
 
 
 class VisualizerUI:
-    def __init__(self, root, width, height, time_step, randomize_callback, generate_image_callback, update_time_step_callback=None):
+    def __init__(self, root, width, height, time_step, brightness, randomize_callback, generate_image_callback, update_time_step_callback=None, update_brightness_callback=None):
         """Initialize the UI components for the visualizer
         
         Args:
@@ -14,17 +14,21 @@ class VisualizerUI:
             width: Initial canvas width
             height: Initial canvas height
             time_step: Initial time step value
+            brightness: Initial brightness value (0.1-2.0)
             randomize_callback: Function to call when randomize button is clicked
             generate_image_callback: Function to generate image data for display
             update_time_step_callback: Function to call when time step slider is moved
+            update_brightness_callback: Function to call when brightness slider is moved
         """
         self.root = root
         self.width = width
         self.height = height
         self.time_step = time_step
+        self.brightness = brightness
         self.randomize_callback = randomize_callback
         self.generate_image_callback = generate_image_callback
         self.update_time_step_callback = update_time_step_callback
+        self.update_brightness_callback = update_brightness_callback
         self.frame_time_ms = 0.0
 
         self.setup_ui()
@@ -60,6 +64,18 @@ class VisualizerUI:
                                          orient=tk.HORIZONTAL, length=100)
         self.time_step_slider.set(self.time_step)
         self.time_step_slider.pack(side=tk.LEFT, padx=5)
+
+        # Brightness control
+        self.brightness_label = ttk.Label(self.toolbar, text=f"Brightness: {float(self.brightness):.2f}", relief=tk.SUNKEN)
+        self.brightness_label.pack(side=tk.LEFT, padx=5, pady=2)
+        
+        self.brightness_slider = ttk.Scale(self.toolbar, from_=0.1, to=2.0, 
+                                         command=lambda v: [setattr(self, 'brightness', float(v)), 
+                                                          self.brightness_label.config(text=f"Brightness: {float(v):.2f}"),
+                                                          self.update_brightness_callback(float(v)) if self.update_brightness_callback else None], 
+                                         orient=tk.HORIZONTAL, length=100)
+        self.brightness_slider.set(self.brightness)
+        self.brightness_slider.pack(side=tk.LEFT, padx=5)
     
         
         self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bg='black', highlightthickness=0)
@@ -87,6 +103,13 @@ class VisualizerUI:
         
         if self.update_time_step_callback:
             self.update_time_step_callback(value)
+
+    def update_brightness(self, value):
+        """Update the brightness value when the slider is moved"""
+        self.brightness = float(value)
+        
+        if self.update_brightness_callback:
+            self.update_brightness_callback(value)
     
     def update_display(self, time_val, running):
         """Update the display with a new generated image

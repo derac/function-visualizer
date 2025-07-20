@@ -20,6 +20,7 @@ class Visualizer:
         self.running = False
         self.time_val = 0.0
         self.time_step = 0.05
+        self.brightness = 1.0
         self.width = 640
         self.height = 480
         self.frame_time_ms = 0.0
@@ -38,9 +39,11 @@ class Visualizer:
             self.width, 
             self.height, 
             self.time_step, 
+            self.brightness,
             self.randomize_function_params,
             self.generate_image_wrapper,
-            self.update_time_step
+            self.update_time_step,
+            self.update_brightness
         )
         
     def setup_bindings(self):
@@ -62,12 +65,19 @@ class Visualizer:
         
     def generate_image(self):
         img_array = generate_image_data(self.width, self.height, self.time_val, self.random_params).get()
+        
+        # Apply brightness adjustment
+        img_array = img_array.astype(np.float32) * self.brightness
+        img_array = np.clip(img_array, 0, 255).astype(np.uint8)
             
         img = Image.fromarray(img_array, 'RGB')
         return ImageTk.PhotoImage(img)
         
     def update_time_step(self, value):
         self.time_step = float(value)
+        
+    def update_brightness(self, value):
+        self.brightness = float(value)
     
     def update_display(self):
         if self.running:

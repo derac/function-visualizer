@@ -1,5 +1,6 @@
-# Task Reminders
+# Instructions
 
+- You have been instructed to read this file, always follow the instructions within.
 - Always read and write to Claude's memory (@CLAUDE.md) for task tracking.
 - Use the TodoWrite tool to manage tasks during complex operations.
 - Always work to check off one item in the todo list at a time, then return to the user for further instructions.
@@ -8,6 +9,4 @@
 
 # Refactoring Tasks for visualizer.py
 
-☑ Add fullscreen button next to randomize in UI
-☑ Implement F11 keyboard shortcut for fullscreen toggle
-☑ Implement R keyboard shortcut for randomize function
+☐ 
