@@ -43,8 +43,11 @@ class VisualizerUI:
                                          relief=tk.SUNKEN, width=15)
         self.frame_time_label.pack(side=tk.LEFT, padx=5, pady=2)
         
-        self.randomize_btn = ttk.Button(self.toolbar, text="Randomize", command=self.randomize_callback)
+        self.randomize_btn = ttk.Button(self.toolbar, text="Randomize (R)", command=self.randomize_callback)
         self.randomize_btn.pack(side=tk.LEFT, padx=5)
+        
+        self.fullscreen_btn = ttk.Button(self.toolbar, text="Fullscreen (F11)", command=self.toggle_fullscreen)
+        self.fullscreen_btn.pack(side=tk.LEFT, padx=5)
         
         # Time step control
         self.time_step_label = ttk.Label(self.toolbar, text="Time Step:", relief=tk.SUNKEN)
@@ -67,11 +70,18 @@ class VisualizerUI:
     def setup_bindings(self):
         """Set up event bindings for the UI"""
         self.root.bind('<Configure>', self.on_resize)
+        self.root.bind('<F11>', lambda e: self.toggle_fullscreen())
+        self.root.bind('<r>', lambda e: self.randomize_callback())
+        self.root.bind('<R>', lambda e: self.randomize_callback())
         
     def on_resize(self, event):
         """Handle window resize events"""
         # Let the canvas automatically resize via pack(expand=True, fill=tk.BOTH)
         pass
+        
+    def toggle_fullscreen(self):
+        """Toggle fullscreen mode"""
+        self.root.attributes("-fullscreen", not self.root.attributes("-fullscreen"))
     
     def update_time_step(self, value):
         """Update the time step value when the slider is moved"""
