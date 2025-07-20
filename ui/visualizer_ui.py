@@ -40,7 +40,7 @@ class VisualizerUI:
         self.status_label.pack(side=tk.LEFT, padx=5, pady=2)
         
         self.frame_time_label = ttk.Label(self.toolbar, text="Frame: 0.0ms", 
-                                         relief=tk.SUNKEN)
+                                         relief=tk.SUNKEN, width=15)
         self.frame_time_label.pack(side=tk.LEFT, padx=5, pady=2)
         
         self.randomize_btn = ttk.Button(self.toolbar, text="Randomize", command=self.randomize_callback)
