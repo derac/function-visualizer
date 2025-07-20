@@ -12,10 +12,10 @@ except ImportError:
     CUPY_AVAILABLE = False
 
 
-class XORVisualizer:
+class Visualizer:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("XOR/Modulus Function Visualizer")
+        self.root.title("Visualizer")
         self.root.geometry("800x600")
         
         self.using_cupy = CUPY_AVAILABLE
@@ -532,5 +532,5 @@ class XORVisualizer:
 
 
 if __name__ == "__main__":
-    visualizer = XORVisualizer()
+    visualizer = Visualizer()
     visualizer.run()
