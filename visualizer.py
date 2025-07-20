@@ -45,12 +45,6 @@ class XORVisualizer:
                                          relief=tk.SUNKEN)
         self.frame_time_label.pack(side=tk.LEFT, padx=5, pady=2)
         
-        self.start_btn = ttk.Button(self.toolbar, text="Start", command=self.start_animation)
-        self.start_btn.pack(side=tk.LEFT, padx=5)
-        
-        self.stop_btn = ttk.Button(self.toolbar, text="Stop", command=self.stop_animation)
-        self.stop_btn.pack(side=tk.LEFT, padx=5)
-        
         self.randomize_btn = ttk.Button(self.toolbar, text="Randomize", command=self.randomize_function_params)
         self.randomize_btn.pack(side=tk.LEFT, padx=5)
         
@@ -147,7 +141,7 @@ class XORVisualizer:
                 rot_y = morph_x * np.sin(rot_angle) + morph_y * np.cos(rot_angle)
                 
                 # Clean XOR with morphing
-                xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(30 + 30 * np.sin(time_val/10))
+                xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(11 + 10 * np.sin(time_val/10))
 
                 if params.get('use_mod', False):
                     # Apply XOR with mod using morphed coordinates
