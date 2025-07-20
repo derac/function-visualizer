@@ -60,9 +60,7 @@ class VisualizerUI:
                                          orient=tk.HORIZONTAL, length=100)
         self.time_step_slider.set(self.time_step)
         self.time_step_slider.pack(side=tk.LEFT, padx=5)
-        
-        self.time_step_value = ttk.Label(self.toolbar, text=f"{self.time_step:.3f}", relief=tk.SUNKEN, width=6)
-        self.time_step_value.pack(side=tk.LEFT, padx=2)
+    
         
         self.canvas = tk.Canvas(self.root, width=self.width, height=self.height, bg='black', highlightthickness=0)
         self.canvas.pack(expand=True, fill=tk.BOTH, padx=0, pady=0)
@@ -86,12 +84,6 @@ class VisualizerUI:
     def update_time_step(self, value):
         """Update the time step value when the slider is moved"""
         self.time_step = float(value)
-        # Update the time step value label
-        try:
-            self.time_step_value.config(text=f"{self.time_step:.3f}")
-        except AttributeError:
-            # Handle case where the attribute might not be set yet
-            pass
         
         if self.update_time_step_callback:
             self.update_time_step_callback(value)
