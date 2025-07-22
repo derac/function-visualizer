@@ -85,7 +85,7 @@ def compute_function(x, y, time_val, params):
             rot_y = morph_x * np.sin(rot_angle) + morph_y * np.cos(rot_angle)
             
             # Clean XOR with morphing
-            xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(11 + 9 * np.sin(time_val/10))
+            xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(10 + 6 * np.sin(time_val/10))
 
             if params.get('use_mod', True):
                 # Apply XOR with mod using morphed coordinates
@@ -129,24 +129,6 @@ def compute_function(x, y, time_val, params):
             warped_y = (y + animated_strength * np.cos(x * 0.1 + time_phase * 0.7 + 
                                                     np.sin(time_phase * 1.5) * 0.3))/(3*np.sin(time_val/10)+4)
             combined = combined + np.sin(warped_x) * np.cos(warped_y) * 100
-        
-        elif op == 'use_tan':
-            time_tan = time_val * params['tan_time_speed']
-            tan_mult = params['tan_mult'] * (1 + 0.2 * np.sin(time_val * 0.1))
-            
-            # Apply tan with domain stretching and modulation
-            x_tan = (x / tan_mult + time_tan) % (2 * np.pi)
-            y_tan = (y / tan_mult + time_tan * 0.7) % (2 * np.pi)
-            
-            # Smooth tan function with safe handling
-            tan_x = np.tan(x_tan * params['tan_freq_x'])
-            tan_y = np.tan(y_tan * params['tan_freq_y'])
-            
-            # Clamp extreme values for smooth visualization
-            tan_x = np.clip(tan_x, -3, 3)
-            tan_y = np.clip(tan_y, -3, 3)
-            
-            combined = combined + tan_x * tan_y * 80 * params['tan_strength']
         
         elif op == 'use_polar':
             # Calculate polar coordinates with time evolution
@@ -293,7 +275,7 @@ def compute_function(x, y, time_val, params):
 def randomize_function_params():
     """Generate new random parameters for the mathematical function."""
     # Expanded operations list with more function types
-    all_operations = ['use_sin', 'use_cos', 'use_tan', 'use_xor', 'use_mod', 
+    all_operations = ['use_sin', 'use_cos', 'use_xor', 'use_mod', 
                      'use_product', 'use_addition', 
                      'use_cellular', 'use_domain_warp', 'use_polar',
                      'use_noise', 'use_abs', 'use_power']
@@ -371,13 +353,6 @@ def randomize_function_params():
         'color_phase_blue': random.uniform(0, 360),
         'color_saturation': random.uniform(0.7, 1.5),  # Saturation boost
         'color_power': random.uniform(0.8, 1.4),       # Gamma-like adjustment
-        
-        # New operation parameters
-        'tan_mult': random.uniform(30, 180),         # Tan domain scale
-        'tan_freq_x': random.choice([0.5, 1.0, 2.0, 3.0, 5.0]),
-        'tan_freq_y': random.choice([0.5, 1.0, 2.0, 3.0, 5.0]),
-        'tan_strength': random.uniform(0.3, 2.5),     # Tan output strength
-        'tan_time_speed': random.uniform(0.1, 1.8),   # Tan animation speed
 
         'polar_strength': random.uniform(0.4, 2.2),   # Polar pattern strength
         'polar_freq_r': random.choice([0.01, 0.02, 0.05, 0.1]),  # Radial frequency
