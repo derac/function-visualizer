@@ -95,6 +95,8 @@ class VisualizerUI:
         self.root.bind('<F11>', lambda e: self.toggle_fullscreen())
         self.root.bind('<r>', lambda e: self.randomize_callback())
         self.root.bind('<R>', lambda e: self.randomize_callback())
+        self.root.bind('<h>', lambda e: self.toggle_toolbar())
+        self.root.bind('<H>', lambda e: self.toggle_toolbar())
         
     def on_resize(self, event):
         """Handle window resize events"""
@@ -104,6 +106,13 @@ class VisualizerUI:
     def toggle_fullscreen(self):
         """Toggle fullscreen mode"""
         self.root.attributes("-fullscreen", not self.root.attributes("-fullscreen"))
+    
+    def toggle_toolbar(self):
+        """Toggle toolbar visibility"""
+        if self.toolbar.winfo_viewable():
+            self.toolbar.pack_forget()
+        else:
+            self.toolbar.pack(side=tk.TOP, fill=tk.X, before=self.canvas)
     
     def update_time_step(self, value):
         """Update the time step value when the slider is moved"""
