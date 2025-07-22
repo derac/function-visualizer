@@ -61,7 +61,7 @@ class VisualizerUI:
         
         self.time_step_slider = ttk.Scale(self.toolbar, from_=0.0, to=0.2, 
                                          command=lambda v: [setattr(self, 'time_step', float(v)), 
-                                                          self.time_step_label.config(text=f"{float(v):.3f}"),
+                                                          self.time_step_label.config(text=f"Time Step: {float(v):.3f}"),
                                                           self.update_time_step_callback(float(v)) if self.update_time_step_callback else None], 
                                          orient=tk.HORIZONTAL, length=100)
         self.time_step_slider.set(self.time_step)
