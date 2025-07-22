@@ -43,19 +43,19 @@ class VisualizerUI:
         self.toolbar = ttk.Frame(self.root)
         self.toolbar.pack(side=tk.TOP, fill=tk.X)
         
-        self.randomize_btn = ttk.Button(self.toolbar, text="Randomize (R)", command=self.randomize_callback)
+        self.randomize_btn = ttk.Button(self.toolbar, text="R", command=self.randomize_callback)
         self.randomize_btn.pack(side=tk.LEFT, padx=5)
         
-        self.fullscreen_btn = ttk.Button(self.toolbar, text="Fullscreen (F11)", command=self.toggle_fullscreen)
+        self.fullscreen_btn = ttk.Button(self.toolbar, text="F", command=self.toggle_fullscreen)
         self.fullscreen_btn.pack(side=tk.LEFT, padx=5)
         
         # Time step control
-        self.time_step_label = ttk.Label(self.toolbar, text="Time Step:", relief=tk.SUNKEN)
+        self.time_step_label = ttk.Label(self.toolbar, text="Step:", relief=tk.SUNKEN)
         self.time_step_label.pack(side=tk.LEFT, padx=5, pady=2)
         
         self.time_step_slider = ttk.Scale(self.toolbar, from_=0.0, to=0.2, 
                                          command=lambda v: [setattr(self, 'time_step', float(v)), 
-                                                          self.time_step_label.config(text=f"Time Step: {float(v):.3f}"),
+                                                          self.time_step_label.config(text=f"Step: {float(v):.3f}"),
                                                           self.update_time_step_callback(float(v)) if self.update_time_step_callback else None], 
                                          orient=tk.HORIZONTAL, length=100)
         self.time_step_slider.set(self.time_step)
@@ -74,12 +74,12 @@ class VisualizerUI:
         self.brightness_slider.pack(side=tk.LEFT, padx=5)
 
         # Visual fidelity control
-        self.fidelity_label = ttk.Label(self.toolbar, text=f"Fidelity: {int(self.visual_fidelity)}%", relief=tk.SUNKEN)
+        self.fidelity_label = ttk.Label(self.toolbar, text=f"Scale: {int(self.visual_fidelity)}%", relief=tk.SUNKEN)
         self.fidelity_label.pack(side=tk.LEFT, padx=5, pady=2)
         
         self.fidelity_slider = ttk.Scale(self.toolbar, from_=5, to=100, 
                                        command=lambda v: [setattr(self, 'visual_fidelity', float(v)), 
-                                                        self.fidelity_label.config(text=f"Fidelity: {int(float(v))}%"),
+                                                        self.fidelity_label.config(text=f"Scale: {int(float(v))}%"),
                                                         self.update_visual_fidelity_callback(float(v)) if self.update_visual_fidelity_callback else None], 
                                        orient=tk.HORIZONTAL, length=100)
         self.fidelity_slider.set(self.visual_fidelity)
@@ -92,7 +92,8 @@ class VisualizerUI:
     def setup_bindings(self):
         """Set up event bindings for the UI"""
         self.root.bind('<Configure>', self.on_resize)
-        self.root.bind('<F11>', lambda e: self.toggle_fullscreen())
+        self.root.bind('<f>', lambda e: self.toggle_fullscreen())
+        self.root.bind('<F>', lambda e: self.toggle_fullscreen())
         self.root.bind('<r>', lambda e: self.randomize_callback())
         self.root.bind('<R>', lambda e: self.randomize_callback())
         self.root.bind('<h>', lambda e: self.toggle_toolbar())

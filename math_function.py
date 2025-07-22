@@ -86,27 +86,12 @@ def compute_function(x, y, time_val, params):
             
             # Clean XOR with morphing
             xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(10 + 6 * np.sin(time_val/10))
-
-            if params.get('use_mod', True):
-                # Apply XOR with mod using morphed coordinates
-                
-                mod_factor = ((rot_x + rot_y + int(time_val * params['mod_factor'])) % 255) / 255.0
-                # Smooth modulation of the modulation factor
-                mod_smooth = 0.5 + 0.5 * np.sin(time_val * 0.15 + mod_factor * np.pi)
-                combined = combined + xor_mask * mod_factor * mod_smooth * params['xor_strength']
-            else:
-                # Gentle intensity modulation
-                intensity = 0.8 + 0.2 * np.sin(time_val * 0.05 + (rot_x + rot_y) * 0.001)
-                combined = combined + xor_mask * intensity * params['xor_strength']
         
         elif op == 'use_sin':
             combined = combined + wave1 * 200
         
         elif op == 'use_cos':
             combined = combined + wave2 * 200
-        
-        elif op == 'use_product' and params['use_sin'] and params['use_cos']:
-            combined = combined + wave1 * wave2 * 150
         
         elif op == 'use_addition':
             if params['use_sin']:
@@ -275,8 +260,7 @@ def compute_function(x, y, time_val, params):
 def randomize_function_params():
     """Generate new random parameters for the mathematical function."""
     # Expanded operations list with more function types
-    all_operations = ['use_sin', 'use_cos', 'use_xor', 'use_mod', 
-                     'use_product', 'use_addition', 
+    all_operations = ['use_sin', 'use_cos', 'use_xor', 'use_addition', 
                      'use_cellular', 'use_domain_warp', 'use_polar',
                      'use_noise', 'use_abs', 'use_power']
     
