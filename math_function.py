@@ -383,7 +383,7 @@ def randomize_function_params():
     
     # Fill remaining operations (8-12 total active operations)
     remaining_ops = [op for op in all_operations if op not in operations]
-    ops_to_select = random.randint(5, 7)
+    ops_to_select = random.randint(4, 6)
     additional_ops = random.sample(remaining_ops, k=ops_to_select)
     operations.update({op: True for op in additional_ops})
     # testing
@@ -398,6 +398,22 @@ def randomize_function_params():
     enabled_ops = [op for op in all_operations if operations.get(op, False)]
     random.shuffle(enabled_ops)
     
+    # Enhanced color mapping with harmonic ratios
+    color_schemes = [
+        # Nature-inspired schemes
+        {'red': 1.0, 'green': 1.4, 'blue': 0.8},     # golden hour
+        {'red': 0.8, 'green': 1.0, 'blue': 1.6},     # oceanic
+        {'red': 1.5, 'green': 0.8, 'blue': 1.0},     # sunset
+        {'red': 1.2, 'green': 1.2, 'blue': 1.2},     # moonlight
+        {'red': 0.9, 'green': 1.3, 'blue': 0.7},     # forest
+        {'red': 1.6, 'green': 0.9, 'blue': 1.3},     # aurora
+        {'red': 1.3, 'green': 1.5, 'blue': 1.1},     # crystal
+        {'red': 1.1, 'green': 0.7, 'blue': 1.5},     # nebula
+    ]
+    
+    # Enhanced color parameters with phase shifts
+    color_scheme = random.choice(color_schemes)
+
     # Sophisticated parameter ranges for beautiful visuals
     params = {
         'wave1_freq': random.choice([0.618, 1.0, 1.618, 2.5, 3.14, 4.2, 5.8]),  # More frequency options
@@ -424,24 +440,7 @@ def randomize_function_params():
         'domain_warp_strength': random.uniform(15.0, 30.0),  # Stronger warping
         'domain_warp_time_factor': random.uniform(0.3, 2.0),  # How warping changes with time
         'function_order': enabled_ops,  # Store the order for consistent application
-    }
-    
-    # Enhanced color mapping with harmonic ratios
-    color_schemes = [
-        # Nature-inspired schemes
-        {'red': 1.0, 'green': 1.4, 'blue': 0.8},     # golden hour
-        {'red': 0.8, 'green': 1.0, 'blue': 1.6},     # oceanic
-        {'red': 1.5, 'green': 0.8, 'blue': 1.0},     # sunset
-        {'red': 1.2, 'green': 1.2, 'blue': 1.2},     # moonlight
-        {'red': 0.9, 'green': 1.3, 'blue': 0.7},     # forest
-        {'red': 1.6, 'green': 0.9, 'blue': 1.3},     # aurora
-        {'red': 1.3, 'green': 1.5, 'blue': 1.1},     # crystal
-        {'red': 1.1, 'green': 0.7, 'blue': 1.5},     # nebula
-    ]
-    
-    # Enhanced color parameters with phase shifts
-    color_scheme = random.choice(color_schemes)
-    params.update({
+
         'color_red_mult': color_scheme['red'],
         'color_green_mult': color_scheme['green'],
         'color_blue_mult': color_scheme['blue'],
@@ -494,7 +493,7 @@ def randomize_function_params():
         'feedback_pan_range': random.uniform(10, 80),  # Maximum panning distance
         'feedback_mod_freq': random.uniform(0.02, 0.1),  # Modulation frequency
         'feedback_color_shift': random.uniform(-0.2, 0.2),  # Color shift strength
-    })
+    }
 
     print(params['function_order'])
 
