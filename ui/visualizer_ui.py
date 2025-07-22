@@ -38,16 +38,10 @@ class VisualizerUI:
         
     def setup_ui(self):
         """Create and arrange all UI components"""
+        self.root.title(f"Function Visualizer - GPU: {get_hardware_info()} | Frame: 0.0ms")
+        
         self.toolbar = ttk.Frame(self.root)
         self.toolbar.pack(side=tk.TOP, fill=tk.X)
-        
-        self.status_label = ttk.Label(self.toolbar, text="GPU: " + get_hardware_info(), 
-                                     relief=tk.SUNKEN)
-        self.status_label.pack(side=tk.LEFT, padx=5, pady=2)
-        
-        self.frame_time_label = ttk.Label(self.toolbar, text="Frame: 0.0ms", 
-                                         relief=tk.SUNKEN, width=15)
-        self.frame_time_label.pack(side=tk.LEFT, padx=5, pady=2)
         
         self.randomize_btn = ttk.Button(self.toolbar, text="Randomize (R)", command=self.randomize_callback)
         self.randomize_btn.pack(side=tk.LEFT, padx=5)
@@ -157,7 +151,7 @@ class VisualizerUI:
                 
                 end_time = time.time()
                 self.frame_time_ms = (end_time - start_time) * 1000
-                self.frame_time_label.config(text=f"Frame: {self.frame_time_ms:.1f}ms")
+                self.root.title(f"Function Visualizer - GPU: {get_hardware_info()} | Frame: {self.frame_time_ms:.1f}ms")
                 
                 self.canvas.delete("all")
                 self.canvas.create_image(0, 0, anchor=tk.NW, image=photo)
