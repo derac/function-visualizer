@@ -1,10 +1,25 @@
-"""Mathematical functions for visualization and computation."""
+"""Mathematical functions for visualization and computation with feedback loop."""
 
 import random
+import numpy as base_np  # For some operations that need pure numpy
 from utils.hardware import get_array_module
 
 # Get the appropriate array module
 np = get_array_module()
+
+# Global state for feedback loop
+class FeedbackState:
+    def __init__(self):
+        self.previous_frame = None
+        self.feedback_intensity = 0.7
+        self.time_sum = 0.0
+        
+    def reset(self):
+        """Reset the feedback state"""
+        self.previous_frame = None
+        self.time_sum = 0.0
+
+feedback_state = FeedbackState()
 
 def compute_function(x, y, time_val, params):
     """
@@ -85,8 +100,13 @@ def compute_function(x, y, time_val, params):
             rot_y = morph_x * np.sin(rot_angle) + morph_y * np.cos(rot_angle)
             
             # Clean XOR with morphing
-            xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(10 + 6 * np.sin(time_val/10))
-        
+            xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(2 ** (np.sin(time_val/5) + 3))
+
+            # Gentle intensity modulation
+            intensity = 0.8 + 0.2 * np.sin(time_val * 0.05 + (rot_x + rot_y) * 0.001)
+            combined = combined + xor_mask * intensity * params['xor_strength']
+
+
         elif op == 'use_sin':
             combined = combined + wave1 * 200
         
@@ -254,7 +274,127 @@ def compute_function(x, y, time_val, params):
     
     # Final smooth scaling to 8-bit values
     colors = np.stack([red, green, blue], axis=-1) * 255
+    # Apply feedback loop if enabled
+    if 'use_feedback' in operations and feedback_state.previous_frame is not None:
+        colors = apply_feedback_loop(colors, x, y, time_val, params)
+    
+    # Store frame for next iteration
+    feedback_state.previous_frame = colors.astype(np.float32) / 255.0
+    feedback_state.time_sum = time_val
+    
     return colors.astype(np.uint8)
+
+
+def apply_feedback_loop(current_colors, x, y, time_val, params):
+    """Apply feedback transformation from previous frame"""
+    if feedback_state.previous_frame is None:
+        return current_colors
+    
+    # Extract previous frame dimensions
+    prev_height, prev_width = feedback_state.previous_frame.shape[:2]
+    if prev_height == 0 or prev_width == 0:
+        return current_colors
+    
+    # Get current dimensions
+    curr_height, curr_width = current_colors.shape[0], current_colors.shape[1]
+    
+    # Coordinate normalization
+    x_norm = (x - np.min(x)) / (np.max(x) - np.min(x) + 1e-8)
+    y_norm = (y - np.min(y)) / (np.max(y) - np.min(y) + 1e-8)
+    
+    # Time-based transformations
+    zoom_factor = 1.0 + params.get('feedback_zoom_speed', 0.005) * time_val
+    zoom_factor = 1.0 + np.sin(time_val * params.get('feedback_zoom_freq', 0.1)) * params.get('feedback_zoom_amp', 0.05)
+    
+    # Rotation
+    rotation_speed = params.get('feedback_rotation_speed', 0.02)
+    rotation_angle = time_val * rotation_speed
+    
+    # Panning with smooth curves
+    pan_x_speed = params.get('feedback_pan_x_speed', 0.003)
+    pan_y_speed = params.get('feedback_pan_y_speed', 0.002)
+    pan_x = np.sin(time_val * pan_x_speed) * params.get('feedback_pan_range', 50)
+    pan_y = np.cos(time_val * pan_y_speed) * params.get('feedback_pan_range', 50)
+    
+    # Create transformed coordinates for sampling
+    cos_angle = np.cos(rotation_angle)
+    sin_angle = np.sin(rotation_angle)
+    
+    # Center coordinates
+    center_x = prev_width / 2.0
+    center_y = prev_height / 2.0
+    
+    # Apply transformations to coordinates
+    x_trans = (x_norm - 0.5) * prev_width + pan_x
+    y_trans = (y_norm - 0.5) * prev_height + pan_y
+    
+    # Apply rotation and zoom
+    x_rot = (x_trans * cos_angle - y_trans * sin_angle) / zoom_factor + center_x
+    y_rot = (x_trans * sin_angle + y_trans * cos_angle) / zoom_factor + center_y
+    
+    # Clip coordinates to valid range
+    x_rot = np.clip(x_rot, 0, prev_width - 1)
+    y_rot = np.clip(y_rot, 0, prev_height - 1)
+    
+    # Sample from previous frame with bilinear interpolation
+    x0 = x_rot.astype(int)
+    y0 = y_rot.astype(int)
+    x1 = np.clip(x0 + 1, 0, prev_width - 1)
+    y1 = np.clip(y0 + 1, 0, prev_height - 1)
+    
+    # Bilinear interpolation weights
+    fx = x_rot - x0
+    fy = y_rot - y0
+    
+    # Ensure indices are properly shaped for array access
+    if len(feedback_state.previous_frame.shape) == 3:
+        # RGB image
+        sample_00 = feedback_state.previous_frame[y0, x0, :]
+        sample_01 = feedback_state.previous_frame[y1, x0, :]
+        sample_10 = feedback_state.previous_frame[y0, x1, :]
+        sample_11 = feedback_state.previous_frame[y1, x1, :]
+    else:
+        # Grayscale image
+        sample_00 = feedback_state.previous_frame[y0, x0]
+        sample_01 = feedback_state.previous_frame[y1, x0]
+        sample_10 = feedback_state.previous_frame[y0, x1]
+        sample_11 = feedback_state.previous_frame[y1, x1]
+    
+    # Perform interpolation
+    if sample_00.ndim > 0:
+        # RGB interpolation
+        top = sample_00 + (sample_10 - sample_00) * fx[..., None]
+        bottom = sample_01 + (sample_11 - sample_01) * fx[..., None]
+        feedback_colors = top + (bottom - top) * fy[..., None]
+    else:
+        # Grayscale interpolation
+        top = sample_00 + (sample_10 - sample_00) * fx
+        bottom = sample_01 + (sample_11 - sample_01) * fx
+        feedback_colors = top + (bottom - top) * fy
+    
+    feedback_colors = np.clip(feedback_colors, 0.0, 1.0)
+    
+    # Mix current and feedback colors
+    mix_factor = params.get('feedback_strength', 0.6)
+    mix_factor *= params.get('feedback_decay', 0.99) ** (time_val - feedback_state.time_sum)
+    
+    # Add evolving modulation
+    modulation = np.sin(time_val * params.get('feedback_mod_freq', 0.05)) * 0.3 + 0.7
+    mix_factor *= modulation
+    
+    # Convert current colors to float
+    current_float = current_colors.astype(np.float32) / 255.0
+    
+    # Blend colors
+    blended = current_float * (1.0 - mix_factor) + feedback_colors * mix_factor
+    
+    # Apply feedback color shift
+    shift_strength = params.get('feedback_color_shift', 0.1)
+    shift_vec = np.array([1.0 + shift_strength, 1.0 + shift_strength * 0.5, 1.0 - shift_strength])
+    
+    blended = blended * shift_vec[None, None, :] if blended.ndim > 2 else blended * shift_vec[0]
+    
+    return np.clip(blended * 255.0, 0, 255).astype(np.uint8)
 
 
 def randomize_function_params():
@@ -262,19 +402,18 @@ def randomize_function_params():
     # Expanded operations list with more function types
     all_operations = ['use_sin', 'use_cos', 'use_xor', 'use_addition', 
                      'use_cellular', 'use_domain_warp', 'use_polar',
-                     'use_noise', 'use_abs', 'use_power']
+                     'use_noise', 'use_abs', 'use_power', 'use_feedback']
     
     # Create initial operations dict with deterministic/randomized selection
     operations = {}
     
     # Fill remaining operations (8-12 total active operations)
     remaining_ops = [op for op in all_operations if op not in operations]
-    ops_to_select = random.randint(
-        max(0, 3 - len(operations)),
-        max(0, 6 - len(operations))
-    )
+    ops_to_select = random.randint(2, 5)
     additional_ops = random.sample(remaining_ops, k=ops_to_select)
     operations.update({op: True for op in additional_ops})
+    # testing
+    # operations = {'use_xor': True}
     
     # Ensure all operations are in the dict
     for op in all_operations:
@@ -310,7 +449,7 @@ def randomize_function_params():
         'cellular_time_translate': random.uniform(-2.0, 2.0),  # Cellular pattern translation over time
         'domain_warp_strength': random.uniform(5.0, 30.0),  # Stronger warping
         'domain_warp_time_factor': random.uniform(0.3, 2.0),  # How warping changes with time
-        'function_order': enabled_ops  # Store the order for consistent application
+        'function_order': enabled_ops,  # Store the order for consistent application
     }
     
     # Enhanced color mapping with harmonic ratios
@@ -368,6 +507,19 @@ def randomize_function_params():
         'power_freq_y': random.choice([0.01, 0.02, 0.05, 0.1]),  # Y frequency for power base
         'power_time_speed': random.uniform(0.2, 1.8),  # Power animation speed
         'power_exp_mod_freq': random.uniform(0.1, 1.0),  # Exponent modulation frequency
+        
+        # Feedback loop parameters
+        'feedback_strength': random.uniform(0.3, 0.9),  # How strongly feedback is mixed with new frame
+        'feedback_decay': random.uniform(0.95, 0.999),  # How quickly old frames decay influence
+        'feedback_zoom_speed': random.uniform(0, 0.2),  # Speed of zoom transformation on feedback
+        'feedback_zoom_freq': random.uniform(0.05, 0.3),  # Frequency of zoom oscillation
+        'feedback_zoom_amp': random.uniform(0.02, 0.15),  # Amplitude of zoom oscillation
+        'feedback_rotation_speed': random.uniform(-0.1, 0.1),  # Rotation speed of feedback frame
+        'feedback_pan_x_speed': random.uniform(0, 0.01),  # Horizontal panning speed
+        'feedback_pan_y_speed': random.uniform(0, 0.01),  # Vertical panning speed
+        'feedback_pan_range': random.uniform(10, 80),  # Maximum panning distance
+        'feedback_mod_freq': random.uniform(0.02, 0.1),  # Modulation frequency
+        'feedback_color_shift': random.uniform(-0.2, 0.2),  # Color shift strength
     })
 
     print(params['function_order'])
