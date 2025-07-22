@@ -77,7 +77,11 @@ class Visualizer:
         sample_height = max(1, int(full_height * scale_factor))
         
         # Generate image at reduced resolution but with full coordinate system
-        img_array = generate_image_data(sample_width, sample_height, self.time_val, self.random_params, full_width, full_height).get()
+        img_array = generate_image_data(sample_width, sample_height, self.time_val, self.random_params, full_width, full_height)
+        
+        # Convert GPU array to numpy if needed
+        if hasattr(img_array, 'get'):
+            img_array = img_array.get()
         
         # Apply brightness adjustment
         img_array = img_array.astype(np.float32) * self.brightness

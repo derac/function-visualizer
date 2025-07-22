@@ -178,6 +178,12 @@ def compute_function(x, y, time_val, params):
             time_noise = time_val * params['noise_time_speed']
             noise_scale = params['noise_scale']
             
+            # Ensure x and y have compatible shapes
+            if x.shape != y.shape:
+                target_shape = np.broadcast(x, y).shape
+                x = np.broadcast_to(x, target_shape)
+                y = np.broadcast_to(y, target_shape)
+            
             # Create multiple octaves of pseudo-noise
             noise_val = np.zeros_like(x)
             for i in range(params['noise_octaves']):
@@ -193,8 +199,8 @@ def compute_function(x, y, time_val, params):
                 noise_val += octave_val * octave_amp
             
             # Remap noise to 0-1 range
-            noise_val = (noise_val + 4) / 8  # Normalize based on expected range
-            combined = combined + noise_val * 200 * params['noise_strength']
+            noise_val = (noise_val + 4) / 8.0  # Normalize based on expected range
+            combined = combined + noise_val * 200.0 * params['noise_strength']
         
         
         elif op == 'use_abs':
