@@ -62,7 +62,7 @@ class Visualizer:
     def compute_function(self, x, y, time_val):
         if self.random_params is None:
             self.randomize_function_params()
-        
+
         return compute_function(x, y, time_val, self.random_params)
         
         

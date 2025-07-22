@@ -301,17 +301,6 @@ def randomize_function_params():
     # Create initial operations dict with deterministic/randomized selection
     operations = {}
     
-    # Forced interesting combinations
-    interesting_combinations = [
-        ['use_sin', 'use_cos', 'use_mod', 'use_xor'],
-        ['use_fractal', 'use_domain_warp'],
-    ]
-    
-    # Start with an interesting combination (50% chance)
-    if random.random() > 0.5:
-        combo = random.choice(interesting_combinations)
-        operations.update({op: True for op in combo})
-    
     # Fill remaining operations (8-12 total active operations)
     remaining_ops = [op for op in all_operations if op not in operations]
     ops_to_select = random.randint(
@@ -421,7 +410,9 @@ def randomize_function_params():
         'power_time_speed': random.uniform(0.2, 1.8),  # Power animation speed
         'power_exp_mod_freq': random.uniform(0.1, 1.0),  # Exponent modulation frequency
     })
-    
+
+    print(params['function_order'])
+
     return {**operations, **params}
 
 
