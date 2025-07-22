@@ -419,21 +419,38 @@ def randomize_function_params():
     return {**operations, **params}
 
 
-def generate_image_data(width, height, time_val, params):
+def generate_image_data(width, height, time_val, params, full_width=None, full_height=None):
     """
     Generate image data for visualization.
     
     Args:
-        width: image width
-        height: image height
+        width: sample width (may be reduced for speed)
+        height: sample height (may be reduced for speed)
         time_val: current time value for animation
         params: function parameters
+        full_width: actual display width (default: width)
+        full_height: actual display height (default: height)
         
     Returns:
         RGB image array
     """
-    x = np.arange(width)[:, None] * np.ones((1, height), dtype=np.float32)
-    y = np.arange(height)[None, :] * np.ones((width, 1), dtype=np.float32)
+    if full_width is None:
+        full_width = width
+    if full_height is None:
+        full_height = height
+    
+    # Calculate step sizes to sample within full coordinate system
+    step_x = max(1, full_width) / max(1, width)
+    step_y = max(1, full_height) / max(1, height)
+    
+    # Create coordinate arrays that span the full viewport
+    x_start = step_x * 0.5  # Center samples in pixels
+    x_end = full_width - x_start
+    y_start = step_y * 0.5
+    y_end = full_height - y_start
+    
+    x = np.arange(width)[:, None] * step_x + x_start
+    y = np.arange(height)[None, :] * step_y + y_start
     
     colors = compute_function(x, y, time_val, params)
     return np.transpose(colors, (1, 0, 2))

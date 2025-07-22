@@ -67,24 +67,26 @@ class Visualizer:
         
         
     def generate_image(self):
-        # Calculate scaled dimensions based on visual fidelity
-        scale_factor = self.visual_fidelity / 100.0
-        scaled_width = max(1, int(self.width * scale_factor))
-        scaled_height = max(1, int(self.height * scale_factor))
+        # Use full viewport dimensions
+        full_width = self.width
+        full_height = self.height
         
-        # Generate image at reduced resolution
-        img_array = generate_image_data(scaled_width, scaled_height, self.time_val, self.random_params).get()
+        # Calculate reduced sample count based on fidelity
+        scale_factor = self.visual_fidelity / 100.0
+        sample_width = max(1, int(full_width * scale_factor))
+        sample_height = max(1, int(full_height * scale_factor))
+        
+        # Generate image at reduced resolution but with full coordinate system
+        img_array = generate_image_data(sample_width, sample_height, self.time_val, self.random_params, full_width, full_height).get()
         
         # Apply brightness adjustment
         img_array = img_array.astype(np.float32) * self.brightness
         img_array = np.clip(img_array, 0, 255).astype(np.uint8)
             
-        # Create PIL image from array
+        # Create PIL image from array and stretch to viewport
         img = Image.fromarray(img_array, 'RGB')
-        
-        # Stretch the reduced image to fill the viewport
-        if scaled_width != self.width or scaled_height != self.height:
-            img = img.resize((self.width, self.height), Image.Resampling.NEAREST)
+        if sample_width != full_width or sample_height != full_height:
+            img = img.resize((full_width, full_height), Image.Resampling.NEAREST)
         
         return ImageTk.PhotoImage(img)
         
