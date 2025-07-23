@@ -182,8 +182,8 @@ def compute_function(x, y, time_val, params):
         elif op == 'use_abs':
             # Absolute value transformations with time-based modulation
             time_abs = time_val * params['abs_time_speed']
-            abs_wave1 = np.abs(np.sin(x * params['abs_freq_x'] + time_abs))
-            abs_wave2 = np.abs(np.cos(y * params['abs_freq_y'] + time_abs * 0.7))
+            abs_wave1 = np.abs(np.sin(x * params['abs_freq_x'] * np.sin(time_abs/10)))
+            abs_wave2 = np.abs(np.cos(y * params['abs_freq_y'] * np.cos(time_abs/10) * 0.7))
             
             # Create rich patterns through absolute value combinations
             abs_combo = abs_wave1 * abs_wave2 + np.abs(abs_wave1 - abs_wave2)
@@ -403,7 +403,7 @@ def randomize_function_params():
     
     # Fill remaining operations (8-12 total active operations)
     remaining_ops = [op for op in all_operations if op not in operations]
-    ops_to_select = random.randint(4, 6)
+    ops_to_select = random.randint(2, 8)
     additional_ops = random.sample(remaining_ops, k=ops_to_select)
     operations.update({op: True for op in additional_ops})
     # testing
@@ -440,11 +440,8 @@ def randomize_function_params():
         'wave1_freq': random.choice([0.618, 1.0, 1.618, 2.5, 3.14, 4.2, 5.8]),  # More frequency options
         'wave2_freq': random.choice([0.618, 1.0, 1.618, 2.5, 3.14, 4.2, 5.8]),
         'wave1_mult': random.uniform(50, 300),  # Broader range for larger patterns
-        'wave2_mult': random.uniform(50, 300),
         'wave1_translate_x': random.uniform(-100, 100),  # Translation parameters for wave 1
         'wave1_translate_y': random.uniform(-100, 100),
-        'wave2_translate_x': random.uniform(-100, 100),  # Translation parameters for wave 2
-        'wave2_translate_y': random.uniform(-100, 100),
 
         'time_speed': random.uniform(0.2, 3.0),  # More balanced speed range
         'time_translate_x': random.uniform(-50, 50),  # Time-based translation speed
@@ -490,19 +487,19 @@ def randomize_function_params():
         'noise_time_speed': random.uniform(0.1, 1.0),  # Noise animation speed
         'noise_octaves': random.randint(3, 6),       # Noise complexity levels
 
-        'abs_strength': random.uniform(0.5, 2.5),     # Absolute value strength
+        'abs_strength': random.uniform(0.5, 1.0),     # Absolute value strength
         'abs_freq_x': random.choice([0.01, 0.02, 0.05, 0.1]),  # X frequency
         'abs_freq_y': random.choice([0.01, 0.02, 0.05, 0.1]),  # Y frequency
         'abs_freq_xy': random.choice([0.01, 0.02, 0.05]),  # Combined frequency
         'abs_time_speed': random.uniform(0.2, 2.0),   # Animation speed
 
-        'power_strength': random.uniform(0.4, 2.0),   # Power function strength
+        'power_strength': random.uniform(0.5, 1.0),   # Power function strength
         'power_exponent': random.uniform(0.5, 6.0),   # Power exponent
         'power_freq_x': random.choice([0.01, 0.02, 0.05, 0.1]),  # X frequency for power base
         'power_freq_y': random.choice([0.01, 0.02, 0.05, 0.1]),  # Y frequency for power base
         'power_time_speed': random.uniform(0.2, 1.8),  # Power animation speed
         'power_exp_mod_freq': random.uniform(0.1, 1.0),  # Exponent modulation frequency
-        'power_exponent': random.uniform(0.5, 6.0),  # Wider range
+        'power_exponent': random.uniform(0.5, 3.0),  # Wider range
         
         # Feedback loop parameters
         'feedback_strength': random.uniform(0.95, 0.99),  # How strongly feedback is mixed with new frame
