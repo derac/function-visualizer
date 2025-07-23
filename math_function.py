@@ -252,7 +252,7 @@ def compute_function(x, y, time_val, params):
             
             # Normalize and scale the distance field
             voronoi_norm = voronoi_distances * voronoi_scale
-            combined = combined + voronoi_norm * 150 * voronoi_strength
+            combined = combined + voronoi_norm * 50 * voronoi_strength
     
     # Smooth color remapping using sigmoid-like functions
     # Normalize combined values and apply smooth transformation
@@ -518,8 +518,8 @@ def randomize_function_params():
         'feedback_color_shift': random.uniform(-0.1, 0.1),  # Color shift strength
         
         # Voronoi/cellular distance field parameters
-        'voronoi_points': random.randint(3, 12),  # Number of Voronoi seed points
-        'voronoi_strength': random.uniform(0.5, 2.5),  # Voronoi pattern strength
+        'voronoi_points': random.randint(7, 12),  # Number of Voronoi seed points
+        'voronoi_strength': random.uniform(0.3, 0.8),  # Voronoi pattern strength
         'voronoi_scale': random.uniform(0.01, 0.1),  # Distance scaling factor
         
         'function_order': enabled_ops,  # Store the order for consistent application
