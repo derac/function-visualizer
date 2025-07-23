@@ -95,7 +95,7 @@ def compute_function(x, y, time_val, params):
             rot_y = morph_x * np.sin(rot_angle) + morph_y * np.cos(rot_angle)
             
             # Clean XOR with morphing
-            xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(2 ** (np.sin(time_val/5) + 2))
+            xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & 4
 
             # Gentle intensity modulation
             intensity = 0.8 + 0.2 * np.sin(time_val * 0.05 + (rot_x + rot_y) * 0.001)
@@ -505,8 +505,8 @@ def randomize_function_params():
         'power_exponent': random.uniform(0.5, 6.0),  # Wider range
         
         # Feedback loop parameters
-        'feedback_strength': random.uniform(0.97, 0.99),  # How strongly feedback is mixed with new frame
-        'feedback_decay': random.uniform(0.0, 1.0),  # How quickly old frames decay influence
+        'feedback_strength': random.uniform(0.95, 0.99),  # How strongly feedback is mixed with new frame
+        'feedback_decay': random.uniform(0.5, 1.0),  # How quickly old frames decay influence
         'feedback_zoom_speed': random.uniform(2.0, 5.0),  # Speed of zoom transformation on feedback
         'feedback_zoom_freq': random.uniform(0.05, 0.3),  # Frequency of zoom oscillation
         'feedback_zoom_amp': random.uniform(0.02, 0.15),  # Amplitude of zoom oscillation
@@ -519,7 +519,7 @@ def randomize_function_params():
         
         # Voronoi/cellular distance field parameters
         'voronoi_points': random.randint(7, 12),  # Number of Voronoi seed points
-        'voronoi_strength': random.uniform(0.3, 0.8),  # Voronoi pattern strength
+        'voronoi_strength': random.uniform(0.4, 0.6),  # Voronoi pattern strength
         'voronoi_scale': random.uniform(0.01, 0.1),  # Distance scaling factor
         
         'function_order': enabled_ops,  # Store the order for consistent application
