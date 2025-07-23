@@ -100,7 +100,7 @@ def compute_function(x, y, time_val, params):
             rot_y = morph_x * np.sin(rot_angle) + morph_y * np.cos(rot_angle)
             
             # Clean XOR with morphing
-            xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(2 ** (np.sin(time_val/5) + 3))
+            xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & int(2 ** (np.sin(time_val/5) + 2))
 
             # Gentle intensity modulation
             intensity = 0.8 + 0.2 * np.sin(time_val * 0.05 + (rot_x + rot_y) * 0.001)
