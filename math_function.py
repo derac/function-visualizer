@@ -113,12 +113,6 @@ def compute_function(x, y, time_val, params):
         elif op == 'use_cos':
             combined = combined + wave2 * 200
         
-        elif op == 'use_addition':
-            if params['use_sin']:
-                combined = combined + wave1 * 150
-            if params['use_cos']:
-                combined = combined + wave2 * 150
-        
         elif op == 'use_cellular':
             time_cellular = time_val * params['cellular_time_translate']
             grid_x = ((x + time_cellular * 5) / params['cellular_scale']).astype(int)
@@ -374,7 +368,7 @@ def compute_feedback_values(x, y, time_val, params):
 def randomize_function_params():
     """Generate new random parameters for the mathematical function."""
     # Expanded operations list with more function types
-    all_operations = ['use_sin', 'use_cos', 'use_xor', 'use_addition', 
+    all_operations = ['use_sin', 'use_cos', 'use_xor', 
                      'use_cellular', 'use_domain_warp', 'use_polar',
                      'use_noise', 'use_abs', 'use_power', 'use_feedback']
     
@@ -387,7 +381,7 @@ def randomize_function_params():
     additional_ops = random.sample(remaining_ops, k=ops_to_select)
     operations.update({op: True for op in additional_ops})
     # testing
-    #operations = {'use_abs':True,'use_feedback': True}
+    operations = {'use_noise': True, 'use_sin':True, 'use_cos':True}
     
     # Ensure all operations are in the dict
     for op in all_operations:
@@ -424,22 +418,23 @@ def randomize_function_params():
         'wave1_translate_y': random.uniform(-100, 100),
         'wave2_translate_x': random.uniform(-100, 100),  # Translation parameters for wave 2
         'wave2_translate_y': random.uniform(-100, 100),
-        'mod_factor': random.uniform(20, 800),  # Extended range
+
+        'time_speed': random.uniform(0.2, 3.0),  # More balanced speed range
+        'time_translate_x': random.uniform(-50, 50),  # Time-based translation speed
+        'time_translate_y': random.uniform(-50, 50),
+        'time_warp_factor': random.uniform(0.5, 2.0),  # Time warping for phase modulation
+
         'xor_strength': random.uniform(1.0, 10.0),  # Higher impact
         'xor_translate_x': random.uniform(0.2, 1.5),  # Time-based translation speed for XOR
         'xor_translate_y': random.uniform(0.1, 1.0),
         'xor_translate_range': random.uniform(20, 100),  # Translation range for XOR
         'xor_morph_speed': random.uniform(0.1, 0.5),  # Morphing speed for XOR shape
-        'time_speed': random.uniform(0.2, 3.0),  # More balanced speed range
-        'time_translate_x': random.uniform(-50, 50),  # Time-based translation speed
-        'time_translate_y': random.uniform(-50, 50),
-        'time_warp_factor': random.uniform(0.5, 2.0),  # Time warping for phase modulation
-        'power_exponent': random.uniform(0.5, 6.0),  # Wider range
+
         'cellular_scale': random.uniform(1.0, 20.0),  # Better cellular resolution
         'cellular_time_translate': random.uniform(-2.0, 2.0),  # Cellular pattern translation over time
+
         'domain_warp_strength': random.uniform(15.0, 30.0),  # Stronger warping
         'domain_warp_time_factor': random.uniform(0.3, 2.0),  # How warping changes with time
-        'function_order': enabled_ops,  # Store the order for consistent application
 
         'color_red_mult': color_scheme['red'],
         'color_green_mult': color_scheme['green'],
@@ -480,6 +475,7 @@ def randomize_function_params():
         'power_freq_y': random.choice([0.01, 0.02, 0.05, 0.1]),  # Y frequency for power base
         'power_time_speed': random.uniform(0.2, 1.8),  # Power animation speed
         'power_exp_mod_freq': random.uniform(0.1, 1.0),  # Exponent modulation frequency
+        'power_exponent': random.uniform(0.5, 6.0),  # Wider range
         
         # Feedback loop parameters
         'feedback_strength': random.uniform(0.3, 0.9),  # How strongly feedback is mixed with new frame
@@ -493,6 +489,8 @@ def randomize_function_params():
         'feedback_pan_range': random.uniform(10, 80),  # Maximum panning distance
         'feedback_mod_freq': random.uniform(0.02, 0.1),  # Modulation frequency
         'feedback_color_shift': random.uniform(-0.2, 0.2),  # Color shift strength
+        
+        'function_order': enabled_ops,  # Store the order for consistent application
     }
 
     print(params['function_order'])
