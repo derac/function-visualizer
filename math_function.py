@@ -38,9 +38,7 @@ def compute_function(x, y, time_val, params):
         params = randomize_function_params()
     
     # Add time-based modulation to all parameters
-    time_mod = np.sin(time_val * 0.2) * 0.3 + np.cos(time_val * 0.15) * 0.2
     wave1_mult = params['wave1_mult'] * (1 + 0.3 * np.sin(time_val * 0.15))
-    wave2_mult = params['wave2_mult'] * (1 + 0.3 * np.cos(time_val * 0.12))
     domain_warp_strength = params['domain_warp_strength'] * (1 + 0.4 * np.sin(time_val * 0.25))
     
     # Ensure x and y are arrays
@@ -50,13 +48,10 @@ def compute_function(x, y, time_val, params):
     # Apply time-based translations
     time_offset_x = time_val * params['time_translate_x']
     time_offset_y = time_val * params['time_translate_y']
-    time_warp = time_val * params['time_warp_factor']
     
     # Apply wave translations with time evolution
     wave1_offset_x = time_offset_x + params['wave1_translate_x']
     wave1_offset_y = time_offset_y + params['wave1_translate_y']
-    wave2_offset_x = time_offset_x + params['wave2_translate_x']
-    wave2_offset_y = time_offset_y + params['wave2_translate_y']
     
     # Normalize with time-based scaling and translations
     x_normalized = (x - wave1_offset_x) / wave1_mult
@@ -226,6 +221,38 @@ def compute_function(x, y, time_val, params):
             if feedback_state.previous_frame is not None:
                 feedback_values = compute_feedback_values(x, y, time_val, params)
                 combined = combined + feedback_values * 150
+        
+        elif op == 'use_voronoi':
+            # Voronoi distance field - random points used as seeds
+            num_points = params.get('voronoi_points', 8)
+            voronoi_strength = params.get('voronoi_strength', 1.0)
+            voronoi_scale = params.get('voronoi_scale', 1.0)
+            
+            # Generate random seed points if not already generated
+            if 'voronoi_seeds' not in params:
+                # Create random seed points within coordinate bounds
+                x_bounds = x.max() - x.min()
+                y_bounds = y.max() - y.min()
+                seeds_x = np.random.uniform(x.min(), x.max(), num_points)
+                seeds_y = np.random.uniform(y.min(), y.max(), num_points)
+                params['voronoi_seeds'] = list(zip(seeds_x, seeds_y))
+            else:
+                params['voronoi_seeds'] = [[
+                        seeds_x + 10*(random.randint(0,4)-2)*(time_val - feedback_state.time_sum),
+                        seeds_y + 10*(random.randint(0,4)-2)*(time_val - feedback_state.time_sum)
+                    ] for (seeds_x, seeds_y) in params['voronoi_seeds']]
+            
+            # Calculate distance to nearest seed point
+            voronoi_distances = np.inf * np.ones_like(x)
+            
+            for seed_x, seed_y in params['voronoi_seeds']:
+                # Calculate Euclidean distance to this seed
+                distance = np.sqrt((x - seed_x)**2 + (y - seed_y)**2)
+                voronoi_distances = np.minimum(voronoi_distances, distance)
+            
+            # Normalize and scale the distance field
+            voronoi_norm = voronoi_distances * voronoi_scale
+            combined = combined + voronoi_norm * 150 * voronoi_strength
     
     # Smooth color remapping using sigmoid-like functions
     # Normalize combined values and apply smooth transformation
@@ -240,7 +267,6 @@ def compute_function(x, y, time_val, params):
     
     # Create smooth color flows using multiple overlapping waves
     time_factor = time_val * 0.1
-    phase_shift = combined_smooth * 2 * np.pi
     time_warped = time_val * params.get('time_warp_factor', 1.0)
     
     # Create continuous color gradients using smooth trigonometric functions
@@ -370,7 +396,7 @@ def randomize_function_params():
     # Expanded operations list with more function types
     all_operations = ['use_sin', 'use_cos', 'use_xor', 
                      'use_cellular', 'use_domain_warp', 'use_polar',
-                     'use_noise', 'use_abs', 'use_power', 'use_feedback']
+                     'use_noise', 'use_abs', 'use_power', 'use_feedback', 'use_voronoi']
     
     # Create initial operations dict with deterministic/randomized selection
     operations = {}
@@ -381,7 +407,7 @@ def randomize_function_params():
     additional_ops = random.sample(remaining_ops, k=ops_to_select)
     operations.update({op: True for op in additional_ops})
     # testing
-    #operations = {'use_noise': True, 'use_sin':True, 'use_cos':True}
+    operations = {'use_voronoi': True}#, 'use_abs':True}#, 'use_sin':True, 'use_cos':True}
     #operations.update({'use_feedback':True})
     
     # Ensure all operations are in the dict
@@ -490,6 +516,11 @@ def randomize_function_params():
         'feedback_pan_range': random.uniform(10, 80),  # Maximum panning distance
         'feedback_mod_freq': random.uniform(0.02, 0.1),  # Modulation frequency
         'feedback_color_shift': random.uniform(-0.1, 0.1),  # Color shift strength
+        
+        # Voronoi/cellular distance field parameters
+        'voronoi_points': random.randint(3, 12),  # Number of Voronoi seed points
+        'voronoi_strength': random.uniform(0.5, 2.5),  # Voronoi pattern strength
+        'voronoi_scale': random.uniform(0.01, 0.1),  # Distance scaling factor
         
         'function_order': enabled_ops,  # Store the order for consistent application
     }
