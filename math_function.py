@@ -119,10 +119,10 @@ def compute_function(x, y, time_val, params):
             animated_strength = domain_warp_strength * (1 + 0.3 * np.sin(time_val * params['domain_warp_time_factor']))
             time_phase = time_val * 0.5
             warped_x = (x + animated_strength * np.sin(y * 0.1 + time_phase + 
-                                                    np.sin(time_phase * 2) * 0.5))/(3*np.sin(time_val/10)+4)
+                                                    np.sin(time_phase * 2) * 0.5))/(3*np.sin(time_val)+4)
             warped_y = (y + animated_strength * np.cos(x * 0.1 + time_phase * 0.7 + 
-                                                    np.sin(time_phase * 1.5) * 0.3))/(3*np.sin(time_val/10)+4)
-            combined = combined + np.sin(warped_x) * np.cos(warped_y) * 50
+                                                    np.sin(time_phase * 1.5) * 0.3))/(3*np.sin(time_val)+4)
+            combined = combined + np.sin(warped_x) * np.cos(warped_y) * 25
         
         elif op == 'use_polar':
             # Calculate polar coordinates with time evolution
@@ -457,7 +457,7 @@ def randomize_function_params():
         'cellular_scale': random.uniform(1.0, 20.0),  # Better cellular resolution
         'cellular_time_translate': random.uniform(-2.0, 2.0),  # Cellular pattern translation over time
 
-        'domain_warp_strength': random.uniform(15.0, 30.0),  # Stronger warping
+        'domain_warp_strength': random.uniform(15.0, 60.0),  # Stronger warping
         'domain_warp_time_factor': random.uniform(0.3, 2.0),  # How warping changes with time
 
         'color_red_mult': color_scheme['red'],
