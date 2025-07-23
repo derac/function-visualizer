@@ -280,7 +280,7 @@ def compute_function(x, y, time_val, params):
     feedback_state.previous_frame = final_colors
     feedback_state.time_sum = time_val
     
-    return colors.astype(np.uint8)
+    return colors.astype(np.float32)
 
 
 def compute_feedback_values(x, y, time_val, params):
@@ -382,6 +382,7 @@ def randomize_function_params():
     operations.update({op: True for op in additional_ops})
     # testing
     #operations = {'use_noise': True, 'use_sin':True, 'use_cos':True}
+    #operations.update({'use_feedback':True})
     
     # Ensure all operations are in the dict
     for op in all_operations:
@@ -478,17 +479,17 @@ def randomize_function_params():
         'power_exponent': random.uniform(0.5, 6.0),  # Wider range
         
         # Feedback loop parameters
-        'feedback_strength': random.uniform(0.3, 0.9),  # How strongly feedback is mixed with new frame
-        'feedback_decay': random.uniform(0.95, 0.999),  # How quickly old frames decay influence
-        'feedback_zoom_speed': random.uniform(0, 0.2),  # Speed of zoom transformation on feedback
+        'feedback_strength': random.uniform(0.97, 0.99),  # How strongly feedback is mixed with new frame
+        'feedback_decay': random.uniform(0.0, 1.0),  # How quickly old frames decay influence
+        'feedback_zoom_speed': random.uniform(2.0, 5.0),  # Speed of zoom transformation on feedback
         'feedback_zoom_freq': random.uniform(0.05, 0.3),  # Frequency of zoom oscillation
         'feedback_zoom_amp': random.uniform(0.02, 0.15),  # Amplitude of zoom oscillation
         'feedback_rotation_speed': random.uniform(-0.1, 0.1),  # Rotation speed of feedback frame
-        'feedback_pan_x_speed': random.uniform(0, 0.01),  # Horizontal panning speed
-        'feedback_pan_y_speed': random.uniform(0, 0.01),  # Vertical panning speed
+        'feedback_pan_x_speed': random.uniform(0, 0.5),  # Horizontal panning speed
+        'feedback_pan_y_speed': random.uniform(0, 0.5),  # Vertical panning speed
         'feedback_pan_range': random.uniform(10, 80),  # Maximum panning distance
         'feedback_mod_freq': random.uniform(0.02, 0.1),  # Modulation frequency
-        'feedback_color_shift': random.uniform(-0.2, 0.2),  # Color shift strength
+        'feedback_color_shift': random.uniform(-0.1, 0.1),  # Color shift strength
         
         'function_order': enabled_ops,  # Store the order for consistent application
     }
