@@ -381,7 +381,7 @@ def randomize_function_params():
     additional_ops = random.sample(remaining_ops, k=ops_to_select)
     operations.update({op: True for op in additional_ops})
     # testing
-    operations = {'use_noise': True, 'use_sin':True, 'use_cos':True}
+    #operations = {'use_noise': True, 'use_sin':True, 'use_cos':True}
     
     # Ensure all operations are in the dict
     for op in all_operations:
