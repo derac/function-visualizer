@@ -95,7 +95,7 @@ def compute_function(x, y, time_val, params):
             rot_y = morph_x * np.sin(rot_angle) + morph_y * np.cos(rot_angle)
             
             # Clean XOR with morphing
-            xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & 4
+            xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & 2 ** (int(np.sin(time_val/10)*(2/3))+2)
 
             # Gentle intensity modulation
             intensity = 0.8 + 0.2 * np.sin(time_val * 0.05 + (rot_x + rot_y) * 0.001)
@@ -403,7 +403,7 @@ def randomize_function_params():
     
     # Fill remaining operations (8-12 total active operations)
     remaining_ops = [op for op in all_operations if op not in operations]
-    ops_to_select = random.randint(2, 8)
+    ops_to_select = random.randint(3, 9)
     additional_ops = random.sample(remaining_ops, k=ops_to_select)
     operations.update({op: True for op in additional_ops})
     # testing
