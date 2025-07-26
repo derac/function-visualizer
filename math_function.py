@@ -258,7 +258,7 @@ def compute_function(x, y, time_val, params):
             # Reaction-diffusion using Gray-Scott model with previous frame
             if feedback_state.previous_frame is not None:
                 reaction_diffusion_values = compute_reaction_diffusion(x, y, time_val, params)
-                combined = combined + reaction_diffusion_values * 50
+                combined = combined + reaction_diffusion_values * 100
     
     # Smooth color remapping using sigmoid-like functions
     # Normalize combined values and apply smooth transformation
@@ -400,6 +400,7 @@ def compute_feedback_values(x, y, time_val, params):
 def compute_reaction_diffusion(x, y, time_val, params):
     """
     Compute reaction-diffusion patterns using Gray-Scott model with previous frame.
+    Enhanced to reduce strobing and color flickering.
     
     Args:
         x: x-coordinates array
@@ -433,71 +434,79 @@ def compute_reaction_diffusion(x, y, time_val, params):
     current_frame = feedback_state.previous_frame[y_int, x_int]
     
     # Convert to grayscale for chemical concentrations
-    # Treat as concentration A (activator)
-    A = 0.299 * current_frame[..., 0] + 0.587 * current_frame[..., 1] + 0.114 * current_frame[..., 2]
-    A = np.clip(A, 0, 1)
+    # Reduce sensitivity by using slower saturation conversion
+    A = (0.299 * current_frame[..., 0] + 0.587 * current_frame[..., 1] + 0.114 * current_frame[..., 2])
+    A = np.clip(A * 0.85, 0.05, 0.95)  # Limit range to avoid extreme values
     
-    # Create inhibitor concentration B
-    # Using complement of A with some modulation
+    # Create inhibitor concentration B with smoother transitions
     B = 1.0 - A
+    # Add slight noise to prevent flat areas
+    noise_scale = 0.05
+    B += np.random.normal(0, noise_scale, B.shape) * 0.01  # Very subtle noise
+    B = np.clip(B, 0.05, 0.95)
     
-    # Parameters for Gray-Scott model
+    # Use more stable parameters
     diffusion_a = params.get('reaction_diffusion_diffusion_a', 1.0)
     diffusion_b = params.get('reaction_diffusion_diffusion_b', 0.5)
     feed_rate = params.get('reaction_diffusion_feed_rate', 0.055)
     kill_rate = params.get('reaction_diffusion_kill_rate', 0.062)
-    dt = params.get('reaction_diffusion_dt', 0.1)
+    dt = params.get('reaction_diffusion_dt', 0.02)  # Smaller time step for stability
     
-    # Apply time-based modulation to parameters
-    time_factor = np.sin(time_val * 0.1) * 0.2
-    feed_rate = np.clip(feed_rate + time_factor * 0.01, 0.03, 0.08)
-    kill_rate = np.clip(kill_rate + time_factor * 0.01, 0.05, 0.08)
+    # Drastically reduce time-based modulation to prevent strobing
+    # Max change of ±1% over a full cycle
+    time_factor = np.sin(time_val * 0.02) * 0.002  # Much slower and smaller changes
+    feed_rate = np.clip(feed_rate + time_factor, 0.054, 0.056)
+    kill_rate = np.clip(kill_rate + time_factor, 0.061, 0.063)
     
-    # Finite difference gradients (Laplacian)
-    # Create padded arrays for boundary handling
+    # Finite difference gradients (Laplacian) with smoother boundary handling
     padded_a = np.pad(A, 1, mode='edge')
     padded_b = np.pad(B, 1, mode='edge')
     
-    # Laplacian operator (5-point stencil)
+    # Use more stable Laplacian calculation
     laplacian_a = (
         padded_a[2:, 1:-1] + padded_a[:-2, 1:-1] +
         padded_a[1:-1, 2:] + padded_a[1:-1, :-2] -
         4 * padded_a[1:-1, 1:-1]
-    )
+    ) * 0.25  # Scale for stability
     
     laplacian_b = (
         padded_b[2:, 1:-1] + padded_b[:-2, 1:-1] +
         padded_b[1:-1, 2:] + padded_b[1:-1, :-2] -
         4 * padded_b[1:-1, 1:-1]
-    )
+    ) * 0.25
     
-    # Gray-Scott reaction equations
-    reaction = A * B * B
+    # Gray-Scott reaction equations with milder interaction
+    reaction = A * B * B * 0.8  # Scale down reaction rate
     
-    # Update concentrations
+    # Update concentrations with conservative changes
     dA = (diffusion_a * laplacian_a) - reaction + feed_rate * (1 - A)
     dB = (diffusion_b * laplacian_b) + reaction - (kill_rate + feed_rate) * B
     
+    # Apply gradual changes
     new_A = A + dt * dA
     new_B = B + dt * dB
     
-    # Clip to valid range
-    new_A = np.clip(new_A, 0, 1)
-    new_B = np.clip(new_B, 0, 1)
+    # Clip to stable range with buffer
+    new_A = np.clip(new_A, 0.1, 0.9)
+    new_B = np.clip(new_B, 0.1, 0.9)
     
-    # Calculate reaction-diffusion output
-    # Combine activator and inhibitor to create patterns
+    # Calculate reaction-diffusion output with smooth transitions
     rd_output = new_A - new_B
     
-    # Scale and normalize for visual output
-    rd_normalized = (rd_output - rd_output.mean()) / (rd_output.std() + 1e-8)
-    rd_scaled = 0.5 + rd_normalized * 0.5  # Map to [0, 1]
+    # Use percentile-based normalization to avoid outliers causing flashing
+    # Compute more stable normalization
+    percentiles = np.percentile(rd_output, [15, 85])  # Use inner 70% range
+    rd_clipped = np.clip(rd_output, percentiles[0], percentiles[1])
     
-    # Apply additional modulation
-    pattern_scale = params.get('reaction_diffusion_scale', 1.0)
-    time_modulation = 1.0 + 0.2 * np.sin(time_val * 0.05)
+    # Gentle mapping to visual range
+    rd_normalized = (rd_clipped - percentiles[0]) / (percentiles[1] - percentiles[0] + 1e-8)
+    rd_mapped = rd_normalized * 0.8 + 0.1  # Map to [0.1, 0.9]
     
-    final_output = rd_scaled * pattern_scale * time_modulation
+    # Very subtle temporal modulation
+    pattern_scale = params.get('reaction_diffusion_scale', 0.8) * 0.85  # Reduce intensity
+    time_modulation = 1.0 + 0.05 * np.sin(time_val * 0.01)  # Much slower, smaller modulation
+    
+    final_output = rd_mapped * pattern_scale * time_modulation
     
     return final_output
 
@@ -514,12 +523,12 @@ def randomize_function_params():
     
     # Fill remaining operations (8-12 total active operations)
     remaining_ops = [op for op in all_operations if op not in operations]
-    ops_to_select = random.randint(3, 6)
+    ops_to_select = random.randint(4, 6)
     additional_ops = random.sample(remaining_ops, k=ops_to_select)
     operations.update({op: True for op in additional_ops})
     # testing
     #operations = {'use_voronoi': True}#, 'use_abs':True}#, 'use_sin':True, 'use_cos':True}
-    operations.update({'use_reaction_diffusion':True})
+    #operations.update({'use_reaction_diffusion':True})
     
     # Ensure all operations are in the dict
     for op in all_operations:
@@ -630,13 +639,13 @@ def randomize_function_params():
         'voronoi_strength': random.uniform(0.4, 0.6),  # Voronoi pattern strength
         'voronoi_scale': random.uniform(0.01, 0.1),  # Distance scaling factor
         
-        # Reaction-diffusion parameters
-        'reaction_diffusion_diffusion_a': random.uniform(0.8, 1.2),  # Diffusion rate for activator A
-        'reaction_diffusion_diffusion_b': random.uniform(0.3, 0.7),  # Diffusion rate for inhibitor B
-        'reaction_diffusion_feed_rate': random.uniform(0.05, 0.06),  # Feed rate for system
-        'reaction_diffusion_kill_rate': random.uniform(0.05, 0.07),  # Kill rate for system
-        'reaction_diffusion_dt': random.uniform(0.05, 0.15),        # Time step for simulation
-        'reaction_diffusion_scale': random.uniform(0.8, 1.2),      # Visual scaling factor
+        # Reaction-diffusion parameters - more stable values to prevent strobing
+        'reaction_diffusion_diffusion_a': 1.0,  # Fixed stable value
+        'reaction_diffusion_diffusion_b': 0.5,  # Fixed stable value
+        'reaction_diffusion_feed_rate': 0.055,  # Fixed for stable patterns
+        'reaction_diffusion_kill_rate': 0.062,  # Fixed for stable patterns
+        'reaction_diffusion_dt': 0.02,          # Small fixed step for stability
+        'reaction_diffusion_scale': 0.7,        # Lower intensity for smooth patterns
         
         'function_order': enabled_ops,  # Store the order for consistent application
     }
