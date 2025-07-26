@@ -253,6 +253,12 @@ def compute_function(x, y, time_val, params):
             # Normalize and scale the distance field
             voronoi_norm = voronoi_distances * voronoi_scale
             combined = combined + voronoi_norm * 50 * voronoi_strength
+
+        elif op == 'use_reaction_diffusion':
+            # Reaction-diffusion using Gray-Scott model with previous frame
+            if feedback_state.previous_frame is not None:
+                reaction_diffusion_values = compute_reaction_diffusion(x, y, time_val, params)
+                combined = combined + reaction_diffusion_values * 50
     
     # Smooth color remapping using sigmoid-like functions
     # Normalize combined values and apply smooth transformation
@@ -391,10 +397,115 @@ def compute_feedback_values(x, y, time_val, params):
     return effective_feedback
 
 
+def compute_reaction_diffusion(x, y, time_val, params):
+    """
+    Compute reaction-diffusion patterns using Gray-Scott model with previous frame.
+    
+    Args:
+        x: x-coordinates array
+        y: y-coordinates array
+        time_val: current time value for animation
+        params: function parameters
+        
+    Returns:
+        Reaction-diffusion values array to be added to current frame computation
+    """
+    if feedback_state.previous_frame is None:
+        return np.zeros_like(x)
+    
+    # Get dimensions and create coordinate mapping
+    prev_height, prev_width = feedback_state.previous_frame.shape[:2]
+    
+    # Map current coordinates to previous framebuffer coordinates
+    x_range = x.max() - x.min()
+    y_range = y.max() - y.min()
+    
+    x_norm = (x - x.min()) / (x_range + 1e-8)
+    y_norm = (y - y.min()) / (y_range + 1e-8)
+    
+    x_prev = np.clip(x_norm * (prev_width - 1), 0, prev_width - 1)
+    y_prev = np.clip(y_norm * (prev_height - 1), 0, prev_height - 1)
+    
+    x_int = x_prev.astype(int)
+    y_int = y_prev.astype(int)
+    
+    # Extract previous frame data
+    current_frame = feedback_state.previous_frame[y_int, x_int]
+    
+    # Convert to grayscale for chemical concentrations
+    # Treat as concentration A (activator)
+    A = 0.299 * current_frame[..., 0] + 0.587 * current_frame[..., 1] + 0.114 * current_frame[..., 2]
+    A = np.clip(A, 0, 1)
+    
+    # Create inhibitor concentration B
+    # Using complement of A with some modulation
+    B = 1.0 - A
+    
+    # Parameters for Gray-Scott model
+    diffusion_a = params.get('reaction_diffusion_diffusion_a', 1.0)
+    diffusion_b = params.get('reaction_diffusion_diffusion_b', 0.5)
+    feed_rate = params.get('reaction_diffusion_feed_rate', 0.055)
+    kill_rate = params.get('reaction_diffusion_kill_rate', 0.062)
+    dt = params.get('reaction_diffusion_dt', 0.1)
+    
+    # Apply time-based modulation to parameters
+    time_factor = np.sin(time_val * 0.1) * 0.2
+    feed_rate = np.clip(feed_rate + time_factor * 0.01, 0.03, 0.08)
+    kill_rate = np.clip(kill_rate + time_factor * 0.01, 0.05, 0.08)
+    
+    # Finite difference gradients (Laplacian)
+    # Create padded arrays for boundary handling
+    padded_a = np.pad(A, 1, mode='edge')
+    padded_b = np.pad(B, 1, mode='edge')
+    
+    # Laplacian operator (5-point stencil)
+    laplacian_a = (
+        padded_a[2:, 1:-1] + padded_a[:-2, 1:-1] +
+        padded_a[1:-1, 2:] + padded_a[1:-1, :-2] -
+        4 * padded_a[1:-1, 1:-1]
+    )
+    
+    laplacian_b = (
+        padded_b[2:, 1:-1] + padded_b[:-2, 1:-1] +
+        padded_b[1:-1, 2:] + padded_b[1:-1, :-2] -
+        4 * padded_b[1:-1, 1:-1]
+    )
+    
+    # Gray-Scott reaction equations
+    reaction = A * B * B
+    
+    # Update concentrations
+    dA = (diffusion_a * laplacian_a) - reaction + feed_rate * (1 - A)
+    dB = (diffusion_b * laplacian_b) + reaction - (kill_rate + feed_rate) * B
+    
+    new_A = A + dt * dA
+    new_B = B + dt * dB
+    
+    # Clip to valid range
+    new_A = np.clip(new_A, 0, 1)
+    new_B = np.clip(new_B, 0, 1)
+    
+    # Calculate reaction-diffusion output
+    # Combine activator and inhibitor to create patterns
+    rd_output = new_A - new_B
+    
+    # Scale and normalize for visual output
+    rd_normalized = (rd_output - rd_output.mean()) / (rd_output.std() + 1e-8)
+    rd_scaled = 0.5 + rd_normalized * 0.5  # Map to [0, 1]
+    
+    # Apply additional modulation
+    pattern_scale = params.get('reaction_diffusion_scale', 1.0)
+    time_modulation = 1.0 + 0.2 * np.sin(time_val * 0.05)
+    
+    final_output = rd_scaled * pattern_scale * time_modulation
+    
+    return final_output
+
+
 def randomize_function_params():
     """Generate new random parameters for the mathematical function."""
     # Expanded operations list with more function types
-    all_operations = ['use_sin', 'use_cos', 'use_xor', 
+    all_operations = ['use_sin', 'use_cos', 'use_xor', 'use_reaction_diffusion', 
                      'use_cellular', 'use_domain_warp', 'use_polar',
                      'use_noise', 'use_abs', 'use_power', 'use_feedback', 'use_voronoi']
     
@@ -403,12 +514,12 @@ def randomize_function_params():
     
     # Fill remaining operations (8-12 total active operations)
     remaining_ops = [op for op in all_operations if op not in operations]
-    ops_to_select = random.randint(3, 9)
+    ops_to_select = random.randint(3, 6)
     additional_ops = random.sample(remaining_ops, k=ops_to_select)
     operations.update({op: True for op in additional_ops})
     # testing
     #operations = {'use_voronoi': True}#, 'use_abs':True}#, 'use_sin':True, 'use_cos':True}
-    #operations.update({'use_feedback':True})
+    operations.update({'use_reaction_diffusion':True})
     
     # Ensure all operations are in the dict
     for op in all_operations:
@@ -518,6 +629,14 @@ def randomize_function_params():
         'voronoi_points': random.randint(7, 12),  # Number of Voronoi seed points
         'voronoi_strength': random.uniform(0.4, 0.6),  # Voronoi pattern strength
         'voronoi_scale': random.uniform(0.01, 0.1),  # Distance scaling factor
+        
+        # Reaction-diffusion parameters
+        'reaction_diffusion_diffusion_a': random.uniform(0.8, 1.2),  # Diffusion rate for activator A
+        'reaction_diffusion_diffusion_b': random.uniform(0.3, 0.7),  # Diffusion rate for inhibitor B
+        'reaction_diffusion_feed_rate': random.uniform(0.05, 0.06),  # Feed rate for system
+        'reaction_diffusion_kill_rate': random.uniform(0.05, 0.07),  # Kill rate for system
+        'reaction_diffusion_dt': random.uniform(0.05, 0.15),        # Time step for simulation
+        'reaction_diffusion_scale': random.uniform(0.8, 1.2),      # Visual scaling factor
         
         'function_order': enabled_ops,  # Store the order for consistent application
     }
