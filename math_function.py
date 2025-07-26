@@ -99,7 +99,7 @@ def compute_function(x, y, time_val, params):
 
             # Gentle intensity modulation
             intensity = 0.8 + 0.2 * np.sin(time_val * 0.05 + (rot_x + rot_y) * 0.001)
-            combined = combined + xor_mask * intensity * params['xor_strength']
+            combined = combined + xor_mask * intensity * params['xor_strength'] * 20
 
 
         elif op == 'use_sin':
@@ -176,7 +176,7 @@ def compute_function(x, y, time_val, params):
             
             # Remap noise to 0-1 range
             noise_val = (noise_val + 4) / 8.0  # Normalize based on expected range
-            combined = combined + noise_val * 200.0 * params['noise_strength']
+            combined = combined + noise_val * 100.0 * params['noise_strength']
         
         
         elif op == 'use_abs':
@@ -322,7 +322,7 @@ def compute_function(x, y, time_val, params):
             # Add subtle noise for organic texture
             noise_layer = np.sin(x_rot * 0.01 + time_liss * 0.1) * np.cos(y_rot * 0.01 + time_liss * 0.15) * 0.1
             sinusoidal_combined = (sinusoidal_pattern + noise_layer) * params['sinusoidal_strength'] * amp_mod
-            combined = combined + sinusoidal_combined * 120
+            combined = combined + sinusoidal_combined * 100
     
     # Smooth color remapping using sigmoid-like functions
     # Normalize combined values and apply smooth transformation
@@ -632,7 +632,7 @@ def randomize_function_params():
         'time_translate_y': random.uniform(-50, 50),
         'time_warp_factor': random.uniform(0.5, 2.0),  # Time warping for phase modulation
 
-        'xor_strength': random.uniform(1.0, 10.0),  # Higher impact
+        'xor_strength': random.uniform(.7,1.3),  # Higher impact
         'xor_translate_x': random.uniform(0.2, 1.5),  # Time-based translation speed for XOR
         'xor_translate_y': random.uniform(0.1, 1.0),
         'xor_translate_range': random.uniform(20, 100),  # Translation range for XOR
@@ -653,7 +653,7 @@ def randomize_function_params():
         'color_saturation': random.uniform(0.7, 1.5),  # Saturation boost
         'color_power': random.uniform(0.8, 1.4),       # Gamma-like adjustment
 
-        'polar_strength': random.uniform(0.4, 2.2),   # Polar pattern strength
+        'polar_strength': random.uniform(0.7, 1.3),   # Polar pattern strength
         'polar_freq_r': random.choice([0.01, 0.02, 0.05, 0.1]),  # Radial frequency
         'polar_freq_theta': random.choice([2, 3, 5, 8]),  # Angular frequency
         'polar_rotation_speed': random.uniform(-0.5, 0.5),  # Polar rotation speed
@@ -666,7 +666,7 @@ def randomize_function_params():
         'polar_spiral_freq': random.uniform(2, 8),      # Spiral frequency
         'polar_spiral_speed': random.uniform(0.1, 1.5),  # Spiral animation speed
 
-        'noise_strength': random.uniform(0.3, 2.0),   # Noise pattern strength
+        'noise_strength': random.uniform(0.7, 1.3),   # Noise pattern strength
         'noise_scale': random.uniform(0.005, 0.02),   # Noise frequency scale
         'noise_time_speed': random.uniform(0.1, 1.0),  # Noise animation speed
         'noise_octaves': random.randint(3, 6),       # Noise complexity levels
@@ -706,11 +706,11 @@ def randomize_function_params():
         # Sinusoidal field patterns - complex 2D field generation
         'sinusoidal_a_freq': random.choice([1.618, 2.414, 3.236, 4.236, 2.718, 3.141, 1.414]),  # Golden ratio & mathematical constants
         'sinusoidal_b_freq': random.choice([2.618, 3.414, 4.618, 5.236, 4.442, 2.449, 1.732]), # Harmonic ratios
-        'sinusoidal_phase': random.uniform(0, 4 * np.pi),     # Extended phase range
+        'sinusoidal_phase': random.uniform(4 * np.pi, 4 * np.pi),     # Extended phase range
         'sinusoidal_strength': random.uniform(0.7, 1.0),      # Stronger influence range
         'sinusoidal_time_speed': random.uniform(0.3, 1.0),   # Variable animation speeds
         'sinusoidal_phase_speed_ratio': random.uniform(0.3, 3.0), # Asymmetric phase evolution
-        'sinusoidal_scale': random.uniform(8, 25.0),        # Larger pattern range
+        'sinusoidal_scale': random.uniform(25.0, 50.0),        # Larger pattern range
         'sinusoidal_freq_mod_depth': random.uniform(0.1, 0.4), # Frequency modulation depth
         'sinusoidal_freq_mod_speed': random.uniform(0.05, 0.3), # Frequency modulation speed
         'sinusoidal_amplitude_mod': random.uniform(0.2, 0.8),# Amplitude modulation
