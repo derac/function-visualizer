@@ -335,38 +335,56 @@ def compute_function(x, y, time_val, params):
     # Apply power curve for additional color control
     adjusted = np.power(combined_smooth, params['color_power'] * 0.5 + 0.5)
     
-    # Create smooth color flows using multiple overlapping waves
-    time_factor = time_val * 0.1
+    # Create smooth color flows with more organic variation
+    time_factor = time_val * 0.08  # Slightly slower for smoother transitions
     time_warped = time_val * params.get('time_warp_factor', 1.0)
     
-    # Create continuous color gradients using smooth trigonometric functions
-    base_hue = (time_factor + combined_smooth * 6.0 + time_warped * 0.3) % 6.0
+    # More nuanced hue generation with additional harmonic layers
+    primary_hue = (time_factor + combined_smooth * 4.5 + time_warped * 0.25) % 6.0
+    secondary_hue = (time_factor * 0.7 + combined_smooth * 2.8 + time_warped * 0.15 + 2.0) % 6.0
+    tertiary_hue = (time_factor * 0.4 + combined_smooth * 1.2 + time_warped * 0.35 + 4.0) % 6.0
     
-    # Generate RGB from hue using smooth 6-segment color wheel
-    c = adjusted * params['color_saturation']
-    x = c * (1 - np.abs(np.mod(base_hue, 2) - 1))
+    # Reduced saturation for more pastel-like colors
+    base_saturation = adjusted * params['color_saturation'] * 0.6  # Reduced from 1.0 to 0.6
+    variance = np.sin(combined_smooth * 12.5) * 0.1 + 0.1
+    c = base_saturation * (0.85 + variance)  # Subtle saturation variation
     
-    # Smooth RGB transitions
-    red = np.where(base_hue < 1, c, np.where(base_hue < 2, x, np.where(base_hue < 4, 0, np.where(base_hue < 5, x, c))))
-    green = np.where(base_hue < 1, x, np.where(base_hue < 3, c, np.where(base_hue < 4, x, np.where(base_hue < 5, 0, 0))))
-    blue = np.where(base_hue < 2, 0, np.where(base_hue < 3, x, np.where(base_hue < 5, c, x)))
+    # Generate RGB from hue with white-light mixing for toned colors
+    def hue_to_rgb_soft(hue, intensity):
+        # Softer color wheel with white-light blending
+        segment = hue * params['color_hue_segments']
+        rgb_phase = segment * 2 * np.pi
+        
+        red = intensity * params['color_red_mult'] * (1 + 0.3 * np.cos(rgb_phase)) * (0.8 + 0.2 * np.sin(secondary_hue))
+        green = intensity * params['color_green_mult'] * (1 + 0.3 * np.cos(rgb_phase - 2.1)) * (0.8 + 0.2 * np.sin(tertiary_hue))
+        blue = intensity * params['color_blue_mult']  * (1 + 0.3 * np.cos(rgb_phase + 2.1)) * (0.8 + 0.2 * np.sin(primary_hue))
+        
+        return red, green, blue
     
-    # Add enhanced time-based modulation using phase parameters
-    modulation_factor = 0.15
+    red, green, blue = hue_to_rgb_soft(primary_hue, c)
+    
+    # More subtle time-based modulation with color washing effects
+    modulation_factor = 0.15  # Much gentler modulation
     phase_red = params.get('color_phase_red', 0) * np.pi / 180
     phase_green = params.get('color_phase_green', 0) * np.pi / 180
     phase_blue = params.get('color_phase_blue', 0) * np.pi / 180
     
-    mod_wave = np.sin(time_factor * 2 + combined_smooth * 4 * np.pi) * modulation_factor
+    # Create complex but subtle color variations
+    slow_mod = np.sin(time_factor * 0.8 + combined_smooth * 2 * np.pi) * modulation_factor
+    breathing = (np.sin(time_factor * 0.3) * 0.05 + 0.95)  # Gentle breathing effect
     
-    # Apply phase-shifted color modulation
-    red_mod = np.sin(time_factor * 1.7 + phase_red) * modulation_factor
-    green_mod = np.sin(time_factor * 1.9 + phase_green) * modulation_factor * 0.8
-    blue_mod = np.sin(time_factor * 2.1 + phase_blue) * modulation_factor * 1.2
+    # Apply phase-shifted color modulation with ambient light effects
+    red_mod = np.sin(time_factor * 0.7 + phase_red) * modulation_factor * 0.6
+    green_mod = np.sin(time_factor * 0.9 + phase_green) * modulation_factor * 0.8
+    blue_mod = np.sin(time_factor * 1.1 + phase_blue) * modulation_factor * 0.7
     
-    red = np.clip(red * (1 + mod_wave + red_mod) * params['color_red_mult'], 0, 1)
-    green = np.clip(green * (1 + mod_wave * 0.8 + green_mod) * params['color_green_mult'], 0, 1)
-    blue = np.clip(blue * (1 + mod_wave * 1.2 + blue_mod) * params['color_blue_mult'], 0, 1)
+    # Enhanced color multipliers with temperature variations
+    warm_base = 1 + 0.2 * np.sin(time_factor * 0.15)  # Warm-to-cool shift
+    cool_base = 1 + 0.2 * np.cos(time_factor * 0.15)
+    
+    red = np.clip(red * breathing * (1 + slow_mod * warm_base + red_mod) * params['color_red_mult'] * 0.85, 0, 0.9)
+    green = np.clip(green * breathing * (1 + slow_mod * 0.9 + green_mod) * params['color_green_mult'] * 0.9, 0, 0.9)
+    blue = np.clip(blue * breathing * (1 + slow_mod * cool_base + blue_mod) * params['color_blue_mult'] * 0.75, 0, 0.9)
     
     # Final smooth scaling to 8-bit values
     colors = np.stack([red, green, blue], axis=-1) * 255
@@ -618,6 +636,7 @@ def randomize_function_params():
     
     # Enhanced color parameters with phase shifts
     color_scheme = random.choice(color_schemes)
+    #print(color_scheme)
 
     # Sophisticated parameter ranges for beautiful visuals
     params = {
@@ -644,14 +663,15 @@ def randomize_function_params():
         'domain_warp_strength': random.uniform(15.0, 60.0),  # Stronger warping
         'domain_warp_time_factor': random.uniform(0.3, 2.0),  # How warping changes with time
 
+        'color_hue_segments': random.uniform(1,2),
         'color_red_mult': color_scheme['red'],
         'color_green_mult': color_scheme['green'],
         'color_blue_mult': color_scheme['blue'],
         'color_phase_red': random.uniform(0, 360),    # Phase shifts for dynamic colors
         'color_phase_green': random.uniform(0, 360),
         'color_phase_blue': random.uniform(0, 360),
-        'color_saturation': random.uniform(0.7, 1.5),  # Saturation boost
-        'color_power': random.uniform(0.8, 1.4),       # Gamma-like adjustment
+        'color_saturation': random.uniform(1.0, 2.0),  # Saturation boost
+        'color_power': random.uniform(1.0, 1.5),       # Gamma-like adjustment
 
         'polar_strength': random.uniform(0.7, 1.3),   # Polar pattern strength
         'polar_freq_r': random.choice([0.01, 0.02, 0.05, 0.1]),  # Radial frequency
