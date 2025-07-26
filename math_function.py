@@ -259,6 +259,36 @@ def compute_function(x, y, time_val, params):
             if feedback_state.previous_frame is not None:
                 reaction_diffusion_values = compute_reaction_diffusion(x, y, time_val, params)
                 combined = combined + reaction_diffusion_values * 100
+
+        elif op == 'use_lissajous':
+            # Lissajous curve patterns with time evolution
+            time_liss = time_val * params['lissajous_time_speed']
+
+            # Calculate phase with time modulation
+            phase_x = time_liss + params['lissajous_phase']
+            phase_y = time_liss * params['lissajous_phase_speed_ratio'] + params['lissajous_phase']
+
+            # Apply Lissajous curve functions
+            x_normalized = (x - x.mean()) / params['lissajous_scale']
+            y_normalized = (y - y.mean()) / params['lissajous_scale']
+
+            # Generate X and Y frequency components
+            lissajous_x = np.sin(x_normalized * params['lissajous_a_freq'] + phase_x)
+            lissajous_y = np.sin(y_normalized * params['lissajous_b_freq'] + phase_y)
+
+            # Create complex Lissajous patterns
+            lissajous_pattern = lissajous_x * lissajous_y + (
+                np.sin((x_normalized + y_normalized) * params['lissajous_a_freq'] * 0.5 + phase_x + phase_y) +
+                np.cos((x_normalized - y_normalized) * params['lissajous_b_freq'] * 0.5 + phase_x - phase_y)
+                )
+
+            # Add secondary harmonics for richer patterns
+            harmonic2 = np.sin(x_normalized * params['lissajous_a_freq'] * 2 + phase_x * 2) * \
+                        np.cos(y_normalized * params['lissajous_b_freq'] * 2 + phase_y * 2)
+
+            # Combine patterns with modulation
+            lissajous_combined = (lissajous_pattern + harmonic2 * 0.3) * params['lissajous_strength']
+            combined = combined + lissajous_combined * 150
     
     # Smooth color remapping using sigmoid-like functions
     # Normalize combined values and apply smooth transformation
@@ -515,7 +545,7 @@ def randomize_function_params():
     """Generate new random parameters for the mathematical function."""
     # Expanded operations list with more function types
     all_operations = ['use_sin', 'use_cos', 'use_xor', 'use_reaction_diffusion', 
-                     'use_cellular', 'use_domain_warp', 'use_polar',
+                     'use_cellular', 'use_domain_warp', 'use_polar', 'use_lissajous',
                      'use_noise', 'use_abs', 'use_power', 'use_feedback', 'use_voronoi']
     
     # Create initial operations dict with deterministic/randomized selection
@@ -527,7 +557,7 @@ def randomize_function_params():
     additional_ops = random.sample(remaining_ops, k=ops_to_select)
     operations.update({op: True for op in additional_ops})
     # testing
-    #operations = {'use_voronoi': True}#, 'use_abs':True}#, 'use_sin':True, 'use_cos':True}
+    operations = {'use_lissajous': True}#, 'use_abs':True}#, 'use_sin':True, 'use_cos':True}
     #operations.update({'use_reaction_diffusion':True})
     
     # Ensure all operations are in the dict
@@ -639,6 +669,15 @@ def randomize_function_params():
         'voronoi_strength': random.uniform(0.4, 0.6),  # Voronoi pattern strength
         'voronoi_scale': random.uniform(0.01, 0.1),  # Distance scaling factor
         
+        # Lissajous curve parameters for builtin pattern generation
+        'lissajous_a_freq': random.choice([2, 3, 4, 5, 6]),  # X-axis frequency
+        'lissajous_b_freq': random.choice([3, 4, 5, 6, 7]),  # Y-axis frequency
+        'lissajous_phase': random.uniform(0, 2 * np.pi),     # Phase shift
+        'lissajous_strength': random.uniform(0.9, 1.2),      # Lissajous influence
+        'lissajous_time_speed': random.uniform(1.0, 1.0),
+        'lissajous_phase_speed_ratio': random.uniform(0.8, 1.0),
+        'lissajous_scale': random.uniform(5, 20.0),
+        
         # Reaction-diffusion parameters - more stable values to prevent strobing
         'reaction_diffusion_diffusion_a': 1.0,  # Fixed stable value
         'reaction_diffusion_diffusion_b': 0.5,  # Fixed stable value
@@ -651,6 +690,8 @@ def randomize_function_params():
     }
 
     print(params['function_order'])
+    print(operations)
+    print(params)
 
     return {**operations, **params}
 
