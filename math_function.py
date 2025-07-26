@@ -260,35 +260,69 @@ def compute_function(x, y, time_val, params):
                 reaction_diffusion_values = compute_reaction_diffusion(x, y, time_val, params)
                 combined = combined + reaction_diffusion_values * 100
 
-        elif op == 'use_lissajous':
-            # Lissajous curve patterns with time evolution
-            time_liss = time_val * params['lissajous_time_speed']
+        elif op == 'use_sinusoidal_field':
+            # Enhanced Sinusoidal field curves with organic complexity
+            time_liss = time_val * params['sinusoidal_time_speed']
 
-            # Calculate phase with time modulation
-            phase_x = time_liss + params['lissajous_phase']
-            phase_y = time_liss * params['lissajous_phase_speed_ratio'] + params['lissajous_phase']
+            # Dynamic frequency modulation for breathing patterns
+            freq_mod_time = time_val * params['sinusoidal_freq_mod_speed']
+            a_freq_dynamic = params['sinusoidal_a_freq'] * (1 + params['sinusoidal_freq_mod_depth'] * np.sin(freq_mod_time))
+            b_freq_dynamic = params['sinusoidal_b_freq'] * (1 + params['sinusoidal_freq_mod_depth'] * np.cos(freq_mod_time * 0.7))
 
-            # Apply Lissajous curve functions
-            x_normalized = (x - x.mean()) / params['lissajous_scale']
-            y_normalized = (y - y.mean()) / params['lissajous_scale']
+            # Calculate phase with complex time evolution
+            phase_x = time_liss + params['sinusoidal_phase']
+            phase_y = time_liss * params['sinusoidal_phase_speed_ratio'] + params['sinusoidal_phase']
+            phase_rotation = time_liss * params['sinusoidal_rotation_speed']
 
-            # Generate X and Y frequency components
-            lissajous_x = np.sin(x_normalized * params['lissajous_a_freq'] + phase_x)
-            lissajous_y = np.sin(y_normalized * params['lissajous_b_freq'] + phase_y)
+            # Independent axis scaling for rectangular patterns
+            x_normalized = (x - x.mean()) / (params['sinusoidal_scale'] * params['sinusoidal_x_scale'])
+            y_normalized = (y - y.mean()) / (params['sinusoidal_scale'] * params['sinusoidal_y_scale'])
 
-            # Create complex Lissajous patterns
-            lissajous_pattern = lissajous_x * lissajous_y + (
-                np.sin((x_normalized + y_normalized) * params['lissajous_a_freq'] * 0.5 + phase_x + phase_y) +
-                np.cos((x_normalized - y_normalized) * params['lissajous_b_freq'] * 0.5 + phase_x - phase_y)
+            # Apply rotation to coordinates
+            cos_rot = np.cos(phase_rotation)
+            sin_rot = np.sin(phase_rotation)
+            x_rot = x_normalized * cos_rot - y_normalized * sin_rot
+            y_rot = x_normalized * sin_rot + y_normalized * cos_rot
+
+            # Amplitude modulation for pulsing effect
+            amp_mod = 1 + params['sinusoidal_amplitude_mod'] * np.sin(time_val * 0.15)
+
+            # Base Sinusoidal field patterns
+            sinusoidal_x = np.sin(x_rot * a_freq_dynamic + phase_x)
+            sinusoidal_y = np.sin(y_rot * b_freq_dynamic + phase_y)
+
+            # Multi-layer harmonic patterns
+            sinusoidal_pattern = sinusoidal_x * sinusoidal_y
+
+            # Add harmonic layers with decay
+            for harmonic in range(2, params['sinusoidal_harmonics'] + 1):
+                decay = params['sinusoidal_harmonic_decay'] ** (harmonic - 1)
+                harmonic_amp = amp_mod * decay
+                
+                # Higher harmonics with frequency ratios
+                harm_x_freq = a_freq_dynamic * harmonic
+                harm_y_freq = b_freq_dynamic * harmonic
+                harm_phase_x = phase_x * harmonic
+                harm_phase_y = phase_y * harmonic
+                
+                # Cross-patterns between harmonics
+                cross_freq = (a_freq_dynamic + b_freq_dynamic) * 0.5 * harmonic
+                cross_phase = (phase_x + phase_y) * 0.5
+                
+                sinusoidal_pattern += (
+                    harmonic_amp * (
+                        np.sin(x_rot * harm_x_freq + harm_phase_x) * 
+                        np.sin(y_rot * harm_y_freq + harm_phase_y) +
+                        
+                        np.sin((x_rot + y_rot) * cross_freq + cross_phase) * 0.3 +
+                        np.cos((x_rot - y_rot) * cross_freq * 0.8 + cross_phase) * 0.2
+                    )
                 )
 
-            # Add secondary harmonics for richer patterns
-            harmonic2 = np.sin(x_normalized * params['lissajous_a_freq'] * 2 + phase_x * 2) * \
-                        np.cos(y_normalized * params['lissajous_b_freq'] * 2 + phase_y * 2)
-
-            # Combine patterns with modulation
-            lissajous_combined = (lissajous_pattern + harmonic2 * 0.3) * params['lissajous_strength']
-            combined = combined + lissajous_combined * 150
+            # Add subtle noise for organic texture
+            noise_layer = np.sin(x_rot * 0.01 + time_liss * 0.1) * np.cos(y_rot * 0.01 + time_liss * 0.15) * 0.1
+            sinusoidal_combined = (sinusoidal_pattern + noise_layer) * params['sinusoidal_strength'] * amp_mod
+            combined = combined + sinusoidal_combined * 120
     
     # Smooth color remapping using sigmoid-like functions
     # Normalize combined values and apply smooth transformation
@@ -545,7 +579,7 @@ def randomize_function_params():
     """Generate new random parameters for the mathematical function."""
     # Expanded operations list with more function types
     all_operations = ['use_sin', 'use_cos', 'use_xor', 'use_reaction_diffusion', 
-                     'use_cellular', 'use_domain_warp', 'use_polar', 'use_lissajous',
+                     'use_cellular', 'use_domain_warp', 'use_polar', 'use_sinusoidal_field',
                      'use_noise', 'use_abs', 'use_power', 'use_feedback', 'use_voronoi']
     
     # Create initial operations dict with deterministic/randomized selection
@@ -557,7 +591,7 @@ def randomize_function_params():
     additional_ops = random.sample(remaining_ops, k=ops_to_select)
     operations.update({op: True for op in additional_ops})
     # testing
-    operations = {'use_lissajous': True}#, 'use_abs':True}#, 'use_sin':True, 'use_cos':True}
+    #operations = {'use_sinusoidal_field': True}#, 'use_abs':True}#, 'use_sin':True, 'use_cos':True}
     #operations.update({'use_reaction_diffusion':True})
     
     # Ensure all operations are in the dict
@@ -669,14 +703,22 @@ def randomize_function_params():
         'voronoi_strength': random.uniform(0.4, 0.6),  # Voronoi pattern strength
         'voronoi_scale': random.uniform(0.01, 0.1),  # Distance scaling factor
         
-        # Lissajous curve parameters for builtin pattern generation
-        'lissajous_a_freq': random.choice([2, 3, 4, 5, 6]),  # X-axis frequency
-        'lissajous_b_freq': random.choice([3, 4, 5, 6, 7]),  # Y-axis frequency
-        'lissajous_phase': random.uniform(0, 2 * np.pi),     # Phase shift
-        'lissajous_strength': random.uniform(0.9, 1.2),      # Lissajous influence
-        'lissajous_time_speed': random.uniform(1.0, 1.0),
-        'lissajous_phase_speed_ratio': random.uniform(0.8, 1.0),
-        'lissajous_scale': random.uniform(5, 20.0),
+        # Sinusoidal field patterns - complex 2D field generation
+        'sinusoidal_a_freq': random.choice([1.618, 2.414, 3.236, 4.236, 2.718, 3.141, 1.414]),  # Golden ratio & mathematical constants
+        'sinusoidal_b_freq': random.choice([2.618, 3.414, 4.618, 5.236, 4.442, 2.449, 1.732]), # Harmonic ratios
+        'sinusoidal_phase': random.uniform(0, 4 * np.pi),     # Extended phase range
+        'sinusoidal_strength': random.uniform(0.7, 1.0),      # Stronger influence range
+        'sinusoidal_time_speed': random.uniform(0.3, 1.0),   # Variable animation speeds
+        'sinusoidal_phase_speed_ratio': random.uniform(0.3, 3.0), # Asymmetric phase evolution
+        'sinusoidal_scale': random.uniform(8, 25.0),        # Larger pattern range
+        'sinusoidal_freq_mod_depth': random.uniform(0.1, 0.4), # Frequency modulation depth
+        'sinusoidal_freq_mod_speed': random.uniform(0.05, 0.3), # Frequency modulation speed
+        'sinusoidal_amplitude_mod': random.uniform(0.2, 0.8),# Amplitude modulation
+        'sinusoidal_harmonics': random.randint(2, 5),        # Additional harmonic layers
+        'sinusoidal_harmonic_decay': random.uniform(0.3, 0.7), # Harmonic intensity decay
+        'sinusoidal_x_scale': random.uniform(0.5, 2.0),      # Independent X-axis scaling
+        'sinusoidal_y_scale': random.uniform(0.5, 2.0),      # Independent Y-axis scaling
+        'sinusoidal_rotation_speed': random.uniform(-0.2, 0.2), # Pattern rotation
         
         # Reaction-diffusion parameters - more stable values to prevent strobing
         'reaction_diffusion_diffusion_a': 1.0,  # Fixed stable value
@@ -690,8 +732,8 @@ def randomize_function_params():
     }
 
     print(params['function_order'])
-    print(operations)
-    print(params)
+    #print(operations)
+    #print(params)
 
     return {**operations, **params}
 
