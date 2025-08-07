@@ -8,6 +8,142 @@ from utils.logger import logger
 # Get the appropriate array module
 np = get_array_module()
 
+# ---------------------
+# Color utilities
+# ---------------------
+
+def _to_np_array(x):
+    """Ensure palette lists become the correct array type (numpy or cupy)."""
+    return np.asarray(x, dtype=np.float32)
+
+# Curated multi-stop palettes (0-1 range RGB)
+_PALETTES = {
+    'viridis': [
+        [0.267, 0.005, 0.329], [0.283, 0.141, 0.458], [0.254, 0.265, 0.531],
+        [0.207, 0.372, 0.553], [0.164, 0.471, 0.558], [0.128, 0.567, 0.551],
+        [0.135, 0.658, 0.518], [0.266, 0.748, 0.441], [0.478, 0.821, 0.318],
+        [0.741, 0.873, 0.150]
+    ],
+    'magma': [
+        [0.001, 0.000, 0.016], [0.063, 0.026, 0.105], [0.129, 0.045, 0.210],
+        [0.196, 0.059, 0.322], [0.266, 0.066, 0.438], [0.345, 0.064, 0.558],
+        [0.438, 0.050, 0.675], [0.549, 0.024, 0.783], [0.678, 0.066, 0.842],
+        [0.816, 0.191, 0.835], [0.948, 0.357, 0.764], [0.993, 0.538, 0.646]
+    ],
+    'inferno': [
+        [0.001, 0.000, 0.014], [0.069, 0.046, 0.131], [0.144, 0.082, 0.267],
+        [0.219, 0.105, 0.410], [0.296, 0.114, 0.559], [0.383, 0.102, 0.708],
+        [0.489, 0.067, 0.842], [0.620, 0.031, 0.917], [0.762, 0.100, 0.906],
+        [0.893, 0.261, 0.841], [0.988, 0.473, 0.770], [0.998, 0.674, 0.643]
+    ],
+    'plasma': [
+        [0.050, 0.030, 0.527], [0.270, 0.009, 0.705], [0.468, 0.016, 0.706],
+        [0.644, 0.057, 0.646], [0.797, 0.125, 0.555], [0.910, 0.239, 0.457],
+        [0.980, 0.396, 0.351], [0.997, 0.580, 0.251], [0.941, 0.784, 0.153],
+        [0.828, 0.990, 0.164]
+    ],
+    'turbo': [
+        [0.189, 0.071, 0.232], [0.251, 0.118, 0.380], [0.305, 0.165, 0.520],
+        [0.357, 0.214, 0.648], [0.407, 0.266, 0.761], [0.457, 0.321, 0.858],
+        [0.508, 0.378, 0.938], [0.563, 0.444, 0.998], [0.625, 0.517, 1.000],
+        [0.695, 0.596, 0.972], [0.770, 0.677, 0.917], [0.842, 0.753, 0.842],
+        [0.904, 0.820, 0.753], [0.952, 0.874, 0.655], [0.985, 0.914, 0.553],
+        [1.000, 0.945, 0.451]
+    ],
+    'sunset': [[0.05, 0.02, 0.20], [0.35, 0.05, 0.35], [0.70, 0.20, 0.35], [0.95, 0.50, 0.25], [1.00, 0.80, 0.40]],
+    'ocean':  [[0.00, 0.05, 0.15], [0.00, 0.25, 0.45], [0.00, 0.55, 0.65], [0.20, 0.80, 0.80], [0.65, 0.95, 0.90]],
+    'forest': [[0.04, 0.10, 0.03], [0.08, 0.25, 0.06], [0.15, 0.45, 0.10], [0.30, 0.65, 0.18], [0.70, 0.85, 0.45]],
+    'icefire':[[0.00, 0.00, 0.30], [0.00, 0.30, 0.60], [0.20, 0.70, 0.85], [0.85, 0.40, 0.20], [0.90, 0.05, 0.05]],
+    'cubehelix': [[0.00, 0.00, 0.00], [0.10, 0.05, 0.20], [0.25, 0.20, 0.45], [0.45, 0.45, 0.65], [0.75, 0.75, 0.85], [1.00, 1.00, 1.00]],
+}
+
+def _lerp(a, b, t):
+    return a * (1 - t) + b * t
+
+def _apply_gamma_contrast_brightness(t, gamma=1.0, contrast=1.0, brightness=1.0):
+    # Center contrast around 0.5 for better control
+    t = np.clip(t, 0.0, 1.0)
+    t = t ** gamma
+    t = (t - 0.5) * contrast + 0.5
+    t = np.clip(t * brightness, 0.0, 1.0)
+    return t
+
+def _auto_contrast(t, low_percentile=5.0, high_percentile=95.0):
+    """Stretch values to [0,1] using robust percentiles to avoid flat colors."""
+    lo = np.percentile(t, low_percentile)
+    hi = np.percentile(t, high_percentile)
+    return np.clip((t - lo) / (hi - lo + 1e-6), 0.0, 1.0)
+
+def _sample_palette(t, name='viridis', reverse=False):
+    """Sample RGB from a named palette at positions t in [0,1]."""
+    if name not in _PALETTES:
+        name = 'viridis'
+    stops = _to_np_array(_PALETTES[name])  # shape (N, 3)
+    if reverse:
+        stops = stops[::-1]
+    n = stops.shape[0]
+    # Map t to indices
+    tt = np.clip(t, 0.0, 1.0) * (n - 1)
+    i0 = np.floor(tt).astype(np.int32)
+    i1 = np.clip(i0 + 1, 0, n - 1)
+    frac = tt - i0
+    c0 = stops[i0]
+    c1 = stops[i1]
+    rgb = _lerp(c0, c1, frac[..., None])
+    return rgb[..., 0], rgb[..., 1], rgb[..., 2]
+
+def _rgb_to_hsv(r, g, b):
+    # Vectorized RGB→HSV; expects 0-1 inputs
+    maxc = np.maximum(np.maximum(r, g), b)
+    minc = np.minimum(np.minimum(r, g), b)
+    v = maxc
+    deltac = maxc - minc + 1e-8
+    s = deltac / (maxc + 1e-8)
+    rc = (maxc - r) / deltac
+    gc = (maxc - g) / deltac
+    bc = (maxc - b) / deltac
+    h = (rc - gc) * (r == maxc) + (2.0 + bc - rc) * (g == maxc) + (4.0 + gc - bc) * (b == maxc)
+    h = (h / 6.0) % 1.0
+    return h, s, v
+
+def _hsv_to_rgb(h, s, v):
+    # Vectorized HSV→RGB; expects 0-1 inputs
+    i = np.floor(h * 6.0).astype(np.int32)
+    f = h * 6.0 - i
+    p = v * (1.0 - s)
+    q = v * (1.0 - f * s)
+    t = v * (1.0 - (1.0 - f) * s)
+    i_mod = i % 6
+    r = (i_mod == 0) * v + (i_mod == 1) * q + (i_mod == 2) * p + (i_mod == 3) * p + (i_mod == 4) * t + (i_mod == 5) * v
+    g = (i_mod == 0) * t + (i_mod == 1) * v + (i_mod == 2) * v + (i_mod == 3) * q + (i_mod == 4) * p + (i_mod == 5) * p
+    b = (i_mod == 0) * p + (i_mod == 1) * p + (i_mod == 2) * t + (i_mod == 3) * v + (i_mod == 4) * v + (i_mod == 5) * q
+    return r, g, b
+
+def _apply_vibrance(rgb_r, rgb_g, rgb_b, vibrance=1.0, saturation=1.0):
+    # Adjust saturation in HSV space
+    r = np.clip(rgb_r, 0.0, 1.0)
+    g = np.clip(rgb_g, 0.0, 1.0)
+    b = np.clip(rgb_b, 0.0, 1.0)
+    h, s, v = _rgb_to_hsv(r, g, b)
+    s = np.clip(s * vibrance * saturation, 0.0, 1.0)
+    return _hsv_to_rgb(h, s, v)
+
+def _enforce_min_variance(rgb_r, rgb_g, rgb_b, min_lum_range=0.35, min_sat_mean=0.35):
+    """Boost saturation/contrast if colors are too flat overall."""
+    r = np.clip(rgb_r, 0.0, 1.0)
+    g = np.clip(rgb_g, 0.0, 1.0)
+    b = np.clip(rgb_b, 0.0, 1.0)
+    luminance = 0.299 * r + 0.587 * g + 0.114 * b
+    lum_range = np.max(luminance) - np.min(luminance)
+    h, s, v = _rgb_to_hsv(r, g, b)
+    sat_mean = np.mean(s)
+    if (lum_range < min_lum_range) or (sat_mean < min_sat_mean):
+        # Robust value stretch and saturation lift
+        v = _auto_contrast(v, 5.0, 95.0)
+        s = np.clip(s * 1.3 + 0.1, 0.0, 1.0)
+        r, g, b = _hsv_to_rgb(h, s, v)
+    return r, g, b
+
 # Global state for feedback loop
 class FeedbackState:
     def __init__(self):
@@ -325,8 +461,12 @@ def compute_function(x, y, time_val, params):
             combined = combined + sinusoidal_combined * 100
     
     # Smooth color remapping using sigmoid-like functions
-    # Normalize combined values and apply smooth transformation
-    combined_norm = (combined - np.min(combined)) / (np.max(combined) - np.min(combined) + 1e-8)
+    # Normalize with robust percentiles to avoid low-contrast outputs
+    clip_low = params.get('color_clip_low', 2.0)
+    clip_high = params.get('color_clip_high', 98.0)
+    v_low, v_high = np.percentile(combined, [clip_low, clip_high])
+    combined_clipped = np.clip(combined, v_low, v_high)
+    combined_norm = (combined_clipped - v_low) / (v_high - v_low + 1e-8)
     
     # Use smooth sigmoid remapping for smooth transitions
     smooth_factor = 3.0
@@ -339,29 +479,47 @@ def compute_function(x, y, time_val, params):
     time_factor = time_val * 0.08  # Slightly slower for smoother transitions
     time_warped = time_val * params.get('time_warp_factor', 1.0)
     
-    # More nuanced hue generation with additional harmonic layers
-    primary_hue = (time_factor + combined_smooth * 4.5 + time_warped * 0.25) % 6.0
-    secondary_hue = (time_factor * 0.7 + combined_smooth * 2.8 + time_warped * 0.15 + 2.0) % 6.0
-    tertiary_hue = (time_factor * 0.4 + combined_smooth * 1.2 + time_warped * 0.35 + 4.0) % 6.0
-    
-    # Reduced saturation for more pastel-like colors
-    base_saturation = adjusted * params['color_saturation'] * 0.6  # Reduced from 1.0 to 0.6
-    variance = np.sin(combined_smooth * 12.5) * 0.1 + 0.1
-    c = base_saturation * (0.85 + variance)  # Subtle saturation variation
-    
-    # Generate RGB from hue with white-light mixing for toned colors
-    def hue_to_rgb_soft(hue, intensity):
-        # Softer color wheel with white-light blending
-        segment = hue * params['color_hue_segments']
-        rgb_phase = segment * 2 * np.pi
+    # Branch: palette-based vs harmonic color generation
+    color_mode = params.get('color_mode', 'harmonic')
+    if color_mode == 'palette':
+        # Tone curve controls
+        gamma = params.get('color_gamma', 1.0)
+        contrast = params.get('color_contrast', 1.0)
+        brightness = params.get('color_brightness', 1.0)
+        vibrance = params.get('color_vibrance', 1.0)
+
+        # Auto-contrast first to expand dynamic range, then tone curve
+        t = _auto_contrast(adjusted, low_percentile=params.get('palette_clip_low', 2.0), high_percentile=params.get('palette_clip_high', 98.0))
+        t = _apply_gamma_contrast_brightness(t, gamma=gamma, contrast=contrast, brightness=brightness)
+        # Subtle temporal drift along the palette
+        t = (t + (np.sin(time_factor) * 0.05 + time_warped * 0.01)) % 1.0
+        palette_name = params.get('palette_name', 'viridis')
+        palette_reverse = params.get('palette_reverse', False)
+        red, green, blue = _sample_palette(t, name=palette_name, reverse=palette_reverse)
+        # Saturation/vibrance in HSV space
+        red, green, blue = _apply_vibrance(red, green, blue, vibrance=vibrance, saturation=params.get('color_saturation', 1.2) * 0.7)
+        # Channel multipliers for warm/cool bias
+        red *= params.get('color_red_mult', 1.0)
+        green *= params.get('color_green_mult', 1.0)
+        blue *= params.get('color_blue_mult', 1.0)
+    else:
+        # Harmonic hue mode (existing behavior with soft tweaks)
+        primary_hue = (time_factor + combined_smooth * 4.5 + time_warped * 0.25) % 6.0
+        secondary_hue = (time_factor * 0.7 + combined_smooth * 2.8 + time_warped * 0.15 + 2.0) % 6.0
+        tertiary_hue = (time_factor * 0.4 + combined_smooth * 1.2 + time_warped * 0.35 + 4.0) % 6.0
         
-        red = intensity * params['color_red_mult'] * (1 + 0.3 * np.cos(rgb_phase)) * (0.8 + 0.2 * np.sin(secondary_hue))
-        green = intensity * params['color_green_mult'] * (1 + 0.3 * np.cos(rgb_phase - 2.1)) * (0.8 + 0.2 * np.sin(tertiary_hue))
-        blue = intensity * params['color_blue_mult']  * (1 + 0.3 * np.cos(rgb_phase + 2.1)) * (0.8 + 0.2 * np.sin(primary_hue))
+        base_saturation = adjusted * params['color_saturation'] * 0.6
+        variance = np.sin(combined_smooth * 12.5) * 0.1 + 0.1
+        c = base_saturation * (0.85 + variance)
         
-        return red, green, blue
-    
-    red, green, blue = hue_to_rgb_soft(primary_hue, c)
+        def hue_to_rgb_soft(hue, intensity):
+            segment = hue * params['color_hue_segments']
+            rgb_phase = segment * 2 * np.pi
+            red = intensity * params['color_red_mult'] * (1 + 0.3 * np.cos(rgb_phase)) * (0.8 + 0.2 * np.sin(secondary_hue))
+            green = intensity * params['color_green_mult'] * (1 + 0.3 * np.cos(rgb_phase - 2.1)) * (0.8 + 0.2 * np.sin(tertiary_hue))
+            blue = intensity * params['color_blue_mult']  * (1 + 0.3 * np.cos(rgb_phase + 2.1)) * (0.8 + 0.2 * np.sin(primary_hue))
+            return red, green, blue
+        red, green, blue = hue_to_rgb_soft(primary_hue, c)
     
     # More subtle time-based modulation with color washing effects
     modulation_factor = 0.15  # Much gentler modulation
@@ -379,13 +537,17 @@ def compute_function(x, y, time_val, params):
     blue_mod = np.sin(time_factor * 1.1 + phase_blue) * modulation_factor * 0.7
     
     # Enhanced color multipliers with temperature variations
-    warm_base = 1 + 0.2 * np.sin(time_factor * 0.15)  # Warm-to-cool shift
+    warm_base = 1 + 0.2 * np.sin(time_factor * 0.15)
     cool_base = 1 + 0.2 * np.cos(time_factor * 0.15)
     
-    red = np.clip(red * breathing * (1 + slow_mod * warm_base + red_mod) * params['color_red_mult'] * 0.85, 0, 0.9)
-    green = np.clip(green * breathing * (1 + slow_mod * 0.9 + green_mod) * params['color_green_mult'] * 0.9, 0, 0.9)
-    blue = np.clip(blue * breathing * (1 + slow_mod * cool_base + blue_mod) * params['color_blue_mult'] * 0.75, 0, 0.9)
+    red = np.clip(red * breathing * (1 + slow_mod * warm_base + red_mod) * params.get('color_red_mult', 1.0) * 0.85, 0, 0.95)
+    green = np.clip(green * breathing * (1 + slow_mod * 0.9 + green_mod) * params.get('color_green_mult', 1.0) * 0.9, 0, 0.95)
+    blue = np.clip(blue * breathing * (1 + slow_mod * cool_base + blue_mod) * params.get('color_blue_mult', 1.0) * 0.85, 0, 0.95)
     
+    # Enforce minimum variance if enabled
+    if params.get('color_auto_normalize', True):
+        red, green, blue = _enforce_min_variance(red, green, blue, min_lum_range=0.35, min_sat_mean=0.35)
+
     # Final smooth scaling to 8-bit values
     colors = np.stack([red, green, blue], axis=-1) * 255
     
@@ -623,7 +785,6 @@ def randomize_function_params():
     
     # Enhanced color mapping with harmonic ratios
     color_schemes = [
-        # Nature-inspired schemes
         {'red': 1.0, 'green': 1.4, 'blue': 0.8},     # golden hour
         {'red': 0.8, 'green': 1.0, 'blue': 1.6},     # oceanic
         {'red': 1.5, 'green': 0.8, 'blue': 1.0},     # sunset
@@ -663,15 +824,29 @@ def randomize_function_params():
         'domain_warp_strength': random.uniform(15.0, 60.0),  # Stronger warping
         'domain_warp_time_factor': random.uniform(0.3, 2.0),  # How warping changes with time
 
-        'color_hue_segments': random.uniform(1,2),
+        'color_hue_segments': random.uniform(1, 2),
         'color_red_mult': color_scheme['red'],
         'color_green_mult': color_scheme['green'],
         'color_blue_mult': color_scheme['blue'],
-        'color_phase_red': random.uniform(0, 360),    # Phase shifts for dynamic colors
+        'color_phase_red': random.uniform(0, 360),
         'color_phase_green': random.uniform(0, 360),
         'color_phase_blue': random.uniform(0, 360),
-        'color_saturation': random.uniform(1.0, 2.0),  # Saturation boost
-        'color_power': random.uniform(1.0, 1.5),       # Gamma-like adjustment
+        'color_saturation': random.uniform(1.0, 2.0),
+        'color_power': random.uniform(1.0, 1.5),
+        # New color controls
+        # Bias away from low-variance results by favoring palette mode slightly
+        'color_mode': random.choice(['harmonic', 'palette', 'palette']),
+        'palette_name': random.choice(list(_PALETTES.keys())),
+        'palette_reverse': random.choice([False, True]),
+        'color_gamma': random.uniform(0.8, 1.4),
+        'color_contrast': random.uniform(0.8, 1.4),
+        'color_brightness': random.uniform(0.9, 1.2),
+        'color_vibrance': random.uniform(0.8, 1.3),
+        'color_auto_normalize': True,
+        'color_clip_low': 2.0,
+        'color_clip_high': 98.0,
+        'palette_clip_low': 2.0,
+        'palette_clip_high': 98.0,
 
         'polar_strength': random.uniform(0.7, 1.3),   # Polar pattern strength
         'polar_freq_r': random.choice([0.01, 0.02, 0.05, 0.1]),  # Radial frequency

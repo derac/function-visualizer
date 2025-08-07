@@ -10,7 +10,7 @@ from utils.logger import logger
 
 
 class VisualizerUI:
-    def __init__(self, root, width, height, time_step, visual_fidelity, randomize_callback, generate_image_callback, update_time_step_callback=None, update_visual_fidelity_callback=None, save_callback=None, load_callback=None):
+    def __init__(self, root, width, height, time_step, visual_fidelity, randomize_callback, generate_image_callback, update_time_step_callback=None, update_visual_fidelity_callback=None, save_callback=None, load_callback=None, toggle_color_mode_callback=None, cycle_palette_callback=None):
         """Initialize the UI components for the visualizer
         
         Args:
@@ -35,6 +35,8 @@ class VisualizerUI:
         self.update_visual_fidelity_callback = update_visual_fidelity_callback
         self.save_callback = save_callback
         self.load_callback = load_callback
+        self.toggle_color_mode_callback = toggle_color_mode_callback
+        self.cycle_palette_callback = cycle_palette_callback
         self.frame_time_ms = 0.0
         self.performance_stats = {}
         self.show_performance = config.get('ui.show_fps', True)
@@ -128,6 +130,11 @@ class VisualizerUI:
         self.root.bind('<p>', lambda e: self.toggle_performance_display())
         self.root.bind('<P>', lambda e: self.toggle_performance_display())
         self.root.bind('<F1>', lambda e: self.show_help())
+        # Color controls
+        self.root.bind('<c>', lambda e: self.toggle_color_mode_callback() if self.toggle_color_mode_callback else None)
+        self.root.bind('<C>', lambda e: self.toggle_color_mode_callback() if self.toggle_color_mode_callback else None)
+        self.root.bind('<bracketright>', lambda e: self.cycle_palette_callback(1) if self.cycle_palette_callback else None)
+        self.root.bind('<bracketleft>', lambda e: self.cycle_palette_callback(-1) if self.cycle_palette_callback else None)
         
     def on_resize(self, event):
         """Handle window resize events"""
@@ -201,6 +208,7 @@ class VisualizerUI:
         🎛️ Sliders:
         • ⏱️ Speed: Animation speed (0.0-0.2)
         • 📏 Quality: Rendering quality (5%-100%)
+        • 🎨 Color: Press C to toggle color mode; [ and ] to change palette
 
 ⚙️ Settings:
 • 🔄 Auto: Enable/disable automatic quality adjustment
@@ -212,6 +220,8 @@ class VisualizerUI:
 • F: Toggle fullscreen
 • H: Hide/show toolbar
 • P: Toggle performance display
+        • C: Toggle color mode (harmonic/palette)
+        • [: Previous palette, ]: Next palette (palette mode)
 • F1: Show help
 
 💡 Tips:

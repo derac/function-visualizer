@@ -608,3 +608,154 @@
 2025-08-07 15:37:46 - visualizer - INFO - Performance good (33.4 FPS), increasing fidelity to 95.0%
 2025-08-07 15:37:47 - visualizer - INFO - Performance good (34.3 FPS), increasing fidelity to 100.0%
 2025-08-07 15:37:51 - visualizer - INFO - Application closing
+2025-08-07 15:38:50 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:38:50 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:38:50 - visualizer - WARNING - Performance low (4.3 FPS), reducing fidelity to 95.0%
+2025-08-07 15:38:51 - visualizer - WARNING - Performance low (4.9 FPS), reducing fidelity to 90.0%
+2025-08-07 15:38:51 - visualizer - INFO - Performance good (32.1 FPS), increasing fidelity to 95.0%
+2025-08-07 15:38:51 - visualizer - INFO - Performance good (46.2 FPS), increasing fidelity to 100.0%
+2025-08-07 15:38:53 - visualizer - INFO - Parameters saved to D:\projects\practice-claude-code\function-visualizer\saves\parameters\params_20250807_153851.json
+2025-08-07 15:38:53 - visualizer - INFO - State saved to D:\projects\practice-claude-code\function-visualizer\saves\parameters\params_20250807_153851.json
+2025-08-07 15:39:39 - visualizer - INFO - Application closing
+2025-08-07 15:44:20 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:44:20 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:44:22 - visualizer - WARNING - Performance low (0.6 FPS), reducing fidelity to 95.0%
+2025-08-07 15:44:22 - visualizer - WARNING - Performance low (1.3 FPS), reducing fidelity to 90.0%
+2025-08-07 15:44:22 - visualizer - INFO - Performance good (26.3 FPS), increasing fidelity to 95.0%
+2025-08-07 15:44:22 - visualizer - INFO - Performance good (35.6 FPS), increasing fidelity to 100.0%
+2025-08-07 15:45:13 - visualizer - INFO - Application closing
+2025-08-07 15:46:15 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:46:15 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:46:16 - visualizer - WARNING - Performance low (0.8 FPS), reducing fidelity to 95.0%
+2025-08-07 15:46:17 - visualizer - WARNING - Performance low (7.8 FPS), reducing fidelity to 90.0%
+2025-08-07 15:46:17 - visualizer - INFO - Performance good (24.4 FPS), increasing fidelity to 95.0%
+2025-08-07 15:46:17 - visualizer - INFO - Performance good (30.8 FPS), increasing fidelity to 100.0%
+2025-08-07 15:46:37 - visualizer - INFO - Application closing
+2025-08-07 15:46:40 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:46:40 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:46:40 - visualizer - WARNING - Performance low (2.4 FPS), reducing fidelity to 95.0%
+2025-08-07 15:46:40 - visualizer - WARNING - Performance low (13.4 FPS), reducing fidelity to 90.0%
+2025-08-07 15:46:40 - visualizer - INFO - Performance good (25.1 FPS), increasing fidelity to 95.0%
+2025-08-07 15:46:41 - visualizer - INFO - Performance good (36.1 FPS), increasing fidelity to 100.0%
+2025-08-07 15:47:39 - visualizer - INFO - Application closing
+2025-08-07 15:47:41 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:47:42 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:47:42 - visualizer - WARNING - Performance low (2.5 FPS), reducing fidelity to 95.0%
+2025-08-07 15:47:42 - visualizer - WARNING - Performance low (14.1 FPS), reducing fidelity to 90.0%
+2025-08-07 15:47:42 - visualizer - INFO - Performance good (27.4 FPS), increasing fidelity to 95.0%
+2025-08-07 15:47:42 - visualizer - INFO - Performance good (34.9 FPS), increasing fidelity to 100.0%
+2025-08-07 15:49:24 - visualizer - WARNING - Performance low (15.0 FPS), reducing fidelity to 95.0%
+2025-08-07 15:49:24 - visualizer - WARNING - Performance low (13.7 FPS), reducing fidelity to 90.0%
+2025-08-07 15:49:24 - visualizer - WARNING - Performance low (12.6 FPS), reducing fidelity to 85.0%
+2025-08-07 15:49:24 - visualizer - WARNING - Performance low (11.6 FPS), reducing fidelity to 80.0%
+2025-08-07 15:49:24 - visualizer - WARNING - Performance low (11.1 FPS), reducing fidelity to 75.0%
+2025-08-07 15:49:25 - visualizer - WARNING - Performance low (12.2 FPS), reducing fidelity to 70.0%
+2025-08-07 15:49:25 - visualizer - WARNING - Performance low (13.2 FPS), reducing fidelity to 65.0%
+2025-08-07 15:49:25 - visualizer - WARNING - Performance low (14.2 FPS), reducing fidelity to 60.0%
+2025-08-07 15:49:25 - visualizer - WARNING - Performance low (15.5 FPS), reducing fidelity to 55.0%
+2025-08-07 15:49:45 - visualizer - INFO - Performance good (24.3 FPS), increasing fidelity to 60.0%
+2025-08-07 15:49:45 - visualizer - INFO - Performance good (25.2 FPS), increasing fidelity to 65.0%
+2025-08-07 15:49:45 - visualizer - INFO - Performance good (25.7 FPS), increasing fidelity to 70.0%
+2025-08-07 15:49:45 - visualizer - INFO - Performance good (26.0 FPS), increasing fidelity to 75.0%
+2025-08-07 15:49:45 - visualizer - INFO - Performance good (26.0 FPS), increasing fidelity to 80.0%
+2025-08-07 15:49:45 - visualizer - INFO - Performance good (25.5 FPS), increasing fidelity to 85.0%
+2025-08-07 15:49:46 - visualizer - WARNING - Performance low (16.0 FPS), reducing fidelity to 80.0%
+2025-08-07 15:49:49 - visualizer - WARNING - Performance low (15.3 FPS), reducing fidelity to 75.0%
+2025-08-07 15:49:49 - visualizer - WARNING - Performance low (14.6 FPS), reducing fidelity to 70.0%
+2025-08-07 15:49:49 - visualizer - WARNING - Performance low (14.1 FPS), reducing fidelity to 65.0%
+2025-08-07 15:49:49 - visualizer - WARNING - Performance low (13.8 FPS), reducing fidelity to 60.0%
+2025-08-07 15:49:49 - visualizer - WARNING - Performance low (13.8 FPS), reducing fidelity to 55.0%
+2025-08-07 15:49:49 - visualizer - WARNING - Performance low (13.7 FPS), reducing fidelity to 50.0%
+2025-08-07 15:49:50 - visualizer - INFO - Performance good (28.0 FPS), increasing fidelity to 55.0%
+2025-08-07 15:49:50 - visualizer - INFO - Performance good (32.3 FPS), increasing fidelity to 60.0%
+2025-08-07 15:49:50 - visualizer - INFO - Performance good (35.2 FPS), increasing fidelity to 65.0%
+2025-08-07 15:49:50 - visualizer - INFO - Performance good (39.0 FPS), increasing fidelity to 70.0%
+2025-08-07 15:49:50 - visualizer - INFO - Performance good (41.6 FPS), increasing fidelity to 75.0%
+2025-08-07 15:49:50 - visualizer - INFO - Performance good (44.0 FPS), increasing fidelity to 80.0%
+2025-08-07 15:49:50 - visualizer - INFO - Performance good (46.1 FPS), increasing fidelity to 85.0%
+2025-08-07 15:49:50 - visualizer - INFO - Performance good (44.4 FPS), increasing fidelity to 90.0%
+2025-08-07 15:49:50 - visualizer - INFO - Performance good (42.9 FPS), increasing fidelity to 95.0%
+2025-08-07 15:49:50 - visualizer - INFO - Performance good (40.4 FPS), increasing fidelity to 100.0%
+2025-08-07 15:51:45 - visualizer - INFO - Parameters saved to D:\projects\practice-claude-code\function-visualizer\saves\parameters\params_20250807_155143.json
+2025-08-07 15:51:45 - visualizer - INFO - State saved to D:\projects\practice-claude-code\function-visualizer\saves\parameters\params_20250807_155143.json
+2025-08-07 15:51:59 - visualizer - INFO - Parameters loaded from saves\parameters\params_20250807_155143.json
+2025-08-07 15:51:59 - visualizer - INFO - Loaded state: params_20250807_155143
+2025-08-07 15:52:45 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:52:45 - visualizer - INFO - Color mode: palette
+2025-08-07 15:52:46 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:52:47 - visualizer - INFO - Color mode: palette
+2025-08-07 15:52:47 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:52:48 - visualizer - INFO - Color mode: palette
+2025-08-07 15:52:48 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:52:50 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:52:51 - visualizer - INFO - Color mode: palette
+2025-08-07 15:52:57 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:52:57 - visualizer - INFO - Color mode: palette
+2025-08-07 15:52:59 - visualizer - INFO - Color mode: palette
+2025-08-07 15:52:59 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:52:59 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 95.0%
+2025-08-07 15:53:00 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:01 - visualizer - INFO - Performance good (24.2 FPS), increasing fidelity to 100.0%
+2025-08-07 15:53:01 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:03 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:04 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:05 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:05 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:06 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:07 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:07 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:08 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:10 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:12 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:16 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:18 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:19 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:22 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:23 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:25 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:25 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:26 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:28 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:29 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:31 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:31 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:32 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:32 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:33 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:34 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:36 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:37 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:40 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:41 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:41 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:42 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:43 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:44 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:47 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:48 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:48 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:49 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:50 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:50 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:51 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:51 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:52 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:53 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:53 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:53 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:54 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:55 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:55 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:56 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:56 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:57 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:57 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:58 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:59 - visualizer - INFO - Color mode: palette
+2025-08-07 15:53:59 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:53:59 - visualizer - INFO - Color mode: palette
+2025-08-07 15:54:00 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:54:00 - visualizer - INFO - Color mode: palette
+2025-08-07 15:54:03 - visualizer - INFO - Color mode: harmonic
+2025-08-07 15:54:03 - visualizer - INFO - Color mode: palette
+2025-08-07 15:54:06 - visualizer - INFO - Application closing

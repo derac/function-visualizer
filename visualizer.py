@@ -59,7 +59,9 @@ class Visualizer:
             self.update_time_step,
             self.update_visual_fidelity,
             self.save_current_state,
-            self.load_saved_state
+            self.load_saved_state,
+            self.toggle_color_mode,
+            self.cycle_palette
         )
         
     def setup_bindings(self):
@@ -212,6 +214,29 @@ class Visualizer:
         """Generate new random parameters for the mathematical function."""
         self.random_params = randomize_function_params()
         logger.log_function_params(self.random_params)
+
+    def toggle_color_mode(self):
+        if not self.random_params:
+            return
+        mode = self.random_params.get('color_mode', 'harmonic')
+        self.random_params['color_mode'] = 'palette' if mode != 'palette' else 'harmonic'
+        logger.info(f"Color mode: {self.random_params['color_mode']}")
+
+    def cycle_palette(self, step):
+        if not self.random_params:
+            return
+        # Palettes defined in math_function._PALETTES
+        try:
+            from math_function import _PALETTES  # type: ignore
+        except Exception:
+            return
+        names = list(_PALETTES.keys())
+        current = self.random_params.get('palette_name', names[0])
+        if current not in names:
+            current = names[0]
+        idx = (names.index(current) + (1 if step >= 0 else -1)) % len(names)
+        self.random_params['palette_name'] = names[idx]
+        logger.info(f"Palette: {self.random_params['palette_name']}")
     
     def on_closing(self):
         """Handle application closing."""
