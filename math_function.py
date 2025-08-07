@@ -3,6 +3,7 @@
 import random
 import numpy as base_np  # For some operations that need pure numpy
 from utils.hardware import get_array_module
+from utils.logger import logger
 
 # Get the appropriate array module
 np = get_array_module()
@@ -94,8 +95,9 @@ def compute_function(x, y, time_val, params):
             rot_x = morph_x * np.cos(rot_angle) - morph_y * np.sin(rot_angle)
             rot_y = morph_x * np.sin(rot_angle) + morph_y * np.cos(rot_angle)
             
-            # Clean XOR with morphing
-            xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & 2 ** (int(np.sin(time_val/10)*(2/3))+2)
+            # Clean XOR with morphing; vary bitmask over time (exponent in [1,3])
+            mask_exponent = int(np.clip((np.sin(time_val * 0.1) + 1.0) * 1.5, 1, 3))
+            xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & (1 << mask_exponent)
 
             # Gentle intensity modulation
             intensity = 0.8 + 0.2 * np.sin(time_val * 0.05 + (rot_x + rot_y) * 0.001)
@@ -125,28 +127,28 @@ def compute_function(x, y, time_val, params):
             combined = combined + np.sin(warped_x) * np.cos(warped_y) * 25
         
         elif op == 'use_polar':
-            # Calculate polar coordinates with time evolution
-            width = x.shape[0]  # Assuming x is a 2D array with width as first dimension
-            height = x.shape[1] if len(x.shape) > 1 else y.shape[0]  # Handle both 2D and separate arrays
-            
-            center_x = width / 2 + np.sin(time_val * params['polar_orbit_speed_x']) * params['polar_orbit_range']
-            center_y = height / 2 + np.cos(time_val * params['polar_orbit_speed_y']) * params['polar_orbit_range']
-            
+            # Polar coordinates computed in world space (x, y are already centered around 0)
+            # Dynamic center orbits around the origin in coordinate units
+            center_x = np.sin(time_val * params['polar_orbit_speed_x']) * params['polar_orbit_range']
+            center_y = np.cos(time_val * params['polar_orbit_speed_y']) * params['polar_orbit_range']
+
             x_rel = x - center_x
             y_rel = y - center_y
-            
-            r = np.sqrt(x_rel**2 + y_rel**2) + 1e-8  # Add small value to avoid division by zero
+
+            r = np.sqrt(x_rel**2 + y_rel**2) + 1e-8  # Avoid division by zero
             theta = np.arctan2(y_rel, x_rel) + time_val * params['polar_rotation_speed']
-            
+
             # Apply polar transformation with time-based frequency modulation
             freq_mod = 1 + 0.3 * np.sin(time_val * 0.15)
-            polar_wave = np.sin(r * params['polar_freq_r'] * freq_mod + theta * params['polar_freq_theta']) * \
-                        np.cos(theta * params['polar_theta_harmonics'] + time_val * params['polar_time_factor'])
-            
+            polar_wave = (
+                np.sin(r * params['polar_freq_r'] * freq_mod + theta * params['polar_freq_theta'])
+                * np.cos(theta * params['polar_theta_harmonics'] + time_val * params['polar_time_factor'])
+            )
+
             # Add spiral motion effect
             spiral_angle = theta + r * params['polar_spiral_factor']
             spiral_wave = np.sin(spiral_angle * params['polar_spiral_freq'] + time_val * params['polar_spiral_speed'])
-            
+
             combined = combined + (polar_wave + spiral_wave * 0.5) * 120 * params['polar_strength']
         
         elif op == 'use_noise':
@@ -230,16 +232,14 @@ def compute_function(x, y, time_val, params):
             
             # Generate random seed points if not already generated
             if 'voronoi_seeds' not in params:
-                # Create random seed points within coordinate bounds
-                x_bounds = x.max() - x.min()
-                y_bounds = y.max() - y.min()
+                # Create random seed points within coordinate bounds as plain Python floats
                 seeds_x = np.random.uniform(x.min(), x.max(), num_points)
                 seeds_y = np.random.uniform(y.min(), y.max(), num_points)
-                params['voronoi_seeds'] = list(zip(seeds_x, seeds_y))
+                params['voronoi_seeds'] = [[float(sx), float(sy)] for sx, sy in zip(seeds_x.tolist(), seeds_y.tolist())]
             else:
                 params['voronoi_seeds'] = [[
-                        seeds_x + 10*(random.randint(0,4)-2)*(time_val - feedback_state.time_sum),
-                        seeds_y + 10*(random.randint(0,4)-2)*(time_val - feedback_state.time_sum)
+                        float(seeds_x) + 10.0 * (random.randint(0, 4) - 2) * (time_val - feedback_state.time_sum),
+                        float(seeds_y) + 10.0 * (random.randint(0, 4) - 2) * (time_val - feedback_state.time_sum)
                     ] for (seeds_x, seeds_y) in params['voronoi_seeds']]
             
             # Calculate distance to nearest seed point
@@ -698,12 +698,12 @@ def randomize_function_params():
         'abs_time_speed': random.uniform(0.2, 2.0),   # Animation speed
 
         'power_strength': random.uniform(0.5, 1.0),   # Power function strength
-        'power_exponent': random.uniform(0.5, 6.0),   # Power exponent
+        # Single source of truth for power_exponent
+        'power_exponent': random.uniform(0.5, 3.0),   # Power exponent
         'power_freq_x': random.choice([0.01, 0.02, 0.05, 0.1]),  # X frequency for power base
         'power_freq_y': random.choice([0.01, 0.02, 0.05, 0.1]),  # Y frequency for power base
         'power_time_speed': random.uniform(0.2, 1.8),  # Power animation speed
         'power_exp_mod_freq': random.uniform(0.1, 1.0),  # Exponent modulation frequency
-        'power_exponent': random.uniform(0.5, 3.0),  # Wider range
         
         # Feedback loop parameters
         'feedback_strength': random.uniform(0.95, 0.99),  # How strongly feedback is mixed with new frame
@@ -726,7 +726,8 @@ def randomize_function_params():
         # Sinusoidal field patterns - complex 2D field generation
         'sinusoidal_a_freq': random.choice([1.618, 2.414, 3.236, 4.236, 2.718, 3.141, 1.414]),  # Golden ratio & mathematical constants
         'sinusoidal_b_freq': random.choice([2.618, 3.414, 4.618, 5.236, 4.442, 2.449, 1.732]), # Harmonic ratios
-        'sinusoidal_phase': random.uniform(4 * np.pi, 4 * np.pi),     # Extended phase range
+        # Provide a real range rather than a single value
+        'sinusoidal_phase': random.uniform(0.0, 4 * np.pi),     # Extended phase range
         'sinusoidal_strength': random.uniform(0.7, 1.0),      # Stronger influence range
         'sinusoidal_time_speed': random.uniform(0.3, 1.0),   # Variable animation speeds
         'sinusoidal_phase_speed_ratio': random.uniform(0.3, 3.0), # Asymmetric phase evolution
@@ -778,18 +779,19 @@ def generate_image_data(width, height, time_val, params, full_width=None, full_h
     if full_height is None:
         full_height = height
     
-    # Calculate step sizes to sample within full coordinate system
-    step_x = max(1, full_width) / max(1, width)
-    step_y = max(1, full_height) / max(1, height)
-    
-    # Create coordinate arrays that span the full viewport
-    x_start = step_x * 0.5  # Center samples in pixels
-    x_end = full_width - x_start
-    y_start = step_y * 0.5
-    y_end = full_height - y_start
-    
-    x = np.arange(width)[:, None] * step_x + x_start
-    y = np.arange(height)[None, :] * step_y + y_start
+    # Use a world coordinate system with constant units-per-pixel so resizing reveals more area
+    # Choose baseline so previous visuals are roughly preserved at default 640x480
+    baseline_width = 640.0
+    baseline_range = 400.0  # previous coord_range
+    units_per_pixel = baseline_range / baseline_width  # constant scale across sizes
+
+    # Compute world extents based on the actual viewport size (full_width/height)
+    x_world_range = units_per_pixel * max(full_width, 1)
+    y_world_range = units_per_pixel * max(full_height, 1)
+
+    # Create coordinate arrays spanning the full world extents but sampled at reduced resolution
+    x = np.linspace(-x_world_range / 2.0, x_world_range / 2.0, width)[:, None]
+    y = np.linspace(-y_world_range / 2.0, y_world_range / 2.0, height)[None, :]
     
     colors = compute_function(x, y, time_val, params)
     return np.transpose(colors, (1, 0, 2))

@@ -1,0 +1,37 @@
+{
+  "window": {
+    "width": 800,
+    "height": 600,
+    "title": "Function Visualizer"
+  },
+  "visualization": {
+    "default_time_step": 0.05,
+    "default_visual_fidelity": 100.0,
+    "frame_rate": 20,
+    "update_interval_ms": 50
+  },
+  "performance": {
+    "enable_gpu": true,
+    "max_resolution": 1920,
+    "min_resolution": 320,
+    "auto_adjust_fidelity": true,
+    "auto_scaling": true
+  },
+  "ui": {
+    "show_toolbar": true,
+    "show_fps": true,
+    "show_hardware_info": true,
+    "theme": "default"
+  },
+  "saving": {
+    "auto_save_interval": 0,
+    "save_directory": "saves",
+    "image_format": "PNG",
+    "video_format": "MP4"
+  },
+  "logging": {
+    "level": "INFO",
+    "log_to_file": true,
+    "log_file": "visualizer.log"
+  }
+}

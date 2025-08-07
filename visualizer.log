@@ -1,0 +1,610 @@
+2025-08-07 14:51:35 - visualizer - INFO - Visualizer initialized
+2025-08-07 14:51:35 - visualizer - INFO - Starting visualizer application
+2025-08-07 14:51:36 - visualizer - WARNING - Performance low (1.4 FPS), reducing fidelity to 95.0%
+2025-08-07 14:51:36 - visualizer - WARNING - Performance low (4.5 FPS), reducing fidelity to 90.0%
+2025-08-07 14:51:36 - visualizer - INFO - Performance good (37.2 FPS), increasing fidelity to 95.0%
+2025-08-07 14:51:36 - visualizer - INFO - Performance good (55.5 FPS), increasing fidelity to 100.0%
+2025-08-07 14:51:43 - visualizer - ERROR - Failed to save parameters: Object of type ndarray is not JSON serializable
+2025-08-07 14:51:48 - visualizer - ERROR - Failed to load parameters: Expecting value: line 112 column 7 (char 3974)
+2025-08-07 14:51:49 - visualizer - ERROR - Failed to save parameters: Object of type ndarray is not JSON serializable
+2025-08-07 14:52:13 - visualizer - INFO - Application closing
+2025-08-07 14:54:02 - visualizer - INFO - Visualizer initialized
+2025-08-07 14:54:02 - visualizer - INFO - Starting visualizer application
+2025-08-07 14:54:03 - visualizer - WARNING - Performance low (3.9 FPS), reducing fidelity to 95.0%
+2025-08-07 14:54:03 - visualizer - INFO - Performance good (42.9 FPS), increasing fidelity to 100.0%
+2025-08-07 14:54:10 - visualizer - WARNING - Performance low (13.8 FPS), reducing fidelity to 95.0%
+2025-08-07 14:54:10 - visualizer - WARNING - Performance low (13.6 FPS), reducing fidelity to 90.0%
+2025-08-07 14:54:10 - visualizer - WARNING - Performance low (13.5 FPS), reducing fidelity to 85.0%
+2025-08-07 14:54:10 - visualizer - WARNING - Performance low (13.5 FPS), reducing fidelity to 80.0%
+2025-08-07 14:54:10 - visualizer - WARNING - Performance low (14.2 FPS), reducing fidelity to 75.0%
+2025-08-07 14:54:10 - visualizer - WARNING - Performance low (14.9 FPS), reducing fidelity to 70.0%
+2025-08-07 14:54:10 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 65.0%
+2025-08-07 14:54:11 - visualizer - INFO - Performance good (24.2 FPS), increasing fidelity to 70.0%
+2025-08-07 14:54:12 - visualizer - INFO - Performance good (24.3 FPS), increasing fidelity to 75.0%
+2025-08-07 14:54:21 - visualizer - WARNING - Performance low (15.7 FPS), reducing fidelity to 70.0%
+2025-08-07 14:54:21 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 65.0%
+2025-08-07 14:54:21 - visualizer - WARNING - Performance low (15.3 FPS), reducing fidelity to 60.0%
+2025-08-07 14:54:21 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 55.0%
+2025-08-07 14:54:21 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 50.0%
+2025-08-07 14:54:27 - visualizer - INFO - Performance good (24.0 FPS), increasing fidelity to 55.0%
+2025-08-07 14:54:41 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 95.0%
+2025-08-07 14:54:41 - visualizer - WARNING - Performance low (14.5 FPS), reducing fidelity to 90.0%
+2025-08-07 14:54:42 - visualizer - WARNING - Performance low (13.8 FPS), reducing fidelity to 85.0%
+2025-08-07 14:54:42 - visualizer - WARNING - Performance low (13.0 FPS), reducing fidelity to 80.0%
+2025-08-07 14:54:42 - visualizer - WARNING - Performance low (12.6 FPS), reducing fidelity to 75.0%
+2025-08-07 14:54:42 - visualizer - WARNING - Performance low (12.3 FPS), reducing fidelity to 70.0%
+2025-08-07 14:54:42 - visualizer - WARNING - Performance low (12.3 FPS), reducing fidelity to 65.0%
+2025-08-07 14:54:42 - visualizer - WARNING - Performance low (13.6 FPS), reducing fidelity to 60.0%
+2025-08-07 14:54:42 - visualizer - WARNING - Performance low (14.9 FPS), reducing fidelity to 55.0%
+2025-08-07 14:54:43 - visualizer - INFO - Performance good (24.6 FPS), increasing fidelity to 60.0%
+2025-08-07 14:54:43 - visualizer - INFO - Performance good (25.0 FPS), increasing fidelity to 65.0%
+2025-08-07 14:54:43 - visualizer - INFO - Performance good (25.0 FPS), increasing fidelity to 70.0%
+2025-08-07 14:54:44 - visualizer - INFO - Performance good (24.5 FPS), increasing fidelity to 75.0%
+2025-08-07 14:54:45 - visualizer - WARNING - Performance low (15.7 FPS), reducing fidelity to 70.0%
+2025-08-07 14:54:45 - visualizer - WARNING - Performance low (15.7 FPS), reducing fidelity to 65.0%
+2025-08-07 14:54:46 - visualizer - INFO - Performance good (24.2 FPS), increasing fidelity to 70.0%
+2025-08-07 14:54:46 - visualizer - INFO - Performance good (24.3 FPS), increasing fidelity to 75.0%
+2025-08-07 14:54:46 - visualizer - INFO - Performance good (24.0 FPS), increasing fidelity to 80.0%
+2025-08-07 14:54:49 - visualizer - WARNING - Performance low (15.5 FPS), reducing fidelity to 75.0%
+2025-08-07 14:54:50 - visualizer - INFO - Application closing
+2025-08-07 14:55:32 - visualizer - INFO - Visualizer initialized
+2025-08-07 14:55:32 - visualizer - INFO - Starting visualizer application
+2025-08-07 14:55:32 - visualizer - WARNING - Performance low (3.9 FPS), reducing fidelity to 95.0%
+2025-08-07 14:55:32 - visualizer - INFO - Performance good (47.1 FPS), increasing fidelity to 100.0%
+2025-08-07 14:55:33 - visualizer - ERROR - Failed to save parameters: Object of type ndarray is not JSON serializable
+2025-08-07 14:55:35 - visualizer - ERROR - Failed to save parameters: Object of type ndarray is not JSON serializable
+2025-08-07 14:55:37 - visualizer - ERROR - Failed to load parameters: Expecting value: line 112 column 7 (char 3992)
+2025-08-07 14:55:38 - visualizer - ERROR - Failed to load parameters: Expecting value: line 112 column 7 (char 3992)
+2025-08-07 14:55:40 - visualizer - INFO - Application closing
+2025-08-07 14:56:21 - visualizer - INFO - Visualizer initialized
+2025-08-07 14:56:21 - visualizer - INFO - Starting visualizer application
+2025-08-07 14:56:21 - visualizer - WARNING - Performance low (4.5 FPS), reducing fidelity to 95.0%
+2025-08-07 14:56:21 - visualizer - INFO - Performance good (24.3 FPS), increasing fidelity to 100.0%
+2025-08-07 14:56:30 - visualizer - WARNING - Performance low (15.2 FPS), reducing fidelity to 95.0%
+2025-08-07 14:56:31 - visualizer - WARNING - Performance low (10.8 FPS), reducing fidelity to 90.0%
+2025-08-07 14:56:31 - visualizer - WARNING - Performance low (11.3 FPS), reducing fidelity to 85.0%
+2025-08-07 14:56:31 - visualizer - WARNING - Performance low (11.1 FPS), reducing fidelity to 80.0%
+2025-08-07 14:56:31 - visualizer - INFO - Performance good (27.4 FPS), increasing fidelity to 85.0%
+2025-08-07 14:56:31 - visualizer - INFO - Performance good (37.1 FPS), increasing fidelity to 90.0%
+2025-08-07 14:56:31 - visualizer - INFO - Performance good (43.8 FPS), increasing fidelity to 95.0%
+2025-08-07 14:56:31 - visualizer - INFO - Performance good (51.2 FPS), increasing fidelity to 100.0%
+2025-08-07 14:56:36 - visualizer - INFO - Application closing
+2025-08-07 14:57:46 - visualizer - INFO - Visualizer initialized
+2025-08-07 14:57:46 - visualizer - INFO - Starting visualizer application
+2025-08-07 14:57:46 - visualizer - WARNING - Performance low (3.9 FPS), reducing fidelity to 95.0%
+2025-08-07 14:57:46 - visualizer - WARNING - Performance low (15.2 FPS), reducing fidelity to 90.0%
+2025-08-07 14:57:46 - visualizer - INFO - Performance good (35.5 FPS), increasing fidelity to 95.0%
+2025-08-07 14:57:46 - visualizer - INFO - Performance good (45.0 FPS), increasing fidelity to 100.0%
+2025-08-07 14:57:48 - visualizer - INFO - Parameters saved to saves\parameters\params_20250807_145748.json
+2025-08-07 14:57:48 - visualizer - INFO - State saved to saves\parameters\params_20250807_145748.json
+2025-08-07 14:57:49 - visualizer - INFO - Parameters loaded from saves\parameters\params_20250807_145748.json
+2025-08-07 14:57:49 - visualizer - INFO - Loaded state: params_20250807_145748
+2025-08-07 14:57:56 - visualizer - INFO - Parameters loaded from saves\parameters\params_20250807_145748.json
+2025-08-07 14:57:56 - visualizer - INFO - Loaded state: params_20250807_145748
+2025-08-07 14:58:00 - visualizer - INFO - Application closing
+2025-08-07 14:58:01 - visualizer - INFO - Parameters saved to saves\parameters\test_params.json
+2025-08-07 14:58:01 - visualizer - INFO - Parameters loaded from saves\parameters\test_params.json
+2025-08-07 14:58:12 - visualizer - INFO - Visualizer initialized
+2025-08-07 14:58:12 - visualizer - INFO - Starting visualizer application
+2025-08-07 14:58:13 - visualizer - WARNING - Performance low (3.9 FPS), reducing fidelity to 95.0%
+2025-08-07 14:58:13 - visualizer - INFO - Performance good (39.2 FPS), increasing fidelity to 100.0%
+2025-08-07 14:58:14 - visualizer - INFO - Parameters saved to saves\parameters\params_20250807_145814.json
+2025-08-07 14:58:14 - visualizer - INFO - State saved to saves\parameters\params_20250807_145814.json
+2025-08-07 14:58:16 - visualizer - INFO - Parameters loaded from saves\parameters\test_params.json
+2025-08-07 14:58:16 - visualizer - INFO - Loaded state: test_params
+2025-08-07 14:58:18 - visualizer - INFO - Parameters loaded from saves\parameters\test_params.json
+2025-08-07 14:58:18 - visualizer - INFO - Loaded state: test_params
+2025-08-07 14:58:20 - visualizer - INFO - Parameters saved to saves\parameters\params_20250807_145820.json
+2025-08-07 14:58:20 - visualizer - INFO - State saved to saves\parameters\params_20250807_145820.json
+2025-08-07 14:58:21 - visualizer - INFO - Parameters loaded from saves\parameters\test_params.json
+2025-08-07 14:58:21 - visualizer - INFO - Loaded state: test_params
+2025-08-07 14:58:23 - visualizer - INFO - Parameters loaded from saves\parameters\test_params.json
+2025-08-07 14:58:23 - visualizer - INFO - Loaded state: test_params
+2025-08-07 14:58:24 - visualizer - INFO - Parameters saved to saves\parameters\params_20250807_145824.json
+2025-08-07 14:58:24 - visualizer - INFO - State saved to saves\parameters\params_20250807_145824.json
+2025-08-07 14:58:24 - visualizer - INFO - Parameters loaded from saves\parameters\test_params.json
+2025-08-07 14:58:24 - visualizer - INFO - Loaded state: test_params
+2025-08-07 14:58:25 - visualizer - INFO - Application closing
+2025-08-07 14:59:17 - visualizer - INFO - Visualizer initialized
+2025-08-07 14:59:17 - visualizer - INFO - Starting visualizer application
+2025-08-07 14:59:17 - visualizer - WARNING - Performance low (3.9 FPS), reducing fidelity to 95.0%
+2025-08-07 14:59:17 - visualizer - INFO - Performance good (40.1 FPS), increasing fidelity to 100.0%
+2025-08-07 14:59:23 - visualizer - INFO - Parameters loaded from saves\parameters\params_20250807_145748.json
+2025-08-07 14:59:23 - visualizer - INFO - Loaded state: params_20250807_145748
+2025-08-07 14:59:31 - visualizer - ERROR - Failed to save parameters: Object of type ndarray is not JSON serializable
+2025-08-07 14:59:41 - visualizer - ERROR - Failed to load parameters: Expecting value: line 112 column 7 (char 3988)
+2025-08-07 14:59:46 - visualizer - INFO - Parameters loaded from saves\parameters\params_20250807_145824.json
+2025-08-07 14:59:46 - visualizer - INFO - Loaded state: params_20250807_145824
+2025-08-07 14:59:48 - visualizer - INFO - Application closing
+2025-08-07 15:00:12 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:00:12 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:00:13 - visualizer - WARNING - Performance low (4.3 FPS), reducing fidelity to 95.0%
+2025-08-07 15:00:13 - visualizer - INFO - Performance good (45.6 FPS), increasing fidelity to 100.0%
+2025-08-07 15:00:21 - visualizer - WARNING - Performance low (15.5 FPS), reducing fidelity to 95.0%
+2025-08-07 15:00:21 - visualizer - WARNING - Performance low (13.3 FPS), reducing fidelity to 90.0%
+2025-08-07 15:00:21 - visualizer - WARNING - Performance low (10.7 FPS), reducing fidelity to 85.0%
+2025-08-07 15:00:21 - visualizer - WARNING - Performance low (11.5 FPS), reducing fidelity to 80.0%
+2025-08-07 15:00:22 - visualizer - WARNING - Performance low (12.3 FPS), reducing fidelity to 75.0%
+2025-08-07 15:00:22 - visualizer - WARNING - Performance low (13.3 FPS), reducing fidelity to 70.0%
+2025-08-07 15:00:22 - visualizer - WARNING - Performance low (14.3 FPS), reducing fidelity to 65.0%
+2025-08-07 15:00:22 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 60.0%
+2025-08-07 15:00:27 - visualizer - INFO - Performance good (24.4 FPS), increasing fidelity to 65.0%
+2025-08-07 15:00:27 - visualizer - INFO - Performance good (24.8 FPS), increasing fidelity to 70.0%
+2025-08-07 15:00:27 - visualizer - INFO - Performance good (25.1 FPS), increasing fidelity to 75.0%
+2025-08-07 15:00:28 - visualizer - INFO - Performance good (24.2 FPS), increasing fidelity to 80.0%
+2025-08-07 15:00:29 - visualizer - WARNING - Performance low (15.5 FPS), reducing fidelity to 75.0%
+2025-08-07 15:00:29 - visualizer - WARNING - Performance low (14.6 FPS), reducing fidelity to 70.0%
+2025-08-07 15:00:29 - visualizer - WARNING - Performance low (14.1 FPS), reducing fidelity to 65.0%
+2025-08-07 15:00:29 - visualizer - WARNING - Performance low (14.4 FPS), reducing fidelity to 60.0%
+2025-08-07 15:00:29 - visualizer - WARNING - Performance low (14.0 FPS), reducing fidelity to 55.0%
+2025-08-07 15:00:29 - visualizer - WARNING - Performance low (14.1 FPS), reducing fidelity to 50.0%
+2025-08-07 15:00:29 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 45.0%
+2025-08-07 15:00:30 - visualizer - INFO - Performance good (26.1 FPS), increasing fidelity to 50.0%
+2025-08-07 15:00:30 - visualizer - INFO - Performance good (27.5 FPS), increasing fidelity to 55.0%
+2025-08-07 15:00:30 - visualizer - INFO - Performance good (28.2 FPS), increasing fidelity to 60.0%
+2025-08-07 15:00:30 - visualizer - INFO - Performance good (29.5 FPS), increasing fidelity to 65.0%
+2025-08-07 15:00:30 - visualizer - INFO - Performance good (30.0 FPS), increasing fidelity to 70.0%
+2025-08-07 15:00:31 - visualizer - INFO - Performance good (28.9 FPS), increasing fidelity to 75.0%
+2025-08-07 15:00:31 - visualizer - INFO - Performance good (27.1 FPS), increasing fidelity to 80.0%
+2025-08-07 15:00:31 - visualizer - INFO - Performance good (25.2 FPS), increasing fidelity to 85.0%
+2025-08-07 15:00:32 - visualizer - WARNING - Performance low (15.2 FPS), reducing fidelity to 80.0%
+2025-08-07 15:00:32 - visualizer - WARNING - Performance low (14.6 FPS), reducing fidelity to 75.0%
+2025-08-07 15:00:32 - visualizer - WARNING - Performance low (14.3 FPS), reducing fidelity to 70.0%
+2025-08-07 15:00:32 - visualizer - WARNING - Performance low (14.4 FPS), reducing fidelity to 65.0%
+2025-08-07 15:00:32 - visualizer - WARNING - Performance low (15.0 FPS), reducing fidelity to 60.0%
+2025-08-07 15:00:32 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 55.0%
+2025-08-07 15:00:33 - visualizer - INFO - Performance good (24.5 FPS), increasing fidelity to 60.0%
+2025-08-07 15:00:33 - visualizer - INFO - Performance good (25.0 FPS), increasing fidelity to 65.0%
+2025-08-07 15:00:34 - visualizer - INFO - Performance good (25.0 FPS), increasing fidelity to 70.0%
+2025-08-07 15:00:34 - visualizer - INFO - Performance good (24.2 FPS), increasing fidelity to 75.0%
+2025-08-07 15:00:36 - visualizer - INFO - Application closing
+2025-08-07 15:01:19 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:01:19 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:01:19 - visualizer - WARNING - Performance low (2.2 FPS), reducing fidelity to 95.0%
+2025-08-07 15:01:19 - visualizer - INFO - Performance good (47.4 FPS), increasing fidelity to 100.0%
+2025-08-07 15:01:30 - visualizer - WARNING - Performance low (11.5 FPS), reducing fidelity to 95.0%
+2025-08-07 15:01:30 - visualizer - WARNING - Performance low (11.6 FPS), reducing fidelity to 90.0%
+2025-08-07 15:01:30 - visualizer - WARNING - Performance low (11.8 FPS), reducing fidelity to 85.0%
+2025-08-07 15:01:30 - visualizer - WARNING - Performance low (12.3 FPS), reducing fidelity to 80.0%
+2025-08-07 15:01:30 - visualizer - WARNING - Performance low (12.8 FPS), reducing fidelity to 75.0%
+2025-08-07 15:01:30 - visualizer - WARNING - Performance low (13.5 FPS), reducing fidelity to 70.0%
+2025-08-07 15:01:31 - visualizer - WARNING - Performance low (14.5 FPS), reducing fidelity to 65.0%
+2025-08-07 15:01:31 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 60.0%
+2025-08-07 15:01:32 - visualizer - INFO - Performance good (24.1 FPS), increasing fidelity to 65.0%
+2025-08-07 15:01:32 - visualizer - INFO - Performance good (24.0 FPS), increasing fidelity to 70.0%
+2025-08-07 15:01:32 - visualizer - INFO - Performance good (28.5 FPS), increasing fidelity to 75.0%
+2025-08-07 15:01:32 - visualizer - INFO - Performance good (35.4 FPS), increasing fidelity to 80.0%
+2025-08-07 15:01:32 - visualizer - INFO - Performance good (39.5 FPS), increasing fidelity to 85.0%
+2025-08-07 15:01:32 - visualizer - INFO - Performance good (45.5 FPS), increasing fidelity to 90.0%
+2025-08-07 15:01:32 - visualizer - INFO - Performance good (49.7 FPS), increasing fidelity to 95.0%
+2025-08-07 15:01:32 - visualizer - INFO - Performance good (51.0 FPS), increasing fidelity to 100.0%
+2025-08-07 15:01:48 - visualizer - WARNING - Performance low (12.8 FPS), reducing fidelity to 95.0%
+2025-08-07 15:01:48 - visualizer - WARNING - Performance low (15.7 FPS), reducing fidelity to 90.0%
+2025-08-07 15:01:48 - visualizer - INFO - Performance good (25.0 FPS), increasing fidelity to 95.0%
+2025-08-07 15:01:48 - visualizer - INFO - Performance good (27.7 FPS), increasing fidelity to 100.0%
+2025-08-07 15:02:30 - visualizer - INFO - Application closing
+2025-08-07 15:05:20 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:05:20 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:05:20 - visualizer - WARNING - Performance low (4.1 FPS), reducing fidelity to 95.0%
+2025-08-07 15:05:21 - visualizer - INFO - Performance good (41.5 FPS), increasing fidelity to 100.0%
+2025-08-07 15:05:30 - visualizer - WARNING - Performance low (15.3 FPS), reducing fidelity to 95.0%
+2025-08-07 15:05:30 - visualizer - WARNING - Performance low (14.0 FPS), reducing fidelity to 90.0%
+2025-08-07 15:05:30 - visualizer - WARNING - Performance low (14.5 FPS), reducing fidelity to 85.0%
+2025-08-07 15:05:30 - visualizer - WARNING - Performance low (15.2 FPS), reducing fidelity to 80.0%
+2025-08-07 15:05:31 - visualizer - INFO - Auto scaling disabled
+2025-08-07 15:05:32 - visualizer - INFO - Auto scaling enabled
+2025-08-07 15:05:34 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 75.0%
+2025-08-07 15:05:34 - visualizer - WARNING - Performance low (16.0 FPS), reducing fidelity to 70.0%
+2025-08-07 15:05:34 - visualizer - INFO - Performance good (24.1 FPS), increasing fidelity to 75.0%
+2025-08-07 15:05:34 - visualizer - INFO - Performance good (26.6 FPS), increasing fidelity to 80.0%
+2025-08-07 15:05:34 - visualizer - INFO - Performance good (29.1 FPS), increasing fidelity to 85.0%
+2025-08-07 15:05:34 - visualizer - INFO - Performance good (31.4 FPS), increasing fidelity to 90.0%
+2025-08-07 15:05:34 - visualizer - INFO - Performance good (33.3 FPS), increasing fidelity to 95.0%
+2025-08-07 15:05:35 - visualizer - INFO - Performance good (34.2 FPS), increasing fidelity to 100.0%
+2025-08-07 15:05:37 - visualizer - WARNING - Performance low (15.7 FPS), reducing fidelity to 95.0%
+2025-08-07 15:05:38 - visualizer - WARNING - Performance low (13.8 FPS), reducing fidelity to 90.0%
+2025-08-07 15:05:38 - visualizer - WARNING - Performance low (12.2 FPS), reducing fidelity to 85.0%
+2025-08-07 15:05:38 - visualizer - WARNING - Performance low (12.6 FPS), reducing fidelity to 80.0%
+2025-08-07 15:05:38 - visualizer - WARNING - Performance low (13.2 FPS), reducing fidelity to 75.0%
+2025-08-07 15:05:38 - visualizer - WARNING - Performance low (14.0 FPS), reducing fidelity to 70.0%
+2025-08-07 15:05:38 - visualizer - WARNING - Performance low (15.0 FPS), reducing fidelity to 65.0%
+2025-08-07 15:05:46 - visualizer - INFO - Performance good (26.7 FPS), increasing fidelity to 70.0%
+2025-08-07 15:05:46 - visualizer - INFO - Performance good (29.1 FPS), increasing fidelity to 75.0%
+2025-08-07 15:05:46 - visualizer - INFO - Performance good (30.2 FPS), increasing fidelity to 80.0%
+2025-08-07 15:05:46 - visualizer - INFO - Performance good (30.7 FPS), increasing fidelity to 85.0%
+2025-08-07 15:05:46 - visualizer - INFO - Performance good (30.7 FPS), increasing fidelity to 90.0%
+2025-08-07 15:05:46 - visualizer - INFO - Performance good (31.6 FPS), increasing fidelity to 95.0%
+2025-08-07 15:05:46 - visualizer - INFO - Performance good (32.2 FPS), increasing fidelity to 100.0%
+2025-08-07 15:05:48 - visualizer - WARNING - Performance low (15.0 FPS), reducing fidelity to 95.0%
+2025-08-07 15:05:48 - visualizer - WARNING - Performance low (13.6 FPS), reducing fidelity to 90.0%
+2025-08-07 15:05:48 - visualizer - WARNING - Performance low (12.4 FPS), reducing fidelity to 85.0%
+2025-08-07 15:05:48 - visualizer - WARNING - Performance low (12.8 FPS), reducing fidelity to 80.0%
+2025-08-07 15:05:48 - visualizer - WARNING - Performance low (13.4 FPS), reducing fidelity to 75.0%
+2025-08-07 15:05:49 - visualizer - WARNING - Performance low (14.1 FPS), reducing fidelity to 70.0%
+2025-08-07 15:05:49 - visualizer - WARNING - Performance low (15.0 FPS), reducing fidelity to 65.0%
+2025-08-07 15:05:49 - visualizer - INFO - Performance good (27.3 FPS), increasing fidelity to 70.0%
+2025-08-07 15:05:49 - visualizer - INFO - Performance good (30.9 FPS), increasing fidelity to 75.0%
+2025-08-07 15:05:50 - visualizer - INFO - Performance good (33.3 FPS), increasing fidelity to 80.0%
+2025-08-07 15:05:50 - visualizer - INFO - Performance good (35.5 FPS), increasing fidelity to 85.0%
+2025-08-07 15:05:50 - visualizer - INFO - Performance good (37.3 FPS), increasing fidelity to 90.0%
+2025-08-07 15:05:50 - visualizer - INFO - Performance good (38.6 FPS), increasing fidelity to 95.0%
+2025-08-07 15:05:50 - visualizer - INFO - Performance good (39.8 FPS), increasing fidelity to 100.0%
+2025-08-07 15:06:01 - visualizer - WARNING - Performance low (15.3 FPS), reducing fidelity to 95.0%
+2025-08-07 15:06:01 - visualizer - WARNING - Performance low (13.9 FPS), reducing fidelity to 90.0%
+2025-08-07 15:06:01 - visualizer - WARNING - Performance low (13.2 FPS), reducing fidelity to 85.0%
+2025-08-07 15:06:01 - visualizer - WARNING - Performance low (12.4 FPS), reducing fidelity to 80.0%
+2025-08-07 15:06:01 - visualizer - WARNING - Performance low (11.9 FPS), reducing fidelity to 75.0%
+2025-08-07 15:06:01 - visualizer - WARNING - Performance low (12.6 FPS), reducing fidelity to 70.0%
+2025-08-07 15:06:01 - visualizer - WARNING - Performance low (14.6 FPS), reducing fidelity to 65.0%
+2025-08-07 15:06:02 - visualizer - INFO - Performance good (25.9 FPS), increasing fidelity to 70.0%
+2025-08-07 15:06:02 - visualizer - INFO - Performance good (29.4 FPS), increasing fidelity to 75.0%
+2025-08-07 15:06:02 - visualizer - INFO - Performance good (32.2 FPS), increasing fidelity to 80.0%
+2025-08-07 15:06:02 - visualizer - INFO - Performance good (34.2 FPS), increasing fidelity to 85.0%
+2025-08-07 15:06:02 - visualizer - INFO - Performance good (36.1 FPS), increasing fidelity to 90.0%
+2025-08-07 15:06:02 - visualizer - INFO - Performance good (37.2 FPS), increasing fidelity to 95.0%
+2025-08-07 15:06:02 - visualizer - INFO - Performance good (38.3 FPS), increasing fidelity to 100.0%
+2025-08-07 15:06:03 - visualizer - INFO - Application closing
+2025-08-07 15:06:59 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:06:59 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:06:59 - visualizer - WARNING - Performance low (4.1 FPS), reducing fidelity to 95.0%
+2025-08-07 15:06:59 - visualizer - INFO - Performance good (39.4 FPS), increasing fidelity to 100.0%
+2025-08-07 15:07:16 - visualizer - WARNING - Performance low (15.6 FPS), reducing fidelity to 95.0%
+2025-08-07 15:07:17 - visualizer - WARNING - Performance low (13.9 FPS), reducing fidelity to 90.0%
+2025-08-07 15:07:17 - visualizer - WARNING - Performance low (14.0 FPS), reducing fidelity to 85.0%
+2025-08-07 15:07:17 - visualizer - WARNING - Performance low (12.9 FPS), reducing fidelity to 80.0%
+2025-08-07 15:07:17 - visualizer - WARNING - Performance low (13.2 FPS), reducing fidelity to 75.0%
+2025-08-07 15:07:17 - visualizer - WARNING - Performance low (13.7 FPS), reducing fidelity to 70.0%
+2025-08-07 15:07:17 - visualizer - WARNING - Performance low (14.4 FPS), reducing fidelity to 65.0%
+2025-08-07 15:07:17 - visualizer - WARNING - Performance low (15.3 FPS), reducing fidelity to 60.0%
+2025-08-07 15:07:18 - visualizer - INFO - Performance good (24.1 FPS), increasing fidelity to 65.0%
+2025-08-07 15:07:18 - visualizer - INFO - Performance good (24.2 FPS), increasing fidelity to 70.0%
+2025-08-07 15:07:22 - visualizer - INFO - Performance good (25.2 FPS), increasing fidelity to 75.0%
+2025-08-07 15:07:23 - visualizer - INFO - Performance good (27.0 FPS), increasing fidelity to 80.0%
+2025-08-07 15:07:23 - visualizer - INFO - Performance good (28.3 FPS), increasing fidelity to 85.0%
+2025-08-07 15:07:23 - visualizer - INFO - Performance good (29.2 FPS), increasing fidelity to 90.0%
+2025-08-07 15:07:23 - visualizer - INFO - Performance good (30.2 FPS), increasing fidelity to 95.0%
+2025-08-07 15:07:23 - visualizer - INFO - Performance good (31.0 FPS), increasing fidelity to 100.0%
+2025-08-07 15:07:25 - visualizer - WARNING - Performance low (15.0 FPS), reducing fidelity to 95.0%
+2025-08-07 15:07:25 - visualizer - WARNING - Performance low (14.0 FPS), reducing fidelity to 90.0%
+2025-08-07 15:07:25 - visualizer - WARNING - Performance low (13.2 FPS), reducing fidelity to 85.0%
+2025-08-07 15:07:25 - visualizer - WARNING - Performance low (13.5 FPS), reducing fidelity to 80.0%
+2025-08-07 15:07:25 - visualizer - WARNING - Performance low (13.0 FPS), reducing fidelity to 75.0%
+2025-08-07 15:07:25 - visualizer - WARNING - Performance low (13.8 FPS), reducing fidelity to 70.0%
+2025-08-07 15:07:26 - visualizer - WARNING - Performance low (14.7 FPS), reducing fidelity to 65.0%
+2025-08-07 15:07:26 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 60.0%
+2025-08-07 15:07:26 - visualizer - INFO - Performance good (24.1 FPS), increasing fidelity to 65.0%
+2025-08-07 15:07:26 - visualizer - INFO - Performance good (24.7 FPS), increasing fidelity to 70.0%
+2025-08-07 15:07:27 - visualizer - INFO - Performance good (24.8 FPS), increasing fidelity to 75.0%
+2025-08-07 15:07:27 - visualizer - INFO - Performance good (24.5 FPS), increasing fidelity to 80.0%
+2025-08-07 15:07:28 - visualizer - WARNING - Performance low (15.3 FPS), reducing fidelity to 75.0%
+2025-08-07 15:07:28 - visualizer - WARNING - Performance low (15.0 FPS), reducing fidelity to 70.0%
+2025-08-07 15:07:28 - visualizer - WARNING - Performance low (15.1 FPS), reducing fidelity to 65.0%
+2025-08-07 15:07:28 - visualizer - WARNING - Performance low (15.5 FPS), reducing fidelity to 60.0%
+2025-08-07 15:07:33 - visualizer - INFO - Performance good (24.1 FPS), increasing fidelity to 65.0%
+2025-08-07 15:07:33 - visualizer - INFO - Performance good (26.0 FPS), increasing fidelity to 70.0%
+2025-08-07 15:07:33 - visualizer - INFO - Performance good (26.0 FPS), increasing fidelity to 75.0%
+2025-08-07 15:07:33 - visualizer - INFO - Performance good (25.8 FPS), increasing fidelity to 80.0%
+2025-08-07 15:07:33 - visualizer - INFO - Performance good (26.7 FPS), increasing fidelity to 85.0%
+2025-08-07 15:07:33 - visualizer - INFO - Performance good (27.3 FPS), increasing fidelity to 90.0%
+2025-08-07 15:07:33 - visualizer - INFO - Performance good (27.7 FPS), increasing fidelity to 95.0%
+2025-08-07 15:07:33 - visualizer - INFO - Performance good (28.1 FPS), increasing fidelity to 100.0%
+2025-08-07 15:07:35 - visualizer - WARNING - Performance low (15.3 FPS), reducing fidelity to 95.0%
+2025-08-07 15:07:35 - visualizer - WARNING - Performance low (14.4 FPS), reducing fidelity to 90.0%
+2025-08-07 15:07:36 - visualizer - WARNING - Performance low (13.4 FPS), reducing fidelity to 85.0%
+2025-08-07 15:07:36 - visualizer - WARNING - Performance low (13.7 FPS), reducing fidelity to 80.0%
+2025-08-07 15:07:36 - visualizer - WARNING - Performance low (13.2 FPS), reducing fidelity to 75.0%
+2025-08-07 15:07:36 - visualizer - WARNING - Performance low (12.4 FPS), reducing fidelity to 70.0%
+2025-08-07 15:07:36 - visualizer - WARNING - Performance low (13.1 FPS), reducing fidelity to 65.0%
+2025-08-07 15:07:36 - visualizer - WARNING - Performance low (13.9 FPS), reducing fidelity to 60.0%
+2025-08-07 15:07:36 - visualizer - WARNING - Performance low (15.1 FPS), reducing fidelity to 55.0%
+2025-08-07 15:07:37 - visualizer - INFO - Performance good (24.1 FPS), increasing fidelity to 60.0%
+2025-08-07 15:07:37 - visualizer - INFO - Performance good (24.9 FPS), increasing fidelity to 65.0%
+2025-08-07 15:07:37 - visualizer - INFO - Performance good (25.2 FPS), increasing fidelity to 70.0%
+2025-08-07 15:07:37 - visualizer - INFO - Performance good (24.9 FPS), increasing fidelity to 75.0%
+2025-08-07 15:07:38 - visualizer - INFO - Performance good (24.4 FPS), increasing fidelity to 80.0%
+2025-08-07 15:07:41 - visualizer - WARNING - Performance low (16.0 FPS), reducing fidelity to 75.0%
+2025-08-07 15:07:43 - visualizer - WARNING - Performance low (15.6 FPS), reducing fidelity to 70.0%
+2025-08-07 15:07:43 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 65.0%
+2025-08-07 15:07:44 - visualizer - WARNING - Performance low (15.5 FPS), reducing fidelity to 60.0%
+2025-08-07 15:07:54 - visualizer - INFO - Parameters saved to saves\parameters\params_20250807_150754.json
+2025-08-07 15:07:54 - visualizer - INFO - State saved to saves\parameters\params_20250807_150754.json
+2025-08-07 15:07:57 - visualizer - INFO - Performance good (25.3 FPS), increasing fidelity to 65.0%
+2025-08-07 15:07:57 - visualizer - INFO - Performance good (28.7 FPS), increasing fidelity to 70.0%
+2025-08-07 15:07:57 - visualizer - INFO - Performance good (31.7 FPS), increasing fidelity to 75.0%
+2025-08-07 15:07:57 - visualizer - INFO - Performance good (34.2 FPS), increasing fidelity to 80.0%
+2025-08-07 15:07:57 - visualizer - INFO - Performance good (35.7 FPS), increasing fidelity to 85.0%
+2025-08-07 15:07:57 - visualizer - INFO - Performance good (37.1 FPS), increasing fidelity to 90.0%
+2025-08-07 15:07:57 - visualizer - INFO - Performance good (38.2 FPS), increasing fidelity to 95.0%
+2025-08-07 15:07:58 - visualizer - INFO - Performance good (40.4 FPS), increasing fidelity to 100.0%
+2025-08-07 15:07:58 - visualizer - INFO - Application closing
+2025-08-07 15:08:31 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:08:31 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:08:31 - visualizer - WARNING - Performance low (3.9 FPS), reducing fidelity to 95.0%
+2025-08-07 15:08:31 - visualizer - WARNING - Performance low (15.7 FPS), reducing fidelity to 90.0%
+2025-08-07 15:08:31 - visualizer - INFO - Performance good (35.9 FPS), increasing fidelity to 95.0%
+2025-08-07 15:08:31 - visualizer - INFO - Performance good (44.6 FPS), increasing fidelity to 100.0%
+2025-08-07 15:08:34 - visualizer - WARNING - Performance low (14.4 FPS), reducing fidelity to 95.0%
+2025-08-07 15:08:35 - visualizer - WARNING - Performance low (14.7 FPS), reducing fidelity to 90.0%
+2025-08-07 15:08:35 - visualizer - WARNING - Performance low (15.0 FPS), reducing fidelity to 85.0%
+2025-08-07 15:08:35 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 80.0%
+2025-08-07 15:08:35 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 75.0%
+2025-08-07 15:08:40 - visualizer - INFO - Performance good (29.9 FPS), increasing fidelity to 80.0%
+2025-08-07 15:08:40 - visualizer - INFO - Performance good (39.2 FPS), increasing fidelity to 85.0%
+2025-08-07 15:08:40 - visualizer - INFO - Performance good (42.3 FPS), increasing fidelity to 90.0%
+2025-08-07 15:08:40 - visualizer - INFO - Performance good (45.5 FPS), increasing fidelity to 95.0%
+2025-08-07 15:08:40 - visualizer - INFO - Performance good (48.4 FPS), increasing fidelity to 100.0%
+2025-08-07 15:08:47 - visualizer - WARNING - Performance low (15.1 FPS), reducing fidelity to 95.0%
+2025-08-07 15:08:47 - visualizer - WARNING - Performance low (10.6 FPS), reducing fidelity to 90.0%
+2025-08-07 15:08:47 - visualizer - WARNING - Performance low (10.4 FPS), reducing fidelity to 85.0%
+2025-08-07 15:08:47 - visualizer - WARNING - Performance low (10.3 FPS), reducing fidelity to 80.0%
+2025-08-07 15:08:47 - visualizer - WARNING - Performance low (10.7 FPS), reducing fidelity to 75.0%
+2025-08-07 15:08:48 - visualizer - WARNING - Performance low (11.1 FPS), reducing fidelity to 70.0%
+2025-08-07 15:08:48 - visualizer - WARNING - Performance low (12.2 FPS), reducing fidelity to 65.0%
+2025-08-07 15:08:48 - visualizer - WARNING - Performance low (13.4 FPS), reducing fidelity to 60.0%
+2025-08-07 15:08:48 - visualizer - WARNING - Performance low (14.9 FPS), reducing fidelity to 55.0%
+2025-08-07 15:08:48 - visualizer - INFO - Performance good (24.2 FPS), increasing fidelity to 60.0%
+2025-08-07 15:08:48 - visualizer - INFO - Performance good (25.9 FPS), increasing fidelity to 65.0%
+2025-08-07 15:08:49 - visualizer - INFO - Performance good (27.0 FPS), increasing fidelity to 70.0%
+2025-08-07 15:08:49 - visualizer - INFO - Performance good (27.4 FPS), increasing fidelity to 75.0%
+2025-08-07 15:08:49 - visualizer - INFO - Performance good (27.2 FPS), increasing fidelity to 80.0%
+2025-08-07 15:08:49 - visualizer - INFO - Performance good (26.6 FPS), increasing fidelity to 85.0%
+2025-08-07 15:08:49 - visualizer - INFO - Performance good (25.6 FPS), increasing fidelity to 90.0%
+2025-08-07 15:08:49 - visualizer - INFO - Performance good (24.1 FPS), increasing fidelity to 95.0%
+2025-08-07 15:08:50 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 90.0%
+2025-08-07 15:08:50 - visualizer - WARNING - Performance low (14.7 FPS), reducing fidelity to 85.0%
+2025-08-07 15:08:51 - visualizer - WARNING - Performance low (14.3 FPS), reducing fidelity to 80.0%
+2025-08-07 15:08:51 - visualizer - WARNING - Performance low (14.2 FPS), reducing fidelity to 75.0%
+2025-08-07 15:08:51 - visualizer - WARNING - Performance low (14.0 FPS), reducing fidelity to 70.0%
+2025-08-07 15:08:51 - visualizer - WARNING - Performance low (14.8 FPS), reducing fidelity to 65.0%
+2025-08-07 15:08:51 - visualizer - WARNING - Performance low (15.8 FPS), reducing fidelity to 60.0%
+2025-08-07 15:08:52 - visualizer - INFO - Performance good (24.9 FPS), increasing fidelity to 65.0%
+2025-08-07 15:08:52 - visualizer - INFO - Performance good (25.7 FPS), increasing fidelity to 70.0%
+2025-08-07 15:08:52 - visualizer - INFO - Performance good (25.4 FPS), increasing fidelity to 75.0%
+2025-08-07 15:08:52 - visualizer - INFO - Performance good (24.3 FPS), increasing fidelity to 80.0%
+2025-08-07 15:08:54 - visualizer - WARNING - Performance low (15.6 FPS), reducing fidelity to 75.0%
+2025-08-07 15:08:54 - visualizer - WARNING - Performance low (15.2 FPS), reducing fidelity to 70.0%
+2025-08-07 15:08:54 - visualizer - WARNING - Performance low (15.2 FPS), reducing fidelity to 65.0%
+2025-08-07 15:08:54 - visualizer - WARNING - Performance low (15.3 FPS), reducing fidelity to 60.0%
+2025-08-07 15:08:55 - visualizer - WARNING - Performance low (15.8 FPS), reducing fidelity to 55.0%
+2025-08-07 15:08:55 - visualizer - INFO - Performance good (30.3 FPS), increasing fidelity to 60.0%
+2025-08-07 15:08:55 - visualizer - INFO - Performance good (35.8 FPS), increasing fidelity to 65.0%
+2025-08-07 15:08:55 - visualizer - INFO - Performance good (44.4 FPS), increasing fidelity to 70.0%
+2025-08-07 15:08:55 - visualizer - INFO - Performance good (53.6 FPS), increasing fidelity to 75.0%
+2025-08-07 15:08:55 - visualizer - INFO - Performance good (61.5 FPS), increasing fidelity to 80.0%
+2025-08-07 15:08:55 - visualizer - INFO - Performance good (67.7 FPS), increasing fidelity to 85.0%
+2025-08-07 15:08:55 - visualizer - INFO - Performance good (74.3 FPS), increasing fidelity to 90.0%
+2025-08-07 15:08:55 - visualizer - INFO - Performance good (80.4 FPS), increasing fidelity to 95.0%
+2025-08-07 15:08:55 - visualizer - INFO - Performance good (83.0 FPS), increasing fidelity to 100.0%
+2025-08-07 15:08:55 - visualizer - INFO - Application closing
+2025-08-07 15:11:19 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:11:20 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:11:21 - visualizer - ERROR - Error updating display: No module named 'scipy'
+2025-08-07 15:11:41 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:11:41 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:11:41 - visualizer - ERROR - Error updating display: No module named 'scipy'
+2025-08-07 15:12:28 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:12:28 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:12:28 - visualizer - ERROR - Error updating display: No module named 'scipy'
+2025-08-07 15:12:50 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:12:50 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:12:50 - visualizer - ERROR - Error updating display: name 'gaussian_filter' is not defined
+2025-08-07 15:13:04 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:13:04 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:13:04 - visualizer - WARNING - Performance low (4.1 FPS), reducing fidelity to 95.0%
+2025-08-07 15:14:56 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:14:57 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:14:57 - visualizer - WARNING - Performance low (3.7 FPS), reducing fidelity to 95.0%
+2025-08-07 15:15:40 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:15:40 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:15:40 - visualizer - WARNING - Performance low (4.0 FPS), reducing fidelity to 95.0%
+2025-08-07 15:15:40 - visualizer - INFO - Performance good (41.2 FPS), increasing fidelity to 100.0%
+2025-08-07 15:15:50 - visualizer - INFO - Auto scaling disabled
+2025-08-07 15:15:57 - visualizer - INFO - Auto scaling enabled
+2025-08-07 15:15:57 - visualizer - WARNING - Performance low (12.1 FPS), reducing fidelity to 95.0%
+2025-08-07 15:15:57 - visualizer - WARNING - Performance low (9.1 FPS), reducing fidelity to 90.0%
+2025-08-07 15:15:57 - visualizer - WARNING - Performance low (9.5 FPS), reducing fidelity to 85.0%
+2025-08-07 15:15:57 - visualizer - WARNING - Performance low (10.0 FPS), reducing fidelity to 80.0%
+2025-08-07 15:15:58 - visualizer - WARNING - Performance low (10.5 FPS), reducing fidelity to 75.0%
+2025-08-07 15:15:58 - visualizer - WARNING - Performance low (11.2 FPS), reducing fidelity to 70.0%
+2025-08-07 15:15:58 - visualizer - WARNING - Performance low (11.9 FPS), reducing fidelity to 65.0%
+2025-08-07 15:15:58 - visualizer - WARNING - Performance low (13.0 FPS), reducing fidelity to 60.0%
+2025-08-07 15:15:58 - visualizer - WARNING - Performance low (14.1 FPS), reducing fidelity to 55.0%
+2025-08-07 15:15:58 - visualizer - WARNING - Performance low (15.5 FPS), reducing fidelity to 50.0%
+2025-08-07 15:15:59 - visualizer - INFO - Performance good (24.8 FPS), increasing fidelity to 55.0%
+2025-08-07 15:15:59 - visualizer - INFO - Performance good (25.7 FPS), increasing fidelity to 60.0%
+2025-08-07 15:15:59 - visualizer - INFO - Performance good (26.0 FPS), increasing fidelity to 65.0%
+2025-08-07 15:15:59 - visualizer - INFO - Performance good (25.8 FPS), increasing fidelity to 70.0%
+2025-08-07 15:15:59 - visualizer - INFO - Performance good (25.0 FPS), increasing fidelity to 75.0%
+2025-08-07 15:16:01 - visualizer - WARNING - Performance low (15.7 FPS), reducing fidelity to 70.0%
+2025-08-07 15:16:01 - visualizer - WARNING - Performance low (15.8 FPS), reducing fidelity to 65.0%
+2025-08-07 15:16:14 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 60.0%
+2025-08-07 15:16:14 - visualizer - WARNING - Performance low (15.7 FPS), reducing fidelity to 55.0%
+2025-08-07 15:16:15 - visualizer - INFO - Performance good (24.4 FPS), increasing fidelity to 60.0%
+2025-08-07 15:16:15 - visualizer - INFO - Performance good (24.7 FPS), increasing fidelity to 65.0%
+2025-08-07 15:16:15 - visualizer - INFO - Performance good (24.3 FPS), increasing fidelity to 70.0%
+2025-08-07 15:16:19 - visualizer - WARNING - Performance low (15.6 FPS), reducing fidelity to 65.0%
+2025-08-07 15:16:19 - visualizer - WARNING - Performance low (15.3 FPS), reducing fidelity to 60.0%
+2025-08-07 15:16:20 - visualizer - INFO - Performance good (24.1 FPS), increasing fidelity to 65.0%
+2025-08-07 15:16:20 - visualizer - INFO - Performance good (24.8 FPS), increasing fidelity to 70.0%
+2025-08-07 15:16:20 - visualizer - INFO - Performance good (24.3 FPS), increasing fidelity to 75.0%
+2025-08-07 15:16:23 - visualizer - INFO - Application closing
+2025-08-07 15:20:04 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:20:04 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:20:05 - visualizer - WARNING - Performance low (4.0 FPS), reducing fidelity to 95.0%
+2025-08-07 15:20:05 - visualizer - INFO - Performance good (40.9 FPS), increasing fidelity to 100.0%
+2025-08-07 15:20:14 - visualizer - INFO - Application closing
+2025-08-07 15:22:13 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:22:13 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:22:13 - visualizer - WARNING - Performance low (4.0 FPS), reducing fidelity to 95.0%
+2025-08-07 15:22:14 - visualizer - WARNING - Performance low (4.9 FPS), reducing fidelity to 90.0%
+2025-08-07 15:22:14 - visualizer - INFO - Performance good (31.2 FPS), increasing fidelity to 95.0%
+2025-08-07 15:22:14 - visualizer - INFO - Performance good (43.0 FPS), increasing fidelity to 100.0%
+2025-08-07 15:22:36 - visualizer - WARNING - Performance low (15.7 FPS), reducing fidelity to 95.0%
+2025-08-07 15:22:38 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 90.0%
+2025-08-07 15:22:38 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 85.0%
+2025-08-07 15:22:38 - visualizer - WARNING - Performance low (15.1 FPS), reducing fidelity to 80.0%
+2025-08-07 15:22:38 - visualizer - WARNING - Performance low (15.3 FPS), reducing fidelity to 75.0%
+2025-08-07 15:22:38 - visualizer - WARNING - Performance low (15.7 FPS), reducing fidelity to 70.0%
+2025-08-07 15:22:40 - visualizer - INFO - Performance good (25.2 FPS), increasing fidelity to 75.0%
+2025-08-07 15:22:40 - visualizer - INFO - Performance good (30.3 FPS), increasing fidelity to 80.0%
+2025-08-07 15:22:40 - visualizer - INFO - Performance good (35.2 FPS), increasing fidelity to 85.0%
+2025-08-07 15:22:40 - visualizer - INFO - Performance good (39.2 FPS), increasing fidelity to 90.0%
+2025-08-07 15:22:40 - visualizer - INFO - Performance good (39.5 FPS), increasing fidelity to 95.0%
+2025-08-07 15:22:40 - visualizer - INFO - Performance good (40.1 FPS), increasing fidelity to 100.0%
+2025-08-07 15:22:47 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 95.0%
+2025-08-07 15:22:47 - visualizer - WARNING - Performance low (15.1 FPS), reducing fidelity to 90.0%
+2025-08-07 15:22:47 - visualizer - WARNING - Performance low (14.5 FPS), reducing fidelity to 85.0%
+2025-08-07 15:22:47 - visualizer - WARNING - Performance low (14.5 FPS), reducing fidelity to 80.0%
+2025-08-07 15:22:47 - visualizer - WARNING - Performance low (14.8 FPS), reducing fidelity to 75.0%
+2025-08-07 15:22:47 - visualizer - WARNING - Performance low (15.8 FPS), reducing fidelity to 70.0%
+2025-08-07 15:22:51 - visualizer - INFO - Performance good (24.1 FPS), increasing fidelity to 75.0%
+2025-08-07 15:22:51 - visualizer - INFO - Performance good (24.8 FPS), increasing fidelity to 80.0%
+2025-08-07 15:22:51 - visualizer - INFO - Performance good (25.2 FPS), increasing fidelity to 85.0%
+2025-08-07 15:22:51 - visualizer - INFO - Performance good (24.5 FPS), increasing fidelity to 90.0%
+2025-08-07 15:22:52 - visualizer - INFO - Application closing
+2025-08-07 15:23:03 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:23:03 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:23:04 - visualizer - WARNING - Performance low (4.4 FPS), reducing fidelity to 95.0%
+2025-08-07 15:23:04 - visualizer - WARNING - Performance low (5.0 FPS), reducing fidelity to 90.0%
+2025-08-07 15:23:04 - visualizer - INFO - Performance good (35.2 FPS), increasing fidelity to 95.0%
+2025-08-07 15:23:04 - visualizer - INFO - Performance good (47.3 FPS), increasing fidelity to 100.0%
+2025-08-07 15:23:27 - visualizer - WARNING - Performance low (16.0 FPS), reducing fidelity to 95.0%
+2025-08-07 15:23:28 - visualizer - WARNING - Performance low (16.0 FPS), reducing fidelity to 90.0%
+2025-08-07 15:23:29 - visualizer - INFO - Performance good (25.0 FPS), increasing fidelity to 95.0%
+2025-08-07 15:23:29 - visualizer - INFO - Performance good (25.7 FPS), increasing fidelity to 100.0%
+2025-08-07 15:23:36 - visualizer - INFO - Parameters saved to saves\parameters\params_20250807_152336.json
+2025-08-07 15:23:36 - visualizer - INFO - State saved to saves\parameters\params_20250807_152336.json
+2025-08-07 15:23:44 - visualizer - ERROR - Failed to save parameters: Object of type ndarray is not JSON serializable
+2025-08-07 15:24:00 - visualizer - WARNING - Performance low (15.6 FPS), reducing fidelity to 95.0%
+2025-08-07 15:24:01 - visualizer - WARNING - Performance low (15.3 FPS), reducing fidelity to 90.0%
+2025-08-07 15:24:01 - visualizer - WARNING - Performance low (15.2 FPS), reducing fidelity to 85.0%
+2025-08-07 15:24:01 - visualizer - WARNING - Performance low (15.2 FPS), reducing fidelity to 80.0%
+2025-08-07 15:24:01 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 75.0%
+2025-08-07 15:24:01 - visualizer - WARNING - Performance low (16.0 FPS), reducing fidelity to 70.0%
+2025-08-07 15:24:01 - visualizer - INFO - Application closing
+2025-08-07 15:27:36 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:27:36 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:27:37 - visualizer - WARNING - Performance low (2.4 FPS), reducing fidelity to 95.0%
+2025-08-07 15:27:37 - visualizer - WARNING - Performance low (2.7 FPS), reducing fidelity to 90.0%
+2025-08-07 15:27:37 - visualizer - INFO - Performance good (26.4 FPS), increasing fidelity to 95.0%
+2025-08-07 15:27:37 - visualizer - INFO - Performance good (39.5 FPS), increasing fidelity to 100.0%
+2025-08-07 15:27:38 - visualizer - INFO - Application closing
+2025-08-07 15:28:45 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:28:45 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:28:45 - visualizer - WARNING - Performance low (4.0 FPS), reducing fidelity to 95.0%
+2025-08-07 15:28:45 - visualizer - WARNING - Performance low (4.8 FPS), reducing fidelity to 90.0%
+2025-08-07 15:28:45 - visualizer - INFO - Performance good (26.0 FPS), increasing fidelity to 95.0%
+2025-08-07 15:28:45 - visualizer - INFO - Performance good (35.9 FPS), increasing fidelity to 100.0%
+2025-08-07 15:29:07 - visualizer - WARNING - Performance low (15.3 FPS), reducing fidelity to 95.0%
+2025-08-07 15:29:07 - visualizer - WARNING - Performance low (12.9 FPS), reducing fidelity to 90.0%
+2025-08-07 15:29:07 - visualizer - WARNING - Performance low (13.3 FPS), reducing fidelity to 85.0%
+2025-08-07 15:29:08 - visualizer - WARNING - Performance low (14.5 FPS), reducing fidelity to 80.0%
+2025-08-07 15:29:08 - visualizer - WARNING - Performance low (14.9 FPS), reducing fidelity to 75.0%
+2025-08-07 15:29:08 - visualizer - WARNING - Performance low (15.5 FPS), reducing fidelity to 70.0%
+2025-08-07 15:29:08 - visualizer - INFO - Performance good (31.6 FPS), increasing fidelity to 75.0%
+2025-08-07 15:29:08 - visualizer - INFO - Performance good (38.4 FPS), increasing fidelity to 80.0%
+2025-08-07 15:29:08 - visualizer - INFO - Performance good (44.0 FPS), increasing fidelity to 85.0%
+2025-08-07 15:29:08 - visualizer - INFO - Performance good (50.8 FPS), increasing fidelity to 90.0%
+2025-08-07 15:29:08 - visualizer - INFO - Performance good (56.3 FPS), increasing fidelity to 95.0%
+2025-08-07 15:29:08 - visualizer - INFO - Performance good (61.7 FPS), increasing fidelity to 100.0%
+2025-08-07 15:29:51 - visualizer - INFO - Application closing
+2025-08-07 15:31:39 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:31:39 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:31:39 - visualizer - WARNING - Performance low (4.2 FPS), reducing fidelity to 95.0%
+2025-08-07 15:31:39 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 90.0%
+2025-08-07 15:31:39 - visualizer - INFO - Performance good (37.0 FPS), increasing fidelity to 95.0%
+2025-08-07 15:31:39 - visualizer - INFO - Performance good (48.2 FPS), increasing fidelity to 100.0%
+2025-08-07 15:32:15 - visualizer - WARNING - Performance low (15.5 FPS), reducing fidelity to 95.0%
+2025-08-07 15:32:15 - visualizer - WARNING - Performance low (14.5 FPS), reducing fidelity to 90.0%
+2025-08-07 15:32:16 - visualizer - WARNING - Performance low (13.6 FPS), reducing fidelity to 85.0%
+2025-08-07 15:32:16 - visualizer - WARNING - Performance low (12.8 FPS), reducing fidelity to 80.0%
+2025-08-07 15:32:16 - visualizer - WARNING - Performance low (12.3 FPS), reducing fidelity to 75.0%
+2025-08-07 15:32:16 - visualizer - WARNING - Performance low (11.8 FPS), reducing fidelity to 70.0%
+2025-08-07 15:32:16 - visualizer - WARNING - Performance low (12.2 FPS), reducing fidelity to 65.0%
+2025-08-07 15:32:16 - visualizer - WARNING - Performance low (13.2 FPS), reducing fidelity to 60.0%
+2025-08-07 15:32:16 - visualizer - WARNING - Performance low (14.4 FPS), reducing fidelity to 55.0%
+2025-08-07 15:32:17 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 50.0%
+2025-08-07 15:32:17 - visualizer - INFO - Performance good (24.6 FPS), increasing fidelity to 55.0%
+2025-08-07 15:32:17 - visualizer - INFO - Performance good (25.4 FPS), increasing fidelity to 60.0%
+2025-08-07 15:32:17 - visualizer - INFO - Performance good (25.8 FPS), increasing fidelity to 65.0%
+2025-08-07 15:32:17 - visualizer - INFO - Performance good (25.8 FPS), increasing fidelity to 70.0%
+2025-08-07 15:32:18 - visualizer - INFO - Performance good (25.2 FPS), increasing fidelity to 75.0%
+2025-08-07 15:32:18 - visualizer - INFO - Performance good (24.1 FPS), increasing fidelity to 80.0%
+2025-08-07 15:32:19 - visualizer - WARNING - Performance low (15.7 FPS), reducing fidelity to 75.0%
+2025-08-07 15:32:19 - visualizer - WARNING - Performance low (14.9 FPS), reducing fidelity to 70.0%
+2025-08-07 15:32:19 - visualizer - WARNING - Performance low (14.6 FPS), reducing fidelity to 65.0%
+2025-08-07 15:32:19 - visualizer - WARNING - Performance low (15.0 FPS), reducing fidelity to 60.0%
+2025-08-07 15:32:19 - visualizer - WARNING - Performance low (15.8 FPS), reducing fidelity to 55.0%
+2025-08-07 15:32:20 - visualizer - INFO - Performance good (24.8 FPS), increasing fidelity to 60.0%
+2025-08-07 15:32:20 - visualizer - INFO - Performance good (25.0 FPS), increasing fidelity to 65.0%
+2025-08-07 15:32:20 - visualizer - INFO - Performance good (24.7 FPS), increasing fidelity to 70.0%
+2025-08-07 15:32:25 - visualizer - INFO - Application closing
+2025-08-07 15:33:14 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:33:14 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:33:14 - visualizer - WARNING - Performance low (3.9 FPS), reducing fidelity to 95.0%
+2025-08-07 15:33:14 - visualizer - WARNING - Performance low (14.4 FPS), reducing fidelity to 90.0%
+2025-08-07 15:33:14 - visualizer - INFO - Performance good (33.1 FPS), increasing fidelity to 95.0%
+2025-08-07 15:33:14 - visualizer - INFO - Performance good (38.6 FPS), increasing fidelity to 100.0%
+2025-08-07 15:33:21 - visualizer - INFO - Application closing
+2025-08-07 15:35:25 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:35:25 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:35:26 - visualizer - WARNING - Performance low (4.1 FPS), reducing fidelity to 95.0%
+2025-08-07 15:35:26 - visualizer - WARNING - Performance low (4.7 FPS), reducing fidelity to 90.0%
+2025-08-07 15:35:26 - visualizer - INFO - Performance good (35.2 FPS), increasing fidelity to 95.0%
+2025-08-07 15:35:26 - visualizer - INFO - Performance good (48.8 FPS), increasing fidelity to 100.0%
+2025-08-07 15:35:32 - visualizer - INFO - Auto scaling disabled
+2025-08-07 15:35:33 - visualizer - INFO - Auto scaling enabled
+2025-08-07 15:35:34 - visualizer - INFO - Auto scaling disabled
+2025-08-07 15:35:34 - visualizer - INFO - Auto scaling enabled
+2025-08-07 15:35:41 - visualizer - INFO - Parameters saved to D:\projects\practice-claude-code\function-visualizer\saves\parameters\params_20250807_153538.json
+2025-08-07 15:35:41 - visualizer - INFO - State saved to D:\projects\practice-claude-code\function-visualizer\saves\parameters\params_20250807_153538.json
+2025-08-07 15:35:43 - visualizer - INFO - Parameters loaded from saves\parameters\params_20250807_152336.json
+2025-08-07 15:35:43 - visualizer - INFO - Loaded state: params_20250807_152336
+2025-08-07 15:35:48 - visualizer - INFO - Application closing
+2025-08-07 15:36:45 - visualizer - INFO - Visualizer initialized
+2025-08-07 15:36:45 - visualizer - INFO - Starting visualizer application
+2025-08-07 15:36:45 - visualizer - WARNING - Performance low (4.1 FPS), reducing fidelity to 95.0%
+2025-08-07 15:36:45 - visualizer - INFO - Performance good (44.0 FPS), increasing fidelity to 100.0%
+2025-08-07 15:36:49 - visualizer - INFO - Parameters loaded from saves\parameters\params_20250807_152336.json
+2025-08-07 15:36:49 - visualizer - INFO - Loaded state: params_20250807_152336
+2025-08-07 15:36:51 - visualizer - INFO - Parameters loaded from saves\parameters\params_20250807_153538.json
+2025-08-07 15:36:51 - visualizer - INFO - Loaded state: params_20250807_153538
+2025-08-07 15:37:05 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 95.0%
+2025-08-07 15:37:05 - visualizer - WARNING - Performance low (14.1 FPS), reducing fidelity to 90.0%
+2025-08-07 15:37:05 - visualizer - WARNING - Performance low (13.1 FPS), reducing fidelity to 85.0%
+2025-08-07 15:37:05 - visualizer - WARNING - Performance low (12.5 FPS), reducing fidelity to 80.0%
+2025-08-07 15:37:05 - visualizer - WARNING - Performance low (12.1 FPS), reducing fidelity to 75.0%
+2025-08-07 15:37:05 - visualizer - WARNING - Performance low (11.7 FPS), reducing fidelity to 70.0%
+2025-08-07 15:37:05 - visualizer - WARNING - Performance low (11.9 FPS), reducing fidelity to 65.0%
+2025-08-07 15:37:06 - visualizer - WARNING - Performance low (13.2 FPS), reducing fidelity to 60.0%
+2025-08-07 15:37:06 - visualizer - WARNING - Performance low (14.5 FPS), reducing fidelity to 55.0%
+2025-08-07 15:37:06 - visualizer - INFO - Performance good (24.3 FPS), increasing fidelity to 60.0%
+2025-08-07 15:37:07 - visualizer - INFO - Performance good (24.7 FPS), increasing fidelity to 65.0%
+2025-08-07 15:37:07 - visualizer - INFO - Performance good (24.6 FPS), increasing fidelity to 70.0%
+2025-08-07 15:37:24 - visualizer - WARNING - Performance low (15.6 FPS), reducing fidelity to 65.0%
+2025-08-07 15:37:24 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 60.0%
+2025-08-07 15:37:25 - visualizer - INFO - Performance good (24.5 FPS), increasing fidelity to 65.0%
+2025-08-07 15:37:25 - visualizer - INFO - Performance good (25.2 FPS), increasing fidelity to 70.0%
+2025-08-07 15:37:25 - visualizer - INFO - Performance good (25.4 FPS), increasing fidelity to 75.0%
+2025-08-07 15:37:25 - visualizer - INFO - Performance good (25.3 FPS), increasing fidelity to 80.0%
+2025-08-07 15:37:25 - visualizer - INFO - Performance good (24.4 FPS), increasing fidelity to 85.0%
+2025-08-07 15:37:27 - visualizer - WARNING - Performance low (15.8 FPS), reducing fidelity to 80.0%
+2025-08-07 15:37:27 - visualizer - WARNING - Performance low (15.8 FPS), reducing fidelity to 75.0%
+2025-08-07 15:37:27 - visualizer - WARNING - Performance low (15.9 FPS), reducing fidelity to 70.0%
+2025-08-07 15:37:32 - visualizer - WARNING - Performance low (15.6 FPS), reducing fidelity to 65.0%
+2025-08-07 15:37:32 - visualizer - WARNING - Performance low (15.2 FPS), reducing fidelity to 60.0%
+2025-08-07 15:37:32 - visualizer - WARNING - Performance low (15.2 FPS), reducing fidelity to 55.0%
+2025-08-07 15:37:32 - visualizer - WARNING - Performance low (15.4 FPS), reducing fidelity to 50.0%
+2025-08-07 15:37:33 - visualizer - INFO - Performance good (24.5 FPS), increasing fidelity to 55.0%
+2025-08-07 15:37:33 - visualizer - INFO - Performance good (24.8 FPS), increasing fidelity to 60.0%
+2025-08-07 15:37:33 - visualizer - INFO - Performance good (24.6 FPS), increasing fidelity to 65.0%
+2025-08-07 15:37:46 - visualizer - WARNING - Performance low (15.6 FPS), reducing fidelity to 60.0%
+2025-08-07 15:37:46 - visualizer - INFO - Performance good (24.0 FPS), increasing fidelity to 65.0%
+2025-08-07 15:37:46 - visualizer - INFO - Performance good (26.7 FPS), increasing fidelity to 70.0%
+2025-08-07 15:37:46 - visualizer - INFO - Performance good (28.7 FPS), increasing fidelity to 75.0%
+2025-08-07 15:37:46 - visualizer - INFO - Performance good (30.1 FPS), increasing fidelity to 80.0%
+2025-08-07 15:37:46 - visualizer - INFO - Performance good (31.6 FPS), increasing fidelity to 85.0%
+2025-08-07 15:37:46 - visualizer - INFO - Performance good (32.6 FPS), increasing fidelity to 90.0%
+2025-08-07 15:37:46 - visualizer - INFO - Performance good (33.4 FPS), increasing fidelity to 95.0%
+2025-08-07 15:37:47 - visualizer - INFO - Performance good (34.3 FPS), increasing fidelity to 100.0%
+2025-08-07 15:37:51 - visualizer - INFO - Application closing
