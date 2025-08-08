@@ -75,7 +75,7 @@ class VisualizerLogger:
     def log_function_params(self, params):
         """Log function parameters for debugging."""
         enabled_ops = [op for op, enabled in params.items() if enabled and op.startswith('use_')]
-        self.debug(f"Enabled operations: {enabled_ops}")
+        self.info(f"Function parameters loaded - Enabled operations: {enabled_ops}")
     
     def log_error_with_context(self, error, context=""):
         """Log error with additional context."""

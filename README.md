@@ -7,7 +7,7 @@ https://github.com/user-attachments/assets/0d64591f-9661-479f-9493-9dc40e4db385
 ## Features
 
 ### 🎨 Visualization
-- **13 Mathematical Operations**: Sine/cosine waves, XOR patterns, cellular automata, domain warping, polar transformations, noise generation, and more
+- **15 Mathematical Operations**: Sine/cosine waves, XOR patterns, cellular automata, domain warping, polar transformations, noise generation, SDF tiling, Gabor noise, and more
 - **Real-time Animation**: Smooth, time-based parameter evolution
 - **GPU Acceleration**: CuPy support for faster computation when available
 - **Visual Fidelity Control**: Adjustable resolution scaling for performance optimization
@@ -115,9 +115,11 @@ function-visualizer/
 │   │   ├── domain_warp.py
 │   │   ├── polar.py
 │   │   ├── noise.py
+│   │   ├── gabor_noise.py
 │   │   ├── abs_transform.py
 │   │   ├── power.py
 │   │   ├── voronoi.py
+│   │   ├── sdf_shapes.py
 │   │   ├── reaction_diffusion.py
 │   │   └── sinusoidal_field.py
 │   ├── compute/
@@ -143,7 +145,7 @@ function-visualizer/
 
 ## Mathematical Operations
 
-The visualizer supports 13 different mathematical operations:
+The visualizer supports 15 different mathematical operations:
 
 1. **Sine Waves** (`use_sin`): Basic sine wave patterns
 2. **Cosine Waves** (`use_cos`): Basic cosine wave patterns
@@ -158,6 +160,8 @@ The visualizer supports 13 different mathematical operations:
 11. **Voronoi Diagrams** (`use_voronoi`): Distance field patterns
 12. **Reaction-Diffusion** (`use_reaction_diffusion`): Gray-Scott model
 13. **Sinusoidal Fields** (`use_sinusoidal_field`): Complex 2D field patterns
+14. **SDF Shapes/Tiles** (`use_sdf_shapes`): Tileable signed distance fields with circle/rounded-box mixing and smooth edges
+15. **Gabor Noise** (`use_gabor_noise`): Oriented, band-limited noise with Gaussian envelope and time animation
 
 ## Performance Tips
 

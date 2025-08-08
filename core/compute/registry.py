@@ -7,6 +7,7 @@ from core.patterns.cellular import apply as apply_cellular
 from core.patterns.domain_warp import apply as apply_domain_warp
 from core.patterns.polar import apply as apply_polar
 from core.patterns.noise import apply as apply_noise
+from core.patterns.gabor_noise import apply as apply_gabor_noise
 from core.patterns.abs_transform import apply as apply_abs
 from core.patterns.power import apply as apply_power
 from core.patterns.voronoi import apply as apply_voronoi
@@ -27,6 +28,7 @@ def get_registry() -> Dict[str, OpFunc]:
         'use_domain_warp': apply_domain_warp,
         'use_polar': apply_polar,
         'use_noise': apply_noise,
+        'use_gabor_noise': apply_gabor_noise,
         'use_abs': apply_abs,
         'use_power': apply_power,
         'use_voronoi': apply_voronoi,

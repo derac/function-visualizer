@@ -2,6 +2,7 @@ import random
 from typing import Dict
 from core.nd import xp as np
 from core.color.palettes import PALETTES
+from utils.logger import logger
 
 
 def randomize_function_params() -> Dict:
@@ -10,7 +11,7 @@ def randomize_function_params() -> Dict:
     """
     all_operations = ['use_sin', 'use_cos', 'use_xor', 'use_reaction_diffusion',
                      'use_cellular', 'use_domain_warp', 'use_polar', 'use_sinusoidal_field',
-                     'use_noise', 'use_abs', 'use_power', 'use_feedback', 'use_voronoi', 'use_sdf_shapes']
+                     'use_noise', 'use_gabor_noise', 'use_abs', 'use_power', 'use_feedback', 'use_voronoi', 'use_sdf_shapes']
 
     operations = {}
     remaining_ops = [op for op in all_operations if op not in operations]
@@ -24,6 +25,9 @@ def randomize_function_params() -> Dict:
 
     enabled_ops = [op for op in all_operations if operations.get(op, False)]
     random.shuffle(enabled_ops)
+
+    # Log which functions are being used
+    logger.info(f"Randomized functions ({len(enabled_ops)} enabled): {', '.join(enabled_ops)}")
 
     color_schemes = [
         {'red': 1.0, 'green': 1.4, 'blue': 0.8},
@@ -101,6 +105,13 @@ def randomize_function_params() -> Dict:
         'noise_scale': random.uniform(0.005, 0.02),
         'noise_time_speed': random.uniform(0.1, 1.0),
         'noise_octaves': random.randint(3, 6),
+
+        # Gabor noise
+        'gabor_strength': random.uniform(0.7, 1.3),
+        'gabor_scale': random.uniform(0.005, 0.03),
+        'gabor_sigma': random.uniform(0.2, 0.6),
+        'gabor_frequency': random.uniform(1.5, 3.5),
+        'gabor_time_speed': random.uniform(0.05, 0.6),
 
         'abs_strength': random.uniform(0.5, 1.0),
         'abs_freq_x': random.choice([0.01, 0.02, 0.05, 0.1]),
