@@ -14,14 +14,10 @@ A real-time mathematical function visualizer that creates beautiful, animated pa
 ### 💾 Save/Load System
 - **Parameter Saving**: Save your favorite visualizations with timestamps
 - **Preset System**: Export and import parameter presets with metadata
-- **Auto-save**: Configurable automatic saving at specified intervals
-- **Image Export**: Save current visualizations as PNG/JPG images
-- **Video Frame Export**: Export frames for video creation
 
 ### 📊 Performance Monitoring
 - **Real-time FPS Display**: Monitor frame rate and performance
 - **Auto-optimization**: Automatic fidelity adjustment based on performance
-- **Memory Tracking**: Monitor memory usage (requires psutil)
 - **Performance Warnings**: Alerts for low FPS or high memory usage
 - **Optimization History**: Track performance optimizations made
 
@@ -100,21 +96,47 @@ The application uses `config.json` for settings. Key configuration options:
 ```
 function-visualizer/
 ├── visualizer.py          # Main application
-├── math_function.py       # Mathematical computations
-├── config.py             # Configuration management
+├── core/                  # Core computation and rendering
+│   ├── nd.py              # NumPy/CuPy selection and helpers
+│   ├── params.py          # Parameter randomization and defaults
+│   ├── color/
+│   │   ├── palettes.py    # Palettes and sampling
+│   │   ├── space.py       # RGB/HSV utilities and vibrance
+│   │   └── tone.py        # Contrast/gamma/brightness
+│   ├── feedback/
+│   │   ├── state.py       # Feedback state singleton
+│   │   └── compute.py     # Feedback signal computation
+│   ├── patterns/          # Individual pattern operators
+│   │   ├── sin_cos.py
+│   │   ├── xor.py
+│   │   ├── cellular.py
+│   │   ├── domain_warp.py
+│   │   ├── polar.py
+│   │   ├── noise.py
+│   │   ├── abs_transform.py
+│   │   ├── power.py
+│   │   ├── voronoi.py
+│   │   ├── reaction_diffusion.py
+│   │   └── sinusoidal_field.py
+│   ├── compute/
+│   │   ├── compose.py     # Orchestrates ops and color mapping
+│   │   └── registry.py    # Maps op keys to functions
+│   └── rendering/
+│       └── image.py       # Image generation from functions
+├── config.py              # Configuration management
 ├── requirements.txt       # Dependencies
-├── README.md             # This file
+├── README.md              # This file
 ├── ui/
-│   └── visualizer_ui.py  # User interface
+│   └── visualizer_ui.py   # User interface
 ├── utils/
-│   ├── hardware.py       # GPU/CPU detection
-│   ├── logger.py         # Logging system
-│   ├── save_manager.py   # Save/load functionality
-│   └── performance.py    # Performance monitoring
-└── saves/                # Saved files (auto-created)
-    ├── parameters/       # Saved parameters
-    ├── images/          # Exported images
-    └── videos/          # Video frames
+│   ├── hardware.py        # GPU/CPU detection
+│   ├── logger.py          # Logging system
+│   ├── save_manager.py    # Save/load functionality
+│   └── performance.py     # Performance monitoring
+└── saves/                 # Saved files (auto-created)
+    ├── parameters/        # Saved parameters
+    ├── images/            # Exported images
+    └── videos/            # Video frames
 ```
 
 ## Mathematical Operations
@@ -147,9 +169,8 @@ The visualizer supports 13 different mathematical operations:
 ### Common Issues
 
 1. **Low FPS**: Reduce visual fidelity or enable auto-optimization
-2. **High Memory Usage**: Lower resolution or restart application
-3. **GPU Not Detected**: Ensure CuPy is properly installed for your CUDA version
-4. **Save/Load Errors**: Check file permissions in saves directory
+1. **GPU Not Detected**: Ensure CuPy is properly installed for your CUDA version
+1. **Save/Load Errors**: Check file permissions in saves directory
 
 ### Logging
 
@@ -159,9 +180,12 @@ The application logs to both console and file (`visualizer.log`). Check logs for
 
 ### Adding New Mathematical Operations
 
-1. Add operation to `math_function.py` in the `compute_function` method
-2. Add parameters to `randomize_function_params()`
-3. Update the operations list in the randomization function
+1. Create a new operator in `core/patterns/your_op.py` exporting:
+   - `apply(x, y, time_val, params, context)` → returns an array contribution (same shape as `x`).
+2. Register the operator in `core/compute/registry.py` by mapping a key (e.g., `'use_your_op'`) to your function.
+3. Add any parameters and ranges to `core/params.py` and include your op key in the randomized operations set if desired.
+4. (Optional) Extend color behavior in `core/color/*` if your op needs custom color handling.
+5. Run `visualizer.py` and test.
 
 ### Extending the UI
 

@@ -13,7 +13,6 @@ class PerformanceMonitor:
         self.max_history = max_history
         self.frame_times = deque(maxlen=max_history)
         self.fps_history = deque(maxlen=max_history)
-        self.memory_usage = deque(maxlen=max_history)
         
         # Performance thresholds
         self.target_fps = config.get('visualization.frame_rate', 20)
@@ -54,14 +53,6 @@ class PerformanceMonitor:
             if self.frame_times:
                 self.avg_frame_time = sum(self.frame_times) / len(self.frame_times)
             
-            # Record memory usage if available
-            try:
-                import psutil
-                process = psutil.Process()
-                memory_mb = process.memory_info().rss / 1024 / 1024
-                self.memory_usage.append(memory_mb)
-            except ImportError:
-                pass
         
         # Log performance metrics
         logger.log_performance(frame_time, self.current_fps, f"{self.avg_frame_time:.1f}ms avg")
@@ -78,8 +69,6 @@ class PerformanceMonitor:
                 'min_frame_time': min(self.frame_times) if self.frame_times else 0,
                 'max_frame_time': max(self.frame_times) if self.frame_times else 0,
                 'frame_count': len(self.frame_times),
-                'memory_mb': self.memory_usage[-1] if self.memory_usage else 0,
-                'avg_memory_mb': sum(self.memory_usage) / len(self.memory_usage) if self.memory_usage else 0
             }
         return stats
     
@@ -121,11 +110,6 @@ class PerformanceMonitor:
                 
                 if self.avg_frame_time > 1000 / self.target_fps:
                     warnings.append(f"High frame time: {self.avg_frame_time:.1f}ms")
-            
-            if self.memory_usage:
-                recent_memory = self.memory_usage[-1]
-                if recent_memory > 500:  # 500MB threshold
-                    warnings.append(f"High memory usage: {recent_memory:.1f}MB")
         
         return warnings
     
@@ -134,7 +118,6 @@ class PerformanceMonitor:
         with self.lock:
             self.frame_times.clear()
             self.fps_history.clear()
-            self.memory_usage.clear()
             self.performance_warnings.clear()
     
     def get_optimal_resolution(self, current_width, current_height):
@@ -183,11 +166,6 @@ class PerformanceOptimizer:
                 # Reduce time step for smoother animation
                 if 'time_step' in optimized:
                     optimized['time_step'] = min(0.2, optimized['time_step'] + 0.01)
-            
-            elif "High memory" in warning:
-                # Reduce resolution or fidelity
-                if 'visual_fidelity' in optimized:
-                    optimized['visual_fidelity'] = max(5.0, optimized['visual_fidelity'] - 15.0)
         
         # Record optimization
         if optimized != current_settings:
