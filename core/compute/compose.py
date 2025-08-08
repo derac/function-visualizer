@@ -18,18 +18,48 @@ def _prepare_arrays_and_context(x: Array, y: Array, time_val: float, params: Dic
     return x_arr, y_arr, context
 
 
+def _normalize_single_function(output: Array) -> Array:
+    """Normalize a single function's output to [0,1] range."""
+    try:
+        output_cpu = to_cpu(output)
+        v_min = float(base_np.min(output_cpu))
+        v_max = float(base_np.max(output_cpu))
+    except Exception:
+        v_min = float(np.min(output))
+        v_max = float(np.max(output))
+    
+    if v_max > v_min:
+        return (output - v_min) / (v_max - v_min + 1e-8)
+    else:
+        return np.zeros_like(output)
+
+
 def _apply_enabled_operations(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
     registry = get_registry()
     operations = params.get('function_order', [])
     combined = np.zeros_like(x, dtype=np.float32)
+    
     for op in operations:
         if not params.get(op, False):
             continue
         func = registry.get(op)
         if func is None:
             continue
+        
+        # Get raw function output
         contribution = func(x, y, time_val, params, context)
-        combined = combined + contribution
+        
+        # Normalize each function's output to [0,1] range
+        contribution_norm = _normalize_single_function(contribution)
+        
+        # Apply function-specific strength parameter if available
+        strength_param = op.replace('use_', '') + '_strength'
+        strength = params.get(strength_param, 1.0)
+        contribution_weighted = contribution_norm * strength
+        
+        # Add to combined result
+        combined = combined + contribution_weighted
+    
     return combined
 
 

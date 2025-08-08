@@ -22,6 +22,6 @@ def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> A
         noise_val += octave_val * octave_amp
 
     noise_val = (noise_val + 4) / 8.0
-    return noise_val * 100.0 * params['noise_strength']
+    return noise_val
 
 

@@ -21,6 +21,6 @@ def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> A
     xor_mask = np.bitwise_xor(rot_x.astype(np.int32), rot_y.astype(np.int32)) & (1 << mask_exponent)
 
     intensity = 0.8 + 0.2 * np.sin(time_val * 0.05 + (rot_x + rot_y) * 0.001)
-    return xor_mask * intensity * params['xor_strength'] * 20
+    return xor_mask * intensity
 
 

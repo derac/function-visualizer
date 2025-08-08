@@ -18,6 +18,6 @@ def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> A
     )
     harmonic = np.nan_to_num(harmonic, nan=0.0, posinf=1000.0, neginf=0.0)
 
-    return (power_val + harmonic * 0.3) * 100 * params['power_strength']
+    return (power_val + harmonic * 0.3)
 
 

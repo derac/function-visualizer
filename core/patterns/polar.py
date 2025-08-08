@@ -21,6 +21,6 @@ def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> A
     spiral_angle = theta + r * params['polar_spiral_factor']
     spiral_wave = np.sin(spiral_angle * params['polar_spiral_freq'] + time_val * params['polar_spiral_speed'])
 
-    return (polar_wave + spiral_wave * 0.5) * 120 * params['polar_strength']
+    return (polar_wave + spiral_wave * 0.5)
 
 

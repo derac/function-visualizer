@@ -71,9 +71,9 @@ def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> A
 
     gabor = c00 + c10 + c01 + c11
 
-    # Map from [-1,1] -> [0,1], scale to match other ops' magnitude
+    # Map from [-1,1] -> [0,1]
     gabor_norm = gabor * 0.5 + 0.5
-    return gabor_norm * 100.0 * strength
+    return gabor_norm
 
 
 

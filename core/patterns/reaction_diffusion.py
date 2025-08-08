@@ -73,6 +73,6 @@ def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> A
     pattern_scale = params.get('reaction_diffusion_scale', 0.8) * 0.85
     time_modulation = 1.0 + 0.05 * np.sin(time_val * 0.01)
 
-    return rd_mapped * pattern_scale * time_modulation
+    return rd_mapped
 
 

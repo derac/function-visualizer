@@ -45,6 +45,6 @@ def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> A
 
     noise_layer = np.sin(x_rot * 0.01 + time_liss * 0.1) * np.cos(y_rot * 0.01 + time_liss * 0.15) * 0.1
     sinusoidal_combined = (sinusoidal_pattern + noise_layer) * params['sinusoidal_strength'] * amp_mod
-    return sinusoidal_combined * 100
+    return sinusoidal_combined
 
 

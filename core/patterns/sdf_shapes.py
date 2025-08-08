@@ -56,7 +56,6 @@ def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> A
     # Inside -> high values, outside -> low values
     val = 1.0 / (1.0 + np.exp(d / edge * 6.0))
 
-    strength = float(params.get('sdf_strength', 0.9))
-    return val * 120.0 * strength
+    return val
 
 

@@ -25,6 +25,6 @@ def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> A
         voronoi_distances = np.minimum(voronoi_distances, distance)
 
     voronoi_norm = voronoi_distances * voronoi_scale
-    return voronoi_norm * 50 * voronoi_strength
+    return voronoi_norm
 
 

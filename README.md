@@ -8,6 +8,7 @@ https://github.com/user-attachments/assets/0d64591f-9661-479f-9493-9dc40e4db385
 
 ### 🎨 Visualization
 - **15 Mathematical Operations**: Sine/cosine waves, XOR patterns, cellular automata, domain warping, polar transformations, noise generation, SDF tiling, Gabor noise, and more
+- **Normalized Composition**: Each function is normalized to [0,1] range before combining, with individual strength controls
 - **Real-time Animation**: Smooth, time-based parameter evolution
 - **GPU Acceleration**: CuPy support for faster computation when available
 - **Visual Fidelity Control**: Adjustable resolution scaling for performance optimization
