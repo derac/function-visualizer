@@ -1,8 +1,8 @@
 import numpy as base_np
-from core.nd import xp as np, to_cpu
+from core.nd import xp as np, to_cpu, Array
 
 
-def apply_gamma_contrast_brightness(t, gamma=1.0, contrast=1.0, brightness=1.0):
+def apply_gamma_contrast_brightness(t: Array, gamma: float = 1.0, contrast: float = 1.0, brightness: float = 1.0) -> Array:
     t = np.clip(t, 0.0, 1.0)
     t = t ** gamma
     t = (t - 0.5) * contrast + 0.5
@@ -10,7 +10,7 @@ def apply_gamma_contrast_brightness(t, gamma=1.0, contrast=1.0, brightness=1.0):
     return t
 
 
-def auto_contrast(t, low_percentile=5.0, high_percentile=95.0):
+def auto_contrast(t: Array, low_percentile: float = 5.0, high_percentile: float = 95.0) -> Array:
     """Stretch values to [0,1] using robust percentiles.
     Uses CPU percentiles to avoid NaN propagation issues.
     """

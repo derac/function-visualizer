@@ -1,7 +1,8 @@
-from core.nd import xp as np
+from typing import Dict
+from core.nd import xp as np, Array
 
 
-def apply(x, y, time_val, params, context):
+def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
     center_x = np.sin(time_val * params['polar_orbit_speed_x']) * params['polar_orbit_range']
     center_y = np.cos(time_val * params['polar_orbit_speed_y']) * params['polar_orbit_range']
 

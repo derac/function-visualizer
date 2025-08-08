@@ -1,5 +1,6 @@
 import numpy as base_np
-from core.nd import xp as np, to_cpu
+from typing import Dict, Tuple
+from core.nd import xp as np, to_cpu, Array
 from core.compute.registry import get_registry
 from core.color.palettes import sample_palette, PALETTES
 from core.color.space import apply_vibrance, enforce_min_variance
@@ -7,7 +8,7 @@ from core.color.tone import auto_contrast, apply_gamma_contrast_brightness
 from core.feedback.state import feedback_state
 
 
-def _prepare_arrays_and_context(x, y, time_val, params):
+def _prepare_arrays_and_context(x: Array, y: Array, time_val: float, params: Dict) -> Tuple[Array, Array, Dict]:
     x_arr = np.asarray(x, dtype=np.float32)
     y_arr = np.asarray(y, dtype=np.float32)
     context = {
@@ -17,7 +18,7 @@ def _prepare_arrays_and_context(x, y, time_val, params):
     return x_arr, y_arr, context
 
 
-def _apply_enabled_operations(x, y, time_val, params, context):
+def _apply_enabled_operations(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
     registry = get_registry()
     operations = params.get('function_order', [])
     combined = np.zeros_like(x, dtype=np.float32)
@@ -32,7 +33,7 @@ def _apply_enabled_operations(x, y, time_val, params, context):
     return combined
 
 
-def _normalize_combined(combined, params):
+def _normalize_combined(combined: Array, params: Dict) -> Tuple[Array, Array, Array]:
     clip_low = params.get('color_clip_low', 2.0)
     clip_high = params.get('color_clip_high', 98.0)
     try:
@@ -47,7 +48,7 @@ def _normalize_combined(combined, params):
     return combined_norm, combined_smooth, adjusted
 
 
-def _compute_initial_rgb(adjusted, combined_smooth, time_val, params):
+def _compute_initial_rgb(adjusted: Array, combined_smooth: Array, time_val: float, params: Dict) -> Tuple[Array, Array, Array, float]:
     time_factor = time_val * 0.08
     time_warped = time_val * params.get('time_warp_factor', 1.0)
     color_mode = params.get('color_mode', 'harmonic')
@@ -86,7 +87,7 @@ def _compute_initial_rgb(adjusted, combined_smooth, time_val, params):
     return red, green, blue, time_factor
 
 
-def _modulate_colors(red, green, blue, combined_smooth, time_factor, params):
+def _modulate_colors(red: Array, green: Array, blue: Array, combined_smooth: Array, time_factor: float, params: Dict) -> Tuple[Array, Array, Array]:
     modulation_factor = 0.15
     phase_red = params.get('color_phase_red', 0) * np.pi / 180
     phase_green = params.get('color_phase_green', 0) * np.pi / 180
@@ -104,7 +105,7 @@ def _modulate_colors(red, green, blue, combined_smooth, time_factor, params):
     return red, green, blue
 
 
-def _sanitize_and_luminance_fallback(red, green, blue, adjusted, params):
+def _sanitize_and_luminance_fallback(red: Array, green: Array, blue: Array, adjusted: Array, params: Dict) -> Tuple[Array, Array, Array]:
     try:
         red = np.nan_to_num(red, nan=0.0, posinf=1.0, neginf=0.0)
         green = np.nan_to_num(green, nan=0.0, posinf=1.0, neginf=0.0)
@@ -128,7 +129,7 @@ def _sanitize_and_luminance_fallback(red, green, blue, adjusted, params):
     return red, green, blue
 
 
-def _final_colors(red, green, blue, combined_norm, adjusted, params):
+def _final_colors(red: Array, green: Array, blue: Array, combined_norm: Array, adjusted: Array, params: Dict) -> Array:
     colors = np.stack([red, green, blue], axis=-1) * 255
     try:
         colors_cpu = colors.get() if hasattr(colors, 'get') else base_np.asarray(colors)
@@ -149,14 +150,14 @@ def _final_colors(red, green, blue, combined_norm, adjusted, params):
     return colors
 
 
-def _update_feedback_and_return(colors, time_val):
+def _update_feedback_and_return(colors: Array, time_val: float) -> Array:
     final_colors = colors.astype(np.float32) / 255.0
     feedback_state.previous_frame = final_colors
     feedback_state.time_sum = time_val
     return colors.astype(np.float32)
 
 
-def compute_function(x, y, time_val, params):
+def compute_function(x: Array, y: Array, time_val: float, params: Dict) -> Array:
     if params is None:
         raise ValueError("params must not be None; call randomize_function_params() first")
 

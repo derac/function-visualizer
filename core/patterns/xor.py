@@ -1,7 +1,8 @@
-from core.nd import xp as np
+from typing import Dict
+from core.nd import xp as np, Array
 
 
-def apply(x, y, time_val, params, context):
+def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
     time_shift_x = time_val * params.get('xor_translate_x', 0.5)
     time_shift_y = time_val * params.get('xor_translate_y', 0.3)
     morph_phase = time_val * params.get('xor_morph_speed', 0.2)

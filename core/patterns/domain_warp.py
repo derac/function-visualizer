@@ -1,7 +1,8 @@
-from core.nd import xp as np
+from typing import Dict
+from core.nd import xp as np, Array
 
 
-def apply(x, y, time_val, params, context):
+def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
     animated_strength = context['domain_warp_strength_mod']
     time_phase = time_val * 0.5
     warped_x = (x + animated_strength * np.sin(y * 0.1 + time_phase + 

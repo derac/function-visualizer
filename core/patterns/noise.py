@@ -1,7 +1,8 @@
-from core.nd import xp as np
+from typing import Dict
+from core.nd import xp as np, Array
 
 
-def apply(x, y, time_val, params, context):
+def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
     time_noise = time_val * params['noise_time_speed']
     noise_scale = params['noise_scale']
 

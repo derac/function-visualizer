@@ -1,4 +1,5 @@
 from typing import Callable, Dict
+from core.nd import Array
 
 from core.patterns.sin_cos import apply_sin, apply_cos
 from core.patterns.xor import apply as apply_xor
@@ -13,7 +14,7 @@ from core.patterns.reaction_diffusion import apply as apply_reaction_diffusion
 from core.patterns.sinusoidal_field import apply as apply_sinusoidal_field
 
 
-OpFunc = Callable[[object, object, float, dict, dict], object]
+OpFunc = Callable[[Array, Array, float, dict, dict], Array]
 
 
 def get_registry() -> Dict[str, OpFunc]:

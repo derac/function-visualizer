@@ -1,9 +1,10 @@
 import random
+from typing import Dict
 from core.nd import xp as np
 from core.color.palettes import PALETTES
 
 
-def randomize_function_params():
+def randomize_function_params() -> Dict:
     """Generate new random parameters for the mathematical function.
     Preserves existing keys and selection strategy for compatibility.
     """

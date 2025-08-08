@@ -1,8 +1,8 @@
-from core.nd import xp as np
+from core.nd import xp as np, Array
 from .state import feedback_state
 
 
-def compute_feedback_values(x, y, time_val, params):
+def compute_feedback_values(x: Array, y: Array, time_val: float, params: dict) -> Array:
     if feedback_state.previous_frame is None:
         return np.zeros_like(x)
 

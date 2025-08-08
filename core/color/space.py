@@ -1,7 +1,8 @@
-from core.nd import xp as np
+from typing import Tuple
+from core.nd import xp as np, Array
 
 
-def rgb_to_hsv(r, g, b):
+def rgb_to_hsv(r: Array, g: Array, b: Array) -> Tuple[Array, Array, Array]:
     maxc = np.maximum(np.maximum(r, g), b)
     minc = np.minimum(np.minimum(r, g), b)
     v = maxc
@@ -15,7 +16,7 @@ def rgb_to_hsv(r, g, b):
     return h, s, v
 
 
-def hsv_to_rgb(h, s, v):
+def hsv_to_rgb(h: Array, s: Array, v: Array) -> Tuple[Array, Array, Array]:
     i = np.floor(h * 6.0).astype(np.int32)
     f = h * 6.0 - i
     p = v * (1.0 - s)
@@ -28,7 +29,7 @@ def hsv_to_rgb(h, s, v):
     return r, g, b
 
 
-def apply_vibrance(rgb_r, rgb_g, rgb_b, vibrance=1.0, saturation=1.0):
+def apply_vibrance(rgb_r: Array, rgb_g: Array, rgb_b: Array, vibrance: float = 1.0, saturation: float = 1.0) -> Tuple[Array, Array, Array]:
     r = np.clip(rgb_r, 0.0, 1.0)
     g = np.clip(rgb_g, 0.0, 1.0)
     b = np.clip(rgb_b, 0.0, 1.0)
@@ -37,7 +38,7 @@ def apply_vibrance(rgb_r, rgb_g, rgb_b, vibrance=1.0, saturation=1.0):
     return hsv_to_rgb(h, s, v)
 
 
-def enforce_min_variance(rgb_r, rgb_g, rgb_b, min_lum_range=0.35, min_sat_mean=0.35):
+def enforce_min_variance(rgb_r: Array, rgb_g: Array, rgb_b: Array, min_lum_range: float = 0.35, min_sat_mean: float = 0.35) -> Tuple[Array, Array, Array]:
     r = np.clip(rgb_r, 0.0, 1.0)
     g = np.clip(rgb_g, 0.0, 1.0)
     b = np.clip(rgb_b, 0.0, 1.0)

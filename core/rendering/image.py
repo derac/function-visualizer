@@ -1,8 +1,9 @@
-from core.nd import xp as np
+from typing import Optional
+from core.nd import xp as np, Array
 from core.compute.compose import compute_function
 
 
-def generate_image_data(width, height, time_val, params, full_width=None, full_height=None):
+def generate_image_data(width: int, height: int, time_val: float, params: dict, full_width: Optional[int] = None, full_height: Optional[int] = None) -> Array:
     if full_width is None:
         full_width = width
     if full_height is None:

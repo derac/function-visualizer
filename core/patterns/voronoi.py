@@ -1,9 +1,10 @@
 import random
-from core.nd import xp as np
+from typing import Dict
+from core.nd import xp as np, Array
 from core.feedback.state import feedback_state
 
 
-def apply(x, y, time_val, params, context):
+def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
     num_points = params.get('voronoi_points', 8)
     voronoi_strength = params.get('voronoi_strength', 1.0)
     voronoi_scale = params.get('voronoi_scale', 1.0)

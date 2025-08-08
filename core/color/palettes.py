@@ -1,8 +1,8 @@
 from typing import Tuple
-from core.nd import xp as np
+from core.nd import xp as np, Array
 
 
-def _to_np_array(x):
+def _to_np_array(x: Array) -> Array:
     return np.asarray(x, dtype=np.float32)
 
 
@@ -48,7 +48,7 @@ PALETTES = {
 }
 
 
-def sample_palette(t, name: str = 'viridis', reverse: bool = False) -> Tuple:
+def sample_palette(t: Array, name: str = 'viridis', reverse: bool = False) -> Tuple[Array, Array, Array]:
     """Sample RGB from a named palette at positions t in [0,1]."""
     if name not in PALETTES:
         name = 'viridis'
