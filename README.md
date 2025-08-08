@@ -1,5 +1,7 @@
 # Function Visualizer
 
+<img width="1019" height="770" alt="{DF434D81-95B0-4BB4-B6E9-1E2E7C5E8D66}" src="https://github.com/user-attachments/assets/82426d67-6aae-444d-9116-c62750bdfa3b" />
+
 A real-time mathematical function visualizer that creates beautiful, animated patterns using complex mathematical operations. The application supports GPU acceleration and includes advanced features for performance monitoring, saving/loading, and customization.
 
 ## Features
