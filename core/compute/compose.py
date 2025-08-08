@@ -8,16 +8,6 @@ from core.color.tone import auto_contrast, apply_gamma_contrast_brightness
 from core.feedback.state import feedback_state
 
 
-def _prepare_arrays_and_context(x: Array, y: Array, time_val: float, params: Dict) -> Tuple[Array, Array, Dict]:
-    x_arr = np.asarray(x, dtype=np.float32)
-    y_arr = np.asarray(y, dtype=np.float32)
-    context = {
-        'wave1_mult_mod': params['wave1_mult'] * (1 + 0.3 * np.sin(time_val * 0.15)),
-        'domain_warp_strength_mod': params['domain_warp_strength'] * (1 + 0.4 * np.sin(time_val * 0.25)),
-    }
-    return x_arr, y_arr, context
-
-
 def _normalize_single_function(output: Array) -> Array:
     """Normalize a single function's output to [0,1] range."""
     try:
@@ -34,7 +24,7 @@ def _normalize_single_function(output: Array) -> Array:
         return np.zeros_like(output)
 
 
-def _apply_enabled_operations(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
+def _apply_enabled_operations(x: Array, y: Array, time_val: float, params: Dict) -> Array:
     registry = get_registry()
     operations = params.get('function_order', [])
     combined = np.zeros_like(x, dtype=np.float32)
@@ -47,7 +37,7 @@ def _apply_enabled_operations(x: Array, y: Array, time_val: float, params: Dict,
             continue
         
         # Get raw function output
-        contribution = func(x, y, time_val, params, context)
+        contribution = func(x, y, time_val, params)
         
         # Normalize each function's output to [0,1] range
         contribution_norm = _normalize_single_function(contribution)
@@ -191,8 +181,7 @@ def compute_function(x: Array, y: Array, time_val: float, params: Dict) -> Array
     if params is None:
         raise ValueError("params must not be None; call randomize_function_params() first")
 
-    x, y, context = _prepare_arrays_and_context(x, y, time_val, params)
-    combined = _apply_enabled_operations(x, y, time_val, params, context)
+    combined = _apply_enabled_operations(x, y, time_val, params)
     combined_norm, combined_smooth, adjusted = _normalize_combined(combined, params)
     red, green, blue, time_factor = _compute_initial_rgb(adjusted, combined_smooth, time_val, params)
     red, green, blue = _modulate_colors(red, green, blue, combined_smooth, time_factor, params)

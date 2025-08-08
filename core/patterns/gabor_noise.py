@@ -11,7 +11,7 @@ def _hash(ix: Array, iy: Array, seed: float) -> Array:
     return _fract(np.sin(ix * 127.1 + iy * 311.7 + seed) * 43758.5453)
 
 
-def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
+def apply(x: Array, y: Array, time_val: float, params: Dict) -> Array:
     # Parameters
     strength = float(params.get('gabor_strength', 0.9))
     scale = float(params.get('gabor_scale', 0.01))

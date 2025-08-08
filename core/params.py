@@ -63,8 +63,8 @@ def randomize_function_params() -> Dict:
         'cellular_scale': random.uniform(1.0, 20.0),
         'cellular_time_translate': random.uniform(-2.0, 2.0),
 
-        'domain_warp_strength': random.uniform(15.0, 60.0),
-        'domain_warp_time_factor': random.uniform(0.3, 2.0),
+        'domain_warp_strength': random.uniform(.7, 1.0),
+        'domain_warp_time_factor': random.uniform(0.01, 0.1),
 
         'color_hue_segments': random.uniform(1, 2),
         'color_red_mult': color_scheme['red'],
@@ -119,7 +119,7 @@ def randomize_function_params() -> Dict:
         'abs_freq_xy': random.choice([0.01, 0.02, 0.05]),
         'abs_time_speed': random.uniform(0.2, 2.0),
 
-        'power_strength': random.uniform(0.5, 1.0),
+        'power_strength': random.uniform(.7, 1.3),
         'power_exponent': random.uniform(0.5, 3.0),
         'power_freq_x': random.choice([0.01, 0.02, 0.05, 0.1]),
         'power_freq_y': random.choice([0.01, 0.02, 0.05, 0.1]),
@@ -139,13 +139,13 @@ def randomize_function_params() -> Dict:
         'feedback_color_shift': random.uniform(-0.1, 0.1),
 
         'voronoi_points': random.randint(7, 12),
-        'voronoi_strength': random.uniform(0.4, 0.6),
+        'voronoi_strength': random.uniform(.7, 1.3),
         'voronoi_scale': random.uniform(0.01, 0.1),
 
         'sinusoidal_a_freq': random.choice([1.618, 2.414, 3.236, 4.236, 2.718, 3.141, 1.414]),
         'sinusoidal_b_freq': random.choice([2.618, 3.414, 4.618, 5.236, 4.442, 2.449, 1.732]),
         'sinusoidal_phase': random.uniform(0.0, 4 * np.pi),
-        'sinusoidal_strength': random.uniform(0.7, 1.0),
+        'sinusoidal_strength': random.uniform(.7, 1.3),
         'sinusoidal_time_speed': random.uniform(0.3, 1.0),
         'sinusoidal_phase_speed_ratio': random.uniform(0.3, 3.0),
         'sinusoidal_scale': random.uniform(25.0, 50.0),

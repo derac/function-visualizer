@@ -188,7 +188,7 @@ The application logs to both console and file (`visualizer.log`). Check logs for
 ### Adding New Mathematical Operations
 
 1. Create a new operator in `core/patterns/your_op.py` exporting:
-   - `apply(x, y, time_val, params, context)` → returns an array contribution (same shape as `x`).
+   - `apply(x, y, time_val, params)` → returns an array contribution (same shape as `x`).
 2. Register the operator in `core/compute/registry.py` by mapping a key (e.g., `'use_your_op'`) to your function.
 3. Add any parameters and ranges to `core/params.py` and include your op key in the randomized operations set if desired.
 4. (Optional) Extend color behavior in `core/color/*` if your op needs custom color handling.

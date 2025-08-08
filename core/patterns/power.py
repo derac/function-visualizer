@@ -2,7 +2,7 @@ from typing import Dict
 from core.nd import xp as np, Array
 
 
-def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
+def apply(x: Array, y: Array, time_val: float, params: Dict) -> Array:
     time_power = time_val * params['power_time_speed']
     base = (np.sin(x * params['power_freq_x'] + time_power) +
             np.cos(y * params['power_freq_y'] + time_power * 0.8) + 2) / 2

@@ -4,7 +4,7 @@ from core.nd import xp as np, Array
 from core.feedback.state import feedback_state
 
 
-def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
+def apply(x: Array, y: Array, time_val: float, params: Dict) -> Array:
     if feedback_state.previous_frame is None:
         return np.zeros_like(x)
 

@@ -2,7 +2,7 @@ from typing import Dict
 from core.nd import xp as np, Array
 
 
-def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
+def apply(x: Array, y: Array, time_val: float, params: Dict) -> Array:
     time_liss = time_val * params['sinusoidal_time_speed']
     freq_mod_time = time_val * params['sinusoidal_freq_mod_speed']
     a_freq_dynamic = params['sinusoidal_a_freq'] * (1 + params['sinusoidal_freq_mod_depth'] * np.sin(freq_mod_time))

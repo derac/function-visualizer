@@ -23,7 +23,7 @@ def _sdf_rounded_box(px: Array, py: Array, half_extent: float, round_radius: flo
     return outside + inside - round_radius
 
 
-def apply(x: Array, y: Array, time_val: float, params: Dict, context: Dict) -> Array:
+def apply(x: Array, y: Array, time_val: float, params: Dict) -> Array:
     # Parameters
     tile_scale = float(max(1e-3, params.get('sdf_tile_scale', 60.0)))
     repeat = max(1, int(params.get('sdf_repeat', 4)))

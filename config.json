@@ -9,7 +9,7 @@
     "default_visual_fidelity": 100.0,
     "frame_rate": 20,
     "update_interval_ms": 50,
-    "auto_randomize_enabled": true,
+    "auto_randomize_enabled": false,
     "auto_randomize_interval_sec": 10.0
   },
   "performance": {

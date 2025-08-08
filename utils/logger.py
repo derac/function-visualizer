@@ -76,13 +76,6 @@ class VisualizerLogger:
         """Log function parameters for debugging."""
         enabled_ops = [op for op, enabled in params.items() if enabled and op.startswith('use_')]
         self.info(f"Function parameters loaded - Enabled operations: {enabled_ops}")
-    
-    def log_error_with_context(self, error, context=""):
-        """Log error with additional context."""
-        self.error(f"{context}: {error}")
-        if hasattr(error, '__traceback__'):
-            import traceback
-            self.error(f"Traceback: {traceback.format_exc()}")
 
 # Global logger instance
 logger = VisualizerLogger()
