@@ -69,9 +69,21 @@ def _apply_gamma_contrast_brightness(t, gamma=1.0, contrast=1.0, brightness=1.0)
     return t
 
 def _auto_contrast(t, low_percentile=5.0, high_percentile=95.0):
-    """Stretch values to [0,1] using robust percentiles to avoid flat colors."""
-    lo = np.percentile(t, low_percentile)
-    hi = np.percentile(t, high_percentile)
+    """Stretch values to [0,1] using robust percentiles to avoid flat colors.
+
+    Uses CPU percentiles to avoid NaN propagation issues and handles degenerate ranges.
+    """
+    try:
+        # Convert to CPU array for stable percentile computation
+        t_cpu = t.get() if hasattr(t, 'get') else base_np.asarray(t)
+        lo, hi = base_np.percentile(base_np.ravel(t_cpu), [low_percentile, high_percentile])
+        if not base_np.isfinite(hi - lo) or (hi - lo) < 1e-6:
+            # Degenerate or invalid range; return a safe zeroed normalization
+            return np.clip((t - lo) / (1e-6), 0.0, 1.0)
+    except Exception:
+        # Fallback to module percentile if CPU conversion fails
+        lo = np.percentile(t, low_percentile)
+        hi = np.percentile(t, high_percentile)
     return np.clip((t - lo) / (hi - lo + 1e-6), 0.0, 1.0)
 
 def _sample_palette(t, name='viridis', reverse=False):
@@ -464,7 +476,12 @@ def compute_function(x, y, time_val, params):
     # Normalize with robust percentiles to avoid low-contrast outputs
     clip_low = params.get('color_clip_low', 2.0)
     clip_high = params.get('color_clip_high', 98.0)
-    v_low, v_high = np.percentile(combined, [clip_low, clip_high])
+    # Robust percentile computation on CPU to avoid NaNs on GPU-backed arrays
+    try:
+        combined_cpu = combined.get() if hasattr(combined, 'get') else base_np.asarray(combined)
+        v_low, v_high = base_np.percentile(base_np.ravel(combined_cpu), [clip_low, clip_high])
+    except Exception:
+        v_low, v_high = np.percentile(combined, [clip_low, clip_high])
     combined_clipped = np.clip(combined, v_low, v_high)
     combined_norm = (combined_clipped - v_low) / (v_high - v_low + 1e-8)
     
@@ -543,6 +560,31 @@ def compute_function(x, y, time_val, params):
     red = np.clip(red * breathing * (1 + slow_mod * warm_base + red_mod) * params.get('color_red_mult', 1.0) * 0.85, 0, 0.95)
     green = np.clip(green * breathing * (1 + slow_mod * 0.9 + green_mod) * params.get('color_green_mult', 1.0) * 0.9, 0, 0.95)
     blue = np.clip(blue * breathing * (1 + slow_mod * cool_base + blue_mod) * params.get('color_blue_mult', 1.0) * 0.85, 0, 0.95)
+
+    # Replace invalid values and prevent full-black degeneracy
+    try:
+        red = np.nan_to_num(red, nan=0.0, posinf=1.0, neginf=0.0)
+        green = np.nan_to_num(green, nan=0.0, posinf=1.0, neginf=0.0)
+        blue = np.nan_to_num(blue, nan=0.0, posinf=1.0, neginf=0.0)
+    except Exception:
+        # Fallback if nan_to_num signature differs
+        red = np.where(np.isfinite(red), red, 0.0)
+        green = np.where(np.isfinite(green), green, 0.0)
+        blue = np.where(np.isfinite(blue), blue, 0.0)
+
+    # If luminance is too low across the frame, fall back to palette sampling of adjusted values
+    luminance = 0.299 * red + 0.587 * green + 0.114 * blue
+    try:
+        lum_max = float((luminance.max().get() if hasattr(luminance, 'get') else luminance.max()))
+    except Exception:
+        lum_max = float(base_np.max(luminance.get() if hasattr(luminance, 'get') else base_np.asarray(luminance)))
+    if not base_np.isfinite(lum_max) or lum_max < 0.02:
+        t_fb = _auto_contrast(adjusted, low_percentile=2.0, high_percentile=98.0)
+        # Provide a small positive offset to avoid sampling the darkest stop repeatedly
+        t_fb = np.clip(t_fb + 0.1, 0.0, 1.0)
+        palette_name = params.get('palette_name', 'viridis')
+        palette_reverse = params.get('palette_reverse', False)
+        red, green, blue = _sample_palette(t_fb, name=palette_name, reverse=palette_reverse)
     
     # Enforce minimum variance if enabled
     if params.get('color_auto_normalize', True):
@@ -550,6 +592,25 @@ def compute_function(x, y, time_val, params):
 
     # Final smooth scaling to 8-bit values
     colors = np.stack([red, green, blue], axis=-1) * 255
+
+    # Hard fallback: if image is effectively black (very low max), rebuild from combined_norm via palette
+    try:
+        colors_cpu = colors.get() if hasattr(colors, 'get') else base_np.asarray(colors)
+        max_val = float(base_np.max(colors_cpu))
+    except Exception:
+        max_val = 0.0
+    if not base_np.isfinite(max_val) or max_val < 1.0:
+        # Recompute t from combined_norm to ensure spread and visible brightness
+        try:
+            t_fb2 = _auto_contrast(combined_norm, low_percentile=5.0, high_percentile=95.0)
+        except Exception:
+            t_fb2 = adjusted
+        t_fb2 = np.clip(t_fb2 * 0.8 + 0.15, 0.0, 1.0)
+        palette_name = params.get('palette_name', 'viridis')
+        palette_reverse = params.get('palette_reverse', False)
+        rr, gg, bb = _sample_palette(t_fb2, name=palette_name, reverse=palette_reverse)
+        rr, gg, bb = _apply_vibrance(rr, gg, bb, vibrance=params.get('color_vibrance', 1.0), saturation=params.get('color_saturation', 1.2) * 0.7)
+        colors = np.stack([rr, gg, bb], axis=-1) * 255
     
     # Store frame for next iteration - save final colors after all operations
     final_colors = colors.astype(np.float32) / 255.0

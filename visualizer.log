@@ -1404,3 +1404,25 @@
 2025-08-08 12:16:20 - visualizer - INFO - State saved to D:\projects\practice-claude-code\function-visualizer\saves\parameters\params_20250808_121616.json
 2025-08-08 12:16:26 - visualizer - INFO - Color mode: harmonic
 2025-08-08 12:16:35 - visualizer - INFO - Application closing
+2025-08-08 12:23:27 - visualizer - INFO - Visualizer initialized
+2025-08-08 12:23:27 - visualizer - INFO - Starting visualizer application
+2025-08-08 12:23:28 - visualizer - WARNING - Performance low (1.9 FPS), reducing fidelity to 95.0%
+2025-08-08 12:23:28 - visualizer - WARNING - Performance low (2.3 FPS), reducing fidelity to 90.0%
+2025-08-08 12:23:28 - visualizer - INFO - Performance good (25.7 FPS), increasing fidelity to 95.0%
+2025-08-08 12:23:28 - visualizer - INFO - Performance good (37.0 FPS), increasing fidelity to 100.0%
+2025-08-08 12:23:33 - visualizer - INFO - Parameters loaded from saves\parameters\params_20250808_121616.json
+2025-08-08 12:23:33 - visualizer - INFO - Loaded state: params_20250808_121616
+2025-08-08 12:23:37 - visualizer - INFO - Color mode: harmonic
+2025-08-08 12:23:37 - visualizer - INFO - Color mode: palette
+2025-08-08 12:23:39 - visualizer - INFO - Application closing
+2025-08-08 12:25:59 - visualizer - INFO - Visualizer initialized
+2025-08-08 12:25:59 - visualizer - INFO - Starting visualizer application
+2025-08-08 12:25:59 - visualizer - WARNING - Performance low (3.2 FPS), reducing fidelity to 95.0%
+2025-08-08 12:26:00 - visualizer - WARNING - Performance low (3.8 FPS), reducing fidelity to 90.0%
+2025-08-08 12:26:00 - visualizer - INFO - Performance good (26.0 FPS), increasing fidelity to 95.0%
+2025-08-08 12:26:00 - visualizer - INFO - Performance good (28.4 FPS), increasing fidelity to 100.0%
+2025-08-08 12:26:03 - visualizer - INFO - Parameters loaded from saves\parameters\params_20250808_121616.json
+2025-08-08 12:26:03 - visualizer - INFO - Loaded state: params_20250808_121616
+2025-08-08 12:26:05 - visualizer - INFO - Color mode: harmonic
+2025-08-08 12:26:06 - visualizer - INFO - Color mode: palette
+2025-08-08 12:26:08 - visualizer - INFO - Application closing
