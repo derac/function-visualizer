@@ -19,7 +19,9 @@ class Config:
                 "default_time_step": 0.05,
                 "default_visual_fidelity": 100.0,
                 "frame_rate": 20,  # FPS
-                "update_interval_ms": 50
+                "update_interval_ms": 50,
+                "auto_randomize_enabled": True,
+                "auto_randomize_interval_sec": 5
             },
             "performance": {
                 "enable_gpu": True,

@@ -43,6 +43,8 @@ class Visualizer:
         self.auto_save_interval = config.get('saving.auto_save_interval', 0)
         
         logger.info("Visualizer initialized")
+        # Auto-randomize timer state must be defined before any scheduling calls
+        self._auto_randomize_job = None
         self.setup_ui()
         self.setup_bindings()
         
@@ -61,8 +63,13 @@ class Visualizer:
             self.save_current_state,
             self.load_saved_state,
             self.toggle_color_mode,
-            self.cycle_palette
+            self.cycle_palette,
+            self.set_auto_randomize_enabled,
+            self.set_auto_randomize_interval,
+            self.reset_auto_randomize_timer
         )
+        # Initialize auto-randomize based on config
+        self.set_auto_randomize_enabled(config.get('visualization.auto_randomize_enabled', True))
         
     def setup_bindings(self):
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -209,11 +216,66 @@ class Visualizer:
             
     def stop_animation(self):
         self.running = False
+        # Stop auto-randomize when animation stops
+        self._cancel_auto_randomize()
         
     def randomize_function_params(self):
         """Generate new random parameters for the mathematical function."""
         self.random_params = randomize_function_params()
         logger.log_function_params(self.random_params)
+
+    def _schedule_next_auto_randomize(self):
+        """Schedule the next auto-randomize if enabled."""
+        # Cancel any existing job to avoid duplicates
+        self._cancel_auto_randomize()
+        if not config.get('visualization.auto_randomize_enabled', True):
+            return
+        interval_ms = int(max(1, config.get('visualization.auto_randomize_interval_sec', 5)) * 1000)
+        # Use Tkinter's after to schedule
+        self._auto_randomize_job = self.root.after(interval_ms, self._auto_randomize_tick)
+
+    def _auto_randomize_tick(self):
+        """Timer callback to perform auto-randomize and reschedule."""
+        try:
+            self.randomize_function_params()
+        finally:
+            # Reschedule regardless of success, as long as still enabled
+            self._schedule_next_auto_randomize()
+
+    def _cancel_auto_randomize(self):
+        job = getattr(self, "_auto_randomize_job", None)
+        if job is not None:
+            try:
+                self.root.after_cancel(job)
+            except Exception:
+                pass
+            self._auto_randomize_job = None
+
+    def set_auto_randomize_enabled(self, enabled: bool):
+        """Enable or disable automatic randomization and persist setting."""
+        config.set('visualization.auto_randomize_enabled', bool(enabled))
+        if enabled:
+            self._schedule_next_auto_randomize()
+        else:
+            self._cancel_auto_randomize()
+
+    def set_auto_randomize_interval(self, seconds: float):
+        """Update auto-randomize interval and reschedule timer."""
+        try:
+            seconds = float(seconds)
+        except Exception:
+            return
+        if seconds <= 0:
+            return
+        config.set('visualization.auto_randomize_interval_sec', seconds)
+        # If enabled, reschedule with new interval
+        if config.get('visualization.auto_randomize_enabled', True):
+            self._schedule_next_auto_randomize()
+
+    def reset_auto_randomize_timer(self):
+        """Reset the auto-randomize timer after a manual randomize action."""
+        if config.get('visualization.auto_randomize_enabled', True):
+            self._schedule_next_auto_randomize()
 
     def toggle_color_mode(self):
         if not self.random_params:

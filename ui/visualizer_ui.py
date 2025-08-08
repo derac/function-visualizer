@@ -10,7 +10,7 @@ from utils.logger import logger
 
 
 class VisualizerUI:
-    def __init__(self, root, width, height, time_step, visual_fidelity, randomize_callback, generate_image_callback, update_time_step_callback=None, update_visual_fidelity_callback=None, save_callback=None, load_callback=None, toggle_color_mode_callback=None, cycle_palette_callback=None):
+    def __init__(self, root, width, height, time_step, visual_fidelity, randomize_callback, generate_image_callback, update_time_step_callback=None, update_visual_fidelity_callback=None, save_callback=None, load_callback=None, toggle_color_mode_callback=None, cycle_palette_callback=None, set_auto_randomize_callback=None, set_auto_randomize_interval_callback=None, reset_auto_randomize_timer_callback=None):
         """Initialize the UI components for the visualizer
         
         Args:
@@ -37,6 +37,9 @@ class VisualizerUI:
         self.load_callback = load_callback
         self.toggle_color_mode_callback = toggle_color_mode_callback
         self.cycle_palette_callback = cycle_palette_callback
+        self.set_auto_randomize_callback = set_auto_randomize_callback
+        self.set_auto_randomize_interval_callback = set_auto_randomize_interval_callback
+        self.reset_auto_randomize_timer_callback = reset_auto_randomize_timer_callback
         self.frame_time_ms = 0.0
         self.performance_stats = {}
         self.show_performance = config.get('ui.show_fps', True)
@@ -52,7 +55,7 @@ class VisualizerUI:
         self.toolbar.pack(side=tk.TOP, fill=tk.X)
         
         # Control buttons with better labels
-        self.randomize_btn = ttk.Button(self.toolbar, text="🎲 Random", command=self.randomize_callback)
+        self.randomize_btn = ttk.Button(self.toolbar, text="🎲 Random", command=self.on_randomize_action)
         self.randomize_btn.pack(side=tk.LEFT, padx=5)
         
         self.save_btn = ttk.Button(self.toolbar, text="💾 Save", command=self.save_visualization)
@@ -80,11 +83,31 @@ class VisualizerUI:
                                          orient=tk.HORIZONTAL, length=100)
         self.time_step_slider.set(self.time_step)
         self.time_step_slider.pack(side=tk.LEFT, padx=5)
+    
 
+        # Auto-randomize toggle (default ON)
+        self.auto_randomize_var = tk.BooleanVar(value=config.get('visualization.auto_randomize_enabled', True))
+        self.auto_randomize_check = ttk.Checkbutton(
+            self.toolbar,
+            text="🎲 AutoRand",
+            variable=self.auto_randomize_var,
+            command=self.toggle_auto_randomize
+        )
+        self.auto_randomize_check.pack(side=tk.LEFT, padx=5)
 
+        # Auto-randomize interval entry (seconds)
+        ttk.Label(self.toolbar, text="⏲️ s:").pack(side=tk.LEFT, padx=(10, 2))
+        self.auto_randomize_interval_var = tk.StringVar(value=str(config.get('visualization.auto_randomize_interval_sec', 5)))
+        self.auto_randomize_interval_entry = ttk.Entry(self.toolbar, textvariable=self.auto_randomize_interval_var, width=4)
+        self.auto_randomize_interval_entry.pack(side=tk.LEFT, padx=2)
+        # Apply on Enter and when focus leaves
+        self.auto_randomize_interval_entry.bind('<Return>', lambda e: self.apply_auto_randomize_interval())
+        self.auto_randomize_interval_entry.bind('<FocusOut>', lambda e: self.apply_auto_randomize_interval())
+
+        
         # Auto scaling toggle
         self.auto_scaling_var = tk.BooleanVar(value=config.get('performance.auto_scaling', True))
-        self.auto_scaling_check = ttk.Checkbutton(self.toolbar, text="🔄 Auto", 
+        self.auto_scaling_check = ttk.Checkbutton(self.toolbar, text="🔄 AutoQual", 
                                                  variable=self.auto_scaling_var, 
                                                  command=self.toggle_auto_scaling)
         self.auto_scaling_check.pack(side=tk.LEFT, padx=5)
@@ -119,8 +142,8 @@ class VisualizerUI:
         self.root.bind('<Configure>', self.on_resize)
         self.root.bind('<f>', lambda e: self.toggle_fullscreen())
         self.root.bind('<F>', lambda e: self.toggle_fullscreen())
-        self.root.bind('<r>', lambda e: self.randomize_callback())
-        self.root.bind('<R>', lambda e: self.randomize_callback())
+        self.root.bind('<r>', lambda e: self.on_randomize_action())
+        self.root.bind('<R>', lambda e: self.on_randomize_action())
         self.root.bind('<s>', lambda e: self.save_visualization())
         self.root.bind('<S>', lambda e: self.save_visualization())
         self.root.bind('<l>', lambda e: self.load_visualization())
@@ -178,6 +201,39 @@ class VisualizerUI:
             self.fidelity_slider.config(state='disabled')
         else:
             self.fidelity_slider.config(state='normal')
+
+    def toggle_auto_randomize(self):
+        """Toggle automatic randomization."""
+        enabled = self.auto_randomize_var.get()
+        config.set('visualization.auto_randomize_enabled', enabled)
+        if self.set_auto_randomize_callback:
+            self.set_auto_randomize_callback(enabled)
+
+    def apply_auto_randomize_interval(self):
+        """Apply the AutoRand interval from the entry box."""
+        try:
+            value_str = self.auto_randomize_interval_var.get().strip()
+            seconds = float(value_str)
+            if seconds <= 0:
+                raise ValueError
+        except Exception:
+            # Revert to current config value on invalid input
+            self.auto_randomize_interval_var.set(str(config.get('visualization.auto_randomize_interval_sec', 5)))
+            self.root.bell()
+            return
+        # Persist and notify controller
+        config.set('visualization.auto_randomize_interval_sec', seconds)
+        if self.set_auto_randomize_interval_callback:
+            self.set_auto_randomize_interval_callback(seconds)
+
+    def on_randomize_action(self):
+        """Handle user-triggered randomization and reset the AutoRand timer."""
+        try:
+            if self.randomize_callback:
+                self.randomize_callback()
+        finally:
+            if self.reset_auto_randomize_timer_callback:
+                self.reset_auto_randomize_timer_callback()
     
     def update_fidelity_slider(self, value):
         """Update the fidelity slider position and label"""
@@ -209,9 +265,11 @@ class VisualizerUI:
         • ⏱️ Speed: Animation speed (0.0-0.2)
         • 📏 Quality: Rendering quality (5%-100%)
         • 🎨 Color: Press C to toggle color mode; [ and ] to change palette
+        • 🎲 AutoRand: Automatically randomize every N seconds (toggle + interval box)
 
 ⚙️ Settings:
 • 🔄 Auto: Enable/disable automatic quality adjustment
+• 🎲 AutoRand: Enable/disable automatic randomize and set interval (seconds)
 
 ⌨️ Keyboard Shortcuts:
 • R: Randomize patterns
