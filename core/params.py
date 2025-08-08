@@ -10,7 +10,7 @@ def randomize_function_params() -> Dict:
     """
     all_operations = ['use_sin', 'use_cos', 'use_xor', 'use_reaction_diffusion',
                      'use_cellular', 'use_domain_warp', 'use_polar', 'use_sinusoidal_field',
-                     'use_noise', 'use_abs', 'use_power', 'use_feedback', 'use_voronoi']
+                     'use_noise', 'use_abs', 'use_power', 'use_feedback', 'use_voronoi', 'use_sdf_shapes']
 
     operations = {}
     remaining_ops = [op for op in all_operations if op not in operations]
@@ -153,6 +153,16 @@ def randomize_function_params() -> Dict:
         'reaction_diffusion_kill_rate': 0.062,
         'reaction_diffusion_dt': 0.02,
         'reaction_diffusion_scale': 0.7,
+
+        # SDF shapes / tiles
+        'sdf_tile_scale': random.uniform(40.0, 120.0),
+        'sdf_repeat': random.randint(2, 8),
+        'sdf_radius': random.uniform(0.25, 0.5),
+        'sdf_box_rounded': random.uniform(0.05, 0.3),
+        'sdf_shape_mix': random.uniform(0.0, 1.0),
+        'sdf_softness': random.uniform(0.8, 2.0),
+        'sdf_time_speed': random.uniform(0.05, 0.4),
+        'sdf_strength': random.uniform(0.6, 1.2),
 
         'function_order': enabled_ops,
     }

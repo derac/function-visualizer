@@ -12,6 +12,7 @@ from core.patterns.power import apply as apply_power
 from core.patterns.voronoi import apply as apply_voronoi
 from core.patterns.reaction_diffusion import apply as apply_reaction_diffusion
 from core.patterns.sinusoidal_field import apply as apply_sinusoidal_field
+from core.patterns.sdf_shapes import apply as apply_sdf_shapes
 
 
 OpFunc = Callable[[Array, Array, float, dict, dict], Array]
@@ -31,6 +32,7 @@ def get_registry() -> Dict[str, OpFunc]:
         'use_voronoi': apply_voronoi,
         'use_reaction_diffusion': apply_reaction_diffusion,
         'use_sinusoidal_field': apply_sinusoidal_field,
+        'use_sdf_shapes': apply_sdf_shapes,
     }
 
 
