@@ -4,7 +4,9 @@ import time
 import threading
 from PIL import Image, ImageTk
 from utils.hardware import get_array_module, CUPY_AVAILABLE
-from math_function import compute_function, randomize_function_params, generate_image_data
+from core.compute.compose import compute_function
+from core.params import randomize_function_params
+from core.rendering.image import generate_image_data
 from ui.visualizer_ui import VisualizerUI
 from config import config
 from utils.logger import logger
@@ -287,9 +289,9 @@ class Visualizer:
     def cycle_palette(self, step):
         if not self.random_params:
             return
-        # Palettes defined in math_function._PALETTES
+        # Palettes defined in core.color.palettes.PALETTES
         try:
-            from math_function import _PALETTES  # type: ignore
+            from core.color.palettes import PALETTES as _PALETTES  # type: ignore
         except Exception:
             return
         names = list(_PALETTES.keys())
